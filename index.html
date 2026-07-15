@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiMAK</title>
+    <title>SiMAK Cloudless - UPTD RSUD Pondokgede v26.9</title>
     
+    <!-- LOGO PADA ALAMAT URL (FAVICON) -->
     <link rel="icon" type="image/png" href="logo.png">
     
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- SDK Firebase Legacy (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
@@ -51,15 +55,18 @@
 </head>
 <body id="main-app-body" class="font-sans text-gray-800 transition-all duration-500">
 
+    <!-- INDIKATOR STATUS BULATAN MINIMALIS -->
     <div id="db-status-loader" class="fixed bottom-4 right-4 bg-slate-900/80 p-3 rounded-full shadow-2xl flex items-center justify-center z-50 border border-slate-700/60 backdrop-blur-sm">
         <div class="w-3.5 h-3.5 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.5)]" id="status-dot"></div>
     </div>
 
     <div class="flex h-screen overflow-hidden bg-slate-950/50 backdrop-blur-[1px] w-full h-full relative">
         
+        <!-- SIDEBAR UTAMA -->
         <div id="app-sidebar" class="sidebar-translate fixed md:sticky top-0 left-0 h-full w-64 bg-slate-900/95 text-white flex flex-col justify-between no-print z-50 shadow-2xl border-r border-slate-800/50 -translate-x-full md:translate-x-0">
             <div class="flex flex-col h-full justify-between overflow-y-auto">
                 <div>
+                    <!-- Header Sidebar -->
                     <div class="p-4 flex items-center justify-between border-b border-slate-800">
                         <div class="flex items-center space-x-3">
                             <div class="w-9 h-9 bg-white rounded p-0.5 flex items-center justify-center overflow-hidden border">
@@ -73,6 +80,7 @@
                         </button>
                     </div>
                     
+                    <!-- Navigasi Utama -->
                     <nav class="p-4 space-y-1">
                         <button onclick="switchTab('dashboard')" id="btn-dashboard" class="sidebar-item active w-full flex items-center space-x-3 px-4 py-3 rounded text-left text-gray-300 hover:text-white hover:bg-slate-800">
                             <i class="fa-solid fa-chart-pie w-5"></i><span>Dashboard Utama</span>
@@ -84,6 +92,7 @@
                             <i class="fa-solid fa-file-invoice-dollar w-5"></i><span>Pusat Riwayat & Dokumen</span>
                         </button>
                         
+                        <!-- Panel Aksi Kontrol Lembar Kerja -->
                         <div class="pt-4 mt-4 border-t border-slate-800 space-y-2">
                             <span class="block px-2 text-[10px] uppercase font-bold text-gray-500 tracking-wider">Aksi Cepat</span>
                             <button onclick="bukaLembarKerjaBaruKosong()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs py-2.5 px-3 rounded-lg font-bold shadow-md transition flex items-center justify-center space-x-2">
@@ -93,14 +102,17 @@
                     </nav>
                 </div>
 
+                <!-- BRANDING KREDIT PERSONAL -->
                 <div class="p-4 border-t border-slate-800 bg-slate-950/50 text-center text-xs text-slate-400 font-mono tracking-widest font-bold">
                      <i class="fa-solid fa-code-branch text-blue-500 mr-1.5 animate-pulse"></i>ftth11
                 </div>
             </div>
         </div>
 
+        <!-- AREA KONTEN UTAMA -->
         <div class="flex-1 flex flex-col overflow-y-auto z-10 bg-transparent">
             
+            <!-- HEADER APP -->
             <header class="bg-white/95 backdrop-blur shadow-md px-6 py-5 flex items-center no-print border-b border-slate-200">
                 <button onclick="toggleSidebarMenu(true)" class="text-slate-700 hover:text-blue-600 mr-5 focus:outline-none p-1.5 rounded-lg hover:bg-slate-100 transition">
                     <i class="fa-solid fa-bars text-2xl"></i>
@@ -117,6 +129,7 @@
 
             <main class="p-6 max-w-7xl w-full mx-auto space-y-6 bg-transparent">
 
+                <!-- TAB 1: DASHBOARD STATISTIK -->
                 <div id="tab-dashboard" class="tab-content space-y-6">
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 no-print">
                         <div onclick="clickDashboardStat('all')" class="glass-panel p-5 rounded-xl shadow border flex items-center justify-between cursor-pointer hover:scale-105 transition border-blue-400/30">
@@ -138,6 +151,7 @@
                     </div>
                 </div>
 
+                <!-- TAB 2: MASTER DATA ALAT MEDIS -->
                 <div id="tab-data-alat" class="tab-content hidden space-y-6">
                     <div class="flex justify-between items-center flex-wrap gap-4 no-print">
                         <h2 class="text-xl font-bold text-white bg-slate-900/80 px-4 py-1.5 rounded-xl border border-slate-700 shadow-md">Master Data Aset RSUD Pondokgede</h2>
@@ -179,6 +193,7 @@
                     </div>
                 </div>
 
+                <!-- TAB 3: PUSAT RIWAYAT & DOKUMEN -->
                 <div id="tab-kalibrasi" class="tab-content hidden space-y-6">
                     <div class="flex justify-between items-center no-print flex-wrap gap-4">
                         <h2 class="text-xl font-bold text-white bg-slate-900/80 px-4 py-1.5 rounded-xl border border-slate-700 shadow-lg">Pusat Riwayat & Dokumen Aset</h2>
@@ -213,6 +228,7 @@
                     </div>
                 </div>
 
+                <!-- LEMBAR KERJA DIGITAL RESMI -->
                 <div id="area-lembar-kerja-resmi" class="bg-white p-8 rounded-xl shadow-2xl border max-w-5xl mx-auto text-slate-900 space-y-6 hidden">
                     <div class="flex items-center justify-between border-b-4 border-black pb-4 text-black">
                         <div class="w-16 h-16 flex items-center justify-center overflow-hidden">
@@ -316,6 +332,7 @@
                         </div>
                     </div>
 
+                    <!-- AREA TANDA TANGAN DENGAN MENU PANAH DROPDOWN NAMA -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 text-xs">
                         <div class="text-center space-y-1.5">
                             <p class="font-semibold text-gray-500">Teknisi Pelaksana</p>
@@ -323,7 +340,6 @@
                                 <canvas id="sig-teknisi" class="w-full h-full absolute inset-0 z-10"></canvas>
                             </div>
                             <button type="button" onclick="clearCanvasSignature('sig-teknisi')" class="text-[10px] bg-red-100 text-red-700 hover:bg-red-200 px-2 py-0.5 rounded font-bold shadow-sm border border-red-300"><i class="fa-solid fa-eraser"></i> Hapus</button>
-                            
                             <div class="pt-1">
                                 <select id="dlk-select-nama-teknisi" class="w-full text-center border p-1 rounded font-bold text-gray-800 outline-none bg-slate-50 focus:border-blue-500 shadow-sm"></select>
                             </div>
@@ -335,7 +351,6 @@
                                 <canvas id="sig-user" class="w-full h-full absolute inset-0 z-10"></canvas>
                             </div>
                             <button type="button" onclick="clearCanvasSignature('sig-user')" class="text-[10px] bg-red-100 text-red-700 hover:bg-red-200 px-2 py-0.5 rounded font-bold shadow-sm border border-red-300"><i class="fa-solid fa-eraser"></i> Hapus</button>
-                            
                             <div class="pt-1">
                                 <select id="dlk-select-nama-saksi" class="w-full text-center border p-1 rounded font-bold text-gray-800 outline-none bg-slate-50 focus:border-blue-500 shadow-sm"></select>
                             </div>
@@ -347,7 +362,6 @@
                                 <canvas id="sig-pj" class="w-full h-full absolute inset-0 z-10"></canvas>
                             </div>
                             <button type="button" onclick="clearCanvasSignature('sig-pj')" class="text-[10px] bg-red-100 text-red-700 hover:bg-red-200 px-2 py-0.5 rounded font-bold shadow-sm border border-red-300"><i class="fa-solid fa-eraser"></i> Hapus</button>
-                            
                             <div class="pt-1">
                                 <select id="dlk-select-nama-pj" class="w-full text-center border p-1 rounded font-bold text-gray-800 outline-none bg-slate-50 focus:border-blue-500 shadow-sm"></select>
                             </div>
@@ -360,6 +374,7 @@
                     </div>
                 </div>
 
+                <!-- POPUPS MODAL PREVIEW -->
                 <div id="modal-preview" class="fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 hidden no-print">
                     <div class="bg-white w-full max-w-4xl h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
                         <div class="p-4 bg-slate-900 text-white flex justify-between items-center"><h3 id="preview-title" class="font-bold text-sm">File Peninjau</h3><button onclick="toggleModal('modal-preview', false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button></div>
@@ -367,6 +382,7 @@
                     </div>
                 </div>
 
+                <!-- MODAL KARTU LOG REKAM JEJAK -->
                 <div id="modal-kartu" class="fixed inset-0 bg-slate-900/60 z-40 flex items-center justify-center p-4 hidden no-print">
                     <div class="bg-white w-full max-w-5xl rounded-xl shadow-xl overflow-hidden h-[90vh] flex flex-col text-slate-800">
                         <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
@@ -394,6 +410,7 @@
                     </div>
                 </div>
 
+                <!-- MODAL REGISTER ALAT MANUAL -->
                 <div id="modal-alat" class="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4 hidden text-xs">
                     <form onsubmit="submitFormAlatMaster(event)" class="bg-white w-full max-w-md rounded-xl shadow-lg">
                         <div id="modal-alat-title" class="px-5 py-4 bg-gray-50 border-b font-bold text-slate-800 text-sm">Registrasi Alat Manual</div>
@@ -410,6 +427,7 @@
                     </form>
                 </div>
 
+                <!-- MODAL CERTIFICATE KALIBRASI -->
                 <div id="modal-kalibrasi" class="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4 hidden text-xs">
                     <form onsubmit="submitKalibrasi(event)" class="bg-white w-full max-w-md rounded-xl shadow-lg text-slate-800">
                         <div class="p-4 font-bold bg-gray-50 border-b flex justify-between items-center">
@@ -438,6 +456,20 @@
     </div>
 
     <script>
+        // 🚨 CONFIG & INIT FIREBASE CLOUD (KUNCI YANG SEMPAT TERTELAN DI KODE LAMA) 🚨
+        const firebaseConfig = {
+            apiKey: "AIzaSyDfg719ZJwUSM_9jgIkDmWlCJLEpcBlVsM",
+            authDomain: "simak-rsudpg11.firebaseapp.com",
+            projectId: "simak-rsudpg11",
+            storageBucket: "simak-rsudpg11.firebasestorage.app",
+            messagingSenderId: "97606453725",
+            appId: "1:97606453725:web:778622f3a04716ca4a4e34",
+            measurementId: "G-QCBM7G4S55"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         let dataAlat = [];
         let dataKalibrasi = [];
         let dataPerbaikan = [];
@@ -454,7 +486,6 @@
         let opsFisik = ["Main Unit & Casing Bersih", "Kabel Power Utuh & Kokoh", "Roda & Kunci Pengaman Lancar"];
         let opsFungsi = ["Sistem Control & Tombol Normal", "Layar Display & Alarm Berfungsi", "Kondisi Internal Battery Prima"];
         
-        // 🚨 DATA LIST MASTER NAMA DROPDOWN TANDA TANGAN 🚨
         let listNamaTeknisi = ["Baits Abdul Pattah", "Arrief Nurcahyo, S.Tr.Em.", "Teknisi Medis A", "Teknisi Medis B"];
         let listNamaSaksi = ["Kepala Unit Ruangan", "Saksi Ruangan A", "Saksi Ruangan B", "Saksi Ruangan C"];
         let listNamaPj = ["Arrief Nurcahyo, S.Tr.Em.", "Baits Abdul Pattah"];
@@ -505,13 +536,11 @@
             renderTabelPusatDokumen();
         }
 
-        // 🚨 SINKRONISASI PENGISIAN DROPDOWN NAMA DI BAWAH TANDA TANGAN 🚨
         function populasikanDropdownNamaTandaTangan() {
             document.getElementById('dlk-select-nama-teknisi').innerHTML = listNamaTeknisi.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="tambah-baru">+ Tambah Nama</option>`;
             document.getElementById('dlk-select-nama-saksi').innerHTML = listNamaSaksi.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="tambah-baru">+ Tambah Nama</option>`;
             document.getElementById('dlk-select-nama-pj').innerHTML = listNamaPj.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="tambah-baru">+ Tambah Nama</option>`;
 
-            // Event listener intercept untuk penambahan nama kustom langsung di tempat
             document.getElementById('dlk-select-nama-teknisi').onchange = function(e) { pemicuTambahNamaTtd(e.target, listNamaTeknisi); }
             document.getElementById('dlk-select-nama-saksi').onchange = function(e) { pemicuTambahNamaTtd(e.target, listNamaSaksi); }
             document.getElementById('dlk-select-nama-pj').onchange = function(e) { pemicuTambahNamaTtd(e.target, listNamaPj); }
@@ -532,7 +561,6 @@
 
         function simpanPenuhIsianWorksheetDinamis() {
             const alatId = document.getElementById('dlk-select-alat').value; if(!alatId) return alert("Pilih alat kesehatan!");
-            
             const noLk = document.getElementById('dlk-no').value; 
             const tgl = document.getElementById('dlk-tgl').value;
             const deskripsi = document.getElementById('dlk-txt-deskripsi-tunggal').value;
@@ -540,7 +568,6 @@
             const hasilTunggal = document.querySelector('input[name="dlk-hasil-tunggal"]:checked').value;
             const ttdTeknisi = document.getElementById('sig-teknisi').toDataURL();
 
-            // Mengambil nilai nama terpilih dari dropdown bawah tanda tangan
             const namaTeknisiTerpilih = document.getElementById('dlk-select-nama-teknisi').value;
             const namaSaksiTerpilih = document.getElementById('dlk-select-nama-saksi').value;
             const namaPjTerpilih = document.getElementById('dlk-select-nama-pj').value;
@@ -650,7 +677,6 @@
                 document.getElementById('dlk-tipe').value = a.tipe || '-'; document.getElementById('dlk-seri').value = a.seri || '-';
                 document.getElementById('dlk-lokasi').value = a.lokasi || 'Ruangan';
                 
-                // Set default Karu dropdown tanda tangan saksi berdasarkan nama lokasi ruangan
                 let defaultKaru = "Karu " + (a.lokasi || 'Ruangan');
                 document.getElementById('dlk-select-nama-saksi').innerHTML = `<option value="${defaultKaru}">${defaultKaru}</option>` + listNamaSaksi.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="tambah-baru">+ Tambah Nama</option>`;
             }
