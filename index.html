@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiMAK</title>
+    <title>SiMAK Cloudless - UPTD RSUD Pondokgede v24.8</title>
     
     <link rel="icon" type="image/png" href="logo.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <style>
         body {
@@ -161,7 +164,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="table-alat-body" class="divide-y text-gray-700 bg-white/70">
-                                    <tr><td colspan="7" class="p-4 text-center text-gray-400 italic">Memuat data internal repositori...</td></tr>
+                                    <tr><td colspan="7" class="p-4 text-center text-gray-400 italic">Menghubungkan Database Firebase Cloud...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -324,7 +327,7 @@
 
                 <div id="modal-preview" class="fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 hidden no-print">
                     <div class="bg-white w-full max-w-4xl h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
-                        <div class="p-4 bg-slate-900 text-white flex justify-between items-center"><h3 id="preview-title" class="font-bold text-sm">File Peninjau</h3><button onclick="toggleModal('modal-preview', false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button></div>
+                        <div class="p-4 bg-slate-900 text-white flex justify-between items-center"><h3 id="preview-title" class="font-bold text-sm">File Peninjau</h3><button onclick="toggleModal('preview-title', false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button></div>
                         <div id="preview-body" class="flex-1 bg-slate-100 p-2 flex items-center justify-center overflow-auto"></div>
                     </div>
                 </div>
@@ -336,7 +339,7 @@
                             <button type="button" onclick="toggleModal('modal-kartu', false)" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
                         </div>
                         <div class="p-4 bg-slate-50 border-b text-xs grid grid-cols-2 md:grid-cols-4 gap-4 shadow-inner">
-                            <div><p class="text-gray-400">Nama Instrumen:</p><p id="kartu-nama" class="font-bold text-slate-900 text-sm">-</p></div>
+                            <div><p class="text-gray-400">Nama Aset:</p><p id="kartu-nama" class="font-bold text-slate-900 text-sm">-</p></div>
                             <div><p class="text-gray-400">Merk / Model:</p><p id="kartu-merk" class="font-semibold text-slate-700 text-sm">-</p></div>
                             <div><p class="text-gray-400">Nomor Seri (SN):</p><p id="kartu-seri" class="font-mono font-bold text-slate-800 text-sm">-</p></div>
                             <div><p class="text-gray-400">Unit / Ruangan:</p><p id="kartu-lokasi" class="font-bold text-blue-600 text-sm">-</p></div>
@@ -400,7 +403,20 @@
     </div>
 
     <script>
-        const LOCAL_JSON_PATH = "./database.json";
+        // 🚨 CONFIG FIREBASE CLOUD CONTEXT (DARI USER) 🚨
+        const firebaseConfig = {
+            apiKey: "AIzaSyDfg719ZJwUSM_9jgIkDmWlCJLEpcBlVsM",
+            authDomain: "simak-rsudpg11.firebaseapp.com",
+            projectId: "simak-rsudpg11",
+            storageBucket: "simak-rsudpg11.firebasestorage.app",
+            messagingSenderId: "97606453725",
+            appId: "1:97606453725:web:778622f3a04716ca4a4e34",
+            measurementId: "G-QCBM7G4S55"
+        };
+
+        // Inisialisasi Ekosistem Google Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         let dataAlat = [];
         let dataKalibrasi = [];
@@ -416,77 +432,138 @@
         let opsFisik = ["Main Unit & Casing Bersih", "Kabel Power Utuh & Kokoh", "Roda & Kunci Pengaman Lancar"];
         let opsFungsi = ["Sistem Control & Tombol Normal", "Layar Display & Alarm Berfungsi", "Kondisi Internal Battery Prima"];
 
+        // 🚨 MUAT DATABASE OTOMATIS REAL-TIME DARI CLOUD FIREBASE (ANTI MANUAL SINKRON) 🚨
         async function muatDatabaseDariGitHub() {
             const dot = document.getElementById('status-dot');
-            try {
-                const response = await fetch(LOCAL_JSON_PATH + '?nocache=' + new Date().getTime());
-                if (!response.ok) throw new Error("Gagal load database lokal");
-                
-                const resData = await response.json();
-                let rawAlat = resData.dataAlat || [];
-                
-                dataAlat = rawAlat.map(a => {
-                    let namaFix = a.nama || '-';
-                    let merkFix = a.merk || '-';
-                    let tipeFix = a.tipe || '-';
-                    let seriFix = a.seri || '-';
-                    let edarFix = a.edar || '-';
-                    let lokasiFix = a.lokasi || 'Instalasi';
-                    
-                    if (edarFix && (edarFix.toLowerCase().includes("instalasi") || edarFix.toLowerCase().includes("poli") || edarFix.toLowerCase().includes("ambulance") || edarFix.toLowerCase().includes("gawat"))) {
-                        lokasiFix = edarFix;
-                        edarFix = (seriFix && (seriFix.startsWith("AKD") || seriFix.startsWith("AKL"))) ? seriFix : "-";
-                        seriFix = (tipeFix && tipeFix.startsWith("SN")) ? tipeFix : "-";
-                        tipeFix = merkFix;
-                        merkFix = a.kode || "-";
-                    }
-
-                    return {
-                        id: a.id || "ALK-" + Math.floor(Math.random() * 10000000),
-                        kode: "ALK-" + Math.floor(1000 + Math.random() * 9000),
-                        nama: namaFix,
-                        merk: merkFix,
-                        tipe: tipeFix,
-                        seri: seriFix,
-                        edar: edarFix,
-                        lokasi: lokasiFix,
-                        status: a.status || "Siap Digunakan"
-                    };
+            
+            // 1. Mendengarkan Koleksi Data Aset Utama Medis
+            db.collection("dataAlat").onSnapshot((querySnapshot) => {
+                dataAlat = [];
+                querySnapshot.forEach((doc) => {
+                    dataAlat.push({ id: doc.id, ...doc.data() });
                 });
-
-                dataKalibrasi = resData.dataKalibrasi || [];
-                dataPerbaikan = resData.dataPerbaikan || [];
-                dataPM = resData.dataPM || [];
-                dataInspeksi = resData.dataInspeksi || [];
-
-                // 🟢 SUKSES: Logo menjadi Hijau Bersinar Estetik
-                dot.className = "w-3.5 h-3.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.7)]";
-            } catch (err) {
-                console.error(err);
-                // 🔴 GAGAL / OFFLINE: Logo menjadi Merah Berkedip
-                dot.className = "w-3.5 h-3.5 bg-rose-600 rounded-full animate-ping shadow-[0_0_12px_rgba(225,29,72,0.7)]";
                 
-                dataAlat = JSON.parse(localStorage.getItem('simak_local_alat')) || [];
-                dataKalibrasi = JSON.parse(localStorage.getItem('simak_local_kalibrasi')) || [];
-            } finally {
+                if(dot) dot.className = "w-3.5 h-3.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.7)]";
                 renderAll();
+            }, (error) => {
+                console.error(error);
+                if(dot) dot.className = "w-3.5 h-3.5 bg-rose-600 rounded-full animate-ping shadow-[0_0_12px_rgba(225,29,72,0.7)]";
+            });
+
+            // 2. Mendengarkan Dokumen Riwayat Aktivitas & PDF Kalibrasi
+            db.collection("dataKalibrasi").onSnapshot((querySnapshot) => {
+                dataKalibrasi = [];
+                querySnapshot.forEach((doc) => { dataKalibrasi.push({ id: doc.id, ...doc.data() }); });
+                renderAll();
+            });
+
+            // 3. Mendengarkan Dokumen Log Lembar Kerja Lapangan Medis
+            db.collection("lembarKerja").onSnapshot((querySnapshot) => {
+                dataPerbaikan = []; dataPM = []; dataInspeksi = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if(data.jenisKerja === 'Corrective Maintenance') dataPerbaikan.push({ id: doc.id, ...data });
+                    else if(data.jenisKerja === 'Preventive Maintenance') dataPM.push({ id: doc.id, ...data });
+                    else dataInspeksi.push({ id: doc.id, ...data });
+                });
+                renderAll();
+            });
+        }
+
+        // 🚨 MENGIRIM LEMBAR KERJA BARU LANGSUNG KE FIREBASE CLOUD (AUTO INSTANT UPDATE) 🚨
+        function simpanPenuhIsianWorksheetDinamis() {
+            const alatId = document.getElementById('dlk-select-alat').value; 
+            if(!alatId) return alert("Silakan tentukan alat kesehatan terlebih dahulu!");
+            
+            const noLk = document.getElementById('dlk-no').value; 
+            const tgl = document.getElementById('dlk-tgl').value;
+            const deskripsi = document.getElementById('dlk-txt-deskripsi-tunggal').value;
+            const jenisKerja = document.querySelector('input[name="dlk-jenis"]:checked').value;
+            const hasilTunggal = document.querySelector('input[name="dlk-hasil-tunggal"]:checked').value;
+
+            // Capture Coretan Tanda Tangan Lapangan Teknisi (Base64 Teks)
+            const ttdTeknisi = document.getElementById('sig-teknisi').toDataURL();
+
+            const payload = {
+                alatId: alatId,
+                noLk: noLk,
+                tgl: tgl,
+                desc: deskripsi,
+                jenisKerja: jenisKerja,
+                hasilTunggal: hasilTunggal,
+                ttdTeknisi: ttdTeknisi,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Tambahkan data log ke Firestore
+            db.collection("lembarKerja").add(payload).then(() => {
+                // Mutasi status alkes pada master data awan
+                const statusBaru = (hasilTunggal === "Alat Rusak Perlu Perbaikan") ? "Dalam Perbaikan" : "Siap Digunakan";
+                db.collection("dataAlat").doc(alatId).update({ status: statusBaru });
+                
+                document.getElementById('area-lembar-kerja-resmi').classList.add('hidden');
+                alert("Sukses! Lembar Kerja baru otomatis tersimpan dan tersinkronisasi di Cloud server.");
+            }).catch((err) => {
+                alert("Kesalahan Cloud Firebase: " + err.message);
+            });
+        }
+
+        // 🚨 UNTUK REGISTRASI ASET MEDIS ATAU FORM MANUAL KE FIREBASE 🚨
+        function submitFormAlatMaster(e) {
+            e.preventDefault(); 
+            const formId = document.getElementById('form-alat-id').value;
+            const nama = document.getElementById('form-alat-nama').value; 
+            const merk = document.getElementById('form-alat-merk').value;
+            const tipe = document.getElementById('form-alat-tipe').value; 
+            const seri = document.getElementById('form-alat-seri').value;
+            const edar = document.getElementById('form-alat-edar').value; 
+            const lokasi = document.getElementById('form-alat-lokasi').value;
+
+            const payload = {
+                nama: nama, merk: merk, tipe: tipe, seri: seri, edar: edar, lokasi: lokasi,
+                status: "Siap Digunakan"
+            };
+
+            if(formId) {
+                db.collection("dataAlat").doc(formId).update(payload).then(() => {
+                    toggleModal('modal-alat', false);
+                    alert("Aset sukses diperbarui!");
+                });
+            } else {
+                db.collection("dataAlat").add(payload).then(() => {
+                    toggleModal('modal-alat', false);
+                    alert("Aset Baru sukses ditambahkan ke Firebase!");
+                });
             }
         }
 
-        function triggerUnduhDatabaseBaru() {
-            const payload = { dataAlat, dataKalibrasi, dataPerbaikan, dataPM, dataInspeksi };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", "database.json");
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
+        // 🚨 UNGGAH SERTIFIKAT KALIBRASI PDF LANGSUNG KE DATA SERVER CLOUD 🚨
+        async function submitKalibrasi(e) {
+            e.preventDefault(); 
+            const aId = document.getElementById('form-cal-alat').value; 
+            const hasil = document.getElementById('form-cal-hasil').value;
+            const pdfFile = document.getElementById('form-cal-pdf-file').files[0]; 
             
-            localStorage.setItem('simak_local_alat', JSON.stringify(dataAlat));
-            localStorage.setItem('simak_local_kalibrasi', JSON.stringify(dataKalibrasi));
-            
-            alert("Perubahan Berhasil Tersimpan!\n\nFile database.json terupdate otomatis diunduh. Upload ke GitHub agar device lain sinkron.");
+            let reader = new FileReader(); 
+            reader.readAsDataURL(pdfFile);
+            reader.onload = function() {
+                const payload = {
+                    alatId: aId,
+                    tgl: document.getElementById('form-cal-tgl').value,
+                    exp: document.getElementById('form-cal-exp').value,
+                    vendor: document.getElementById('form-cal-vendor').value || 'Vendor Resmi',
+                    certPdf: reader.result, 
+                    hasil: hasil
+                };
+
+                db.collection("dataKalibrasi").add(payload).then(() => {
+                    const statusBaru = (hasil === 'Layak') ? 'Siap Digunakan' : 'Dalam Perbaikan';
+                    db.collection("dataAlat").doc(aId).update({ status: statusBaru });
+                    toggleModal('modal-kalibrasi', false); 
+                    e.target.reset();
+                    alert("Berkas Sertifikat Kalibrasi Berhasil Diunggah Terintegrasi Cloud!");
+                });
+            }
         }
 
         function toggleSidebarMenu(show) {
@@ -569,6 +646,7 @@
             arr[index] = n.trim(); renderOpsiChecklistVisual();
         }
 
+        // Hapus parameter checklist row
         function removeOpsiChecklistRow(kategori, index) {
             let arr = kategori === 'alatkerja' ? opsAlatKerja : (kategori === 'fisik' ? opsFisik : opsFungsi);
             if(confirm("Hapus parameter ini?")) { arr.splice(index, 1); renderOpsiChecklistVisual(); }
@@ -627,53 +705,6 @@
             setTimeout(initSignatures, 300);
         }
 
-        function simpanPenuhIsianWorksheetDinamis() {
-            const alatId = document.getElementById('dlk-select-alat').value; if(!alatId) return;
-            const noLk = document.getElementById('dlk-no').value; const tgl = document.getElementById('dlk-tgl').value;
-            const deskripsi = document.getElementById('dlk-txt-deskripsi-tunggal').value;
-            const jenisKerja = document.querySelector('input[name="dlk-jenis"]:checked').value;
-            const hasilTunggal = document.querySelector('input[name="dlk-hasil-tunggal"]:checked').value;
-
-            let customId = targetEditLkLogId || ("LK-" + Date.now());
-
-            if(jenisKerja === 'Corrective Maintenance') {
-                dataPerbaikan.push({ id: customId, alatId: alatId, noLk: noLk, tgl: tgl, desc: deskripsi, hasilTunggal: hasilTunggal });
-            } else if(jenisKerja === 'Preventive Maintenance') {
-                dataPM.push({ id: customId, alatId: alatId, noLk: noLk, tgl: tgl, desc: deskripsi, hasilTunggal: hasilTunggal });
-            } else {
-                dataInspeksi.push({ id: customId, alatId: alatId, noLk: noLk, tgl: tgl, desc: deskripsi, hasilTunggal: hasilTunggal });
-            }
-
-            const a = dataAlat.find(item => item.id == alatId);
-            if(a) a.status = (hasilTunggal === "Alat Rusak Perlu Perbaikan") ? "Dalam Perbaikan" : "Siap Digunakan";
-            
-            document.getElementById('area-lembar-kerja-resmi').classList.add('hidden');
-            triggerUnduhDatabaseBaru();
-        }
-
-        async function submitKalibrasi(e) {
-            e.preventDefault(); 
-            const aId = document.getElementById('form-cal-alat').value; 
-            const hasil = document.getElementById('form-cal-hasil').value;
-            const pdfFile = document.getElementById('form-cal-pdf-file').files[0]; 
-            
-            let reader = new FileReader(); 
-            reader.readAsDataURL(pdfFile);
-            reader.onload = function() {
-                let customCalId = "CAL-" + Date.now();
-                dataKalibrasi.push({
-                    id: customCalId, alatId: aId,
-                    tgl: document.getElementById('form-cal-tgl').value,
-                    exp: document.getElementById('form-cal-exp').value,
-                    vendor: document.getElementById('form-cal-vendor').value || 'Vendor Resmi',
-                    certPdf: reader.result, hasil: hasil
-                });
-                const a = dataAlat.find(item => item.id == aId); if(a) a.status = (hasil === 'Layak') ? 'Siap Digunakan' : 'Dalam Perbaikan';
-                toggleModal('modal-kalibrasi', false); e.target.reset();
-                triggerUnduhDatabaseBaru();
-            }
-        }
-
         function openModalAlatManual() {
             document.getElementById('modal-alat-title').innerText = "Registrasi Alat Manual Baru";
             document.getElementById('form-alat-id').value = ""; document.getElementById('form-alat-nama').value = ""; 
@@ -689,23 +720,6 @@
             document.getElementById('form-alat-merk').value = a.merk || '-'; document.getElementById('form-alat-tipe').value = a.tipe || '-'; 
             document.getElementById('form-alat-seri').value = a.seri || '-'; document.getElementById('form-alat-edar').value = a.edar || '-'; 
             document.getElementById('form-alat-lokasi').value = a.lokasi || '-'; toggleModal('modal-alat', true);
-        }
-
-        function submitFormAlatMaster(e) {
-            e.preventDefault(); 
-            const formId = document.getElementById('form-alat-id').value;
-            const nama = document.getElementById('form-alat-nama').value; const merk = document.getElementById('form-alat-merk').value;
-            const tipe = document.getElementById('form-alat-tipe').value; const seri = document.getElementById('form-alat-seri').value;
-            const edar = document.getElementById('form-alat-edar').value; const lokasi = document.getElementById('form-alat-lokasi').value;
-
-            if(formId) {
-                const a = dataAlat.find(item => item.id == formId); 
-                if(a) { a.nama = nama; a.merk = merk; a.tipe = tipe; a.seri = seri; a.edar = edar; a.lokasi = lokasi; }
-            } else {
-                dataAlat.push({ id: "ALK-" + Date.now(), kode: "ALK-" + Math.floor(1000 + Math.random() * 9000), nama: nama, merk: merk, tipe: tipe, seri: seri, edar: edar, lokasi: lokasi, status: "Siap Digunakan" });
-            }
-            toggleModal('modal-alat', false);
-            triggerUnduhDatabaseBaru();
         }
 
         function bukaKartuPemeliharaan(alatId) {
@@ -749,7 +763,7 @@
             if(!tbody) return;
             
             if(dataAlat.length === 0) { 
-                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400 font-medium italic">Menghubungkan berkas data repositori...</td></tr>`; 
+                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500 font-medium italic">Database Cloud Firestore kosong. Sila tambahkan instrumen alkes via menu "Tambah Manual" di kanan atas.</td></tr>`; 
                 return; 
             }
             
@@ -827,14 +841,8 @@
                 ctx.lineCap = 'round'; 
                 ctx.strokeStyle = '#0f172a';
                 
-                function start(e) { 
-                    act = true; 
-                    draw(e); 
-                } 
-                function end() { 
-                    act = false; 
-                    ctx.beginPath(); 
-                } 
+                function start(e) { act = true; draw(e); } 
+                function end() { act = false; ctx.beginPath(); } 
                 function draw(e) {
                     if(!act) return; 
                     if(e.cancelable) e.preventDefault();
