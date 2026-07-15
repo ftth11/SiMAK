@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiMAK Cloudless - UPTD RSUD Pondokgede v26.9</title>
+    <title>SiMAK</title>
     
     <!-- LOGO PADA ALAMAT URL (FAVICON) -->
     <link rel="icon" type="image/png" href="logo.png">
@@ -456,7 +456,7 @@
     </div>
 
     <script>
-        // 🚨 CONFIG & INIT FIREBASE CLOUD (KUNCI YANG SEMPAT TERTELAN DI KODE LAMA) 🚨
+        // 🚨 CONFIG & INIT FIREBASE CLOUD REAL-TIME 🚨
         const firebaseConfig = {
             apiKey: "AIzaSyDfg719ZJwUSM_9jgIkDmWlCJLEpcBlVsM",
             authDomain: "simak-rsudpg11.firebaseapp.com",
@@ -559,8 +559,14 @@
             }
         }
 
+        // 🚨 PERBAIKAN LOGIKA VALIDASI STRING FIRESTORE ID (ANTI-LOG OUT FALSE NOTIFICATION) 🚨
         function simpanPenuhIsianWorksheetDinamis() {
-            const alatId = document.getElementById('dlk-select-alat').value; if(!alatId) return alert("Pilih alat kesehatan!");
+            const alatIdRaw = document.getElementById('dlk-select-alat').value;
+            // Validasi string murni agar membaca ID Dokumen Firebase Firestore secara aman
+            if(!alatIdRaw || alatIdRaw.trim() === "") {
+                return alert("Silakan pilih salah satu Alat Kesehatan dari database terlebih dahulu!");
+            }
+            
             const noLk = document.getElementById('dlk-no').value; 
             const tgl = document.getElementById('dlk-tgl').value;
             const deskripsi = document.getElementById('dlk-txt-deskripsi-tunggal').value;
@@ -573,17 +579,19 @@
             const namaPjTerpilih = document.getElementById('dlk-select-nama-pj').value;
 
             const payload = {
-                alatId: alatId, noLk: noLk, tgl: tgl, desc: deskripsi, jenisKerja: jenisKerja, hasilTunggal: hasilTunggal, ttdTeknisi: ttdTeknisi,
+                alatId: alatIdRaw.trim(), noLk: noLk, tgl: tgl, desc: deskripsi, jenisKerja: jenisKerja, hasilTunggal: hasilTunggal, ttdTeknisi: ttdTeknisi,
                 teknisiTtd: namaTeknisiTerpilih, saksiTtd: namaSaksiTerpilih, pjTtd: namaPjTerpilih,
                 fotoAlat: stringFotoBase64, createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             db.collection("lembarKerja").add(payload).then(() => {
                 const statusBaru = (hasilTunggal === "Alat Rusak Perlu Perbaikan") ? "Dalam Perbaikan" : "Siap Digunakan";
-                db.collection("dataAlat").doc(alatId).update({ status: statusBaru });
+                db.collection("dataAlat").doc(alatIdRaw.trim()).update({ status: statusBaru });
                 document.getElementById('area-lembar-kerja-resmi').classList.add('hidden');
                 document.getElementById('dlk-input-foto').value = ""; stringFotoBase64 = "-";
-                alert("Sukses! Lembar Kerja cloud berhasil tersimpan.");
+                alert("🎉 Sukses! Lembar Kerja cloud berhasil disinkronisasikan ke Firebase.");
+            }).catch(err => {
+                alert("Gagal menyimpan ke Cloud: " + err.message);
             });
         }
 
