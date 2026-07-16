@@ -42,7 +42,7 @@
             touch-action: none;
         }
 
-        /* 🚨 OPTIMASI ULTRA 1 LEMBAR CETAK A4 🚨 */
+        /* OPTIMASI 1 LEMBAR CETAK A4 */
         @media print {
             @page {
                 size: A4 vertical;
@@ -66,13 +66,12 @@
             }
             .no-print { display: none !important; }
             
-            /* Pengecilan elemen kondisional saat cetak agar hemat ruang */
             input, select, textarea { background: transparent !important; border-bottom: 1px solid #94a3b8 !important; }
-            .print\\:py-1 { padding-top: 0.25rem !important; padding-bottom: 0.25rem !important; }
-            .print\\:h-20 { height: 5rem !important; } /* Perkecil tinggi tinggi kanvas TTD saat di-print */
-            .print\\:h-28 { height: 7rem !important; } /* Perkecil tinggi kotak foto */
-            .print\\:gap-2 { gap: 0.5rem !important; }
-            .print\\:space-y-2 > :not([hidden]) ~ :not([hidden]) { --tw-space-y-between: 0.5rem !important; }
+            .print\:py-1 { padding-top: 0.25rem !important; padding-bottom: 0.25rem !important; }
+            .print\:h-20 { height: 5rem !important; } 
+            .print\:h-28 { height: 7rem !important; } 
+            .print\:gap-2 { gap: 0.5rem !important; }
+            .print\:space-y-2 > :not([hidden]) ~ :not([hidden]) { --tw-space-y-between: 0.5rem !important; }
         }
     </style>
 </head>
@@ -235,7 +234,7 @@
                     </div>
                 </div>
 
-                <div id="area-lembar-kerja-resmi" class="bg-white p-6 print:p-2 rounded-xl shadow-2xl border max-w-5xl mx-auto text-slate-900 space-y-4 print:space-y-2 relative">
+                <div id="area-lembar-kerja-resmi" class="hidden bg-white p-6 print:p-2 rounded-xl shadow-2xl border max-w-5xl mx-auto text-slate-900 space-y-4 print:space-y-2 relative">
                     <button onclick="window.print()" type="button" class="no-print absolute top-4 right-4 bg-blue-600 text-white px-3 py-1.5 rounded font-bold text-xs shadow hover:bg-blue-700 flex items-center space-x-1">
                         <i class="fa-solid fa-print"></i> <span>Cetak Dokumen Resmi</span>
                     </button>
@@ -818,10 +817,17 @@
             
             renderOpsiDropdownAwal(); 
             aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi');
-            populasikanDropdownNamaTandaTangan();
             
-            const areaLK = document.getElementById('area-lembar-kerja-resmi'); areaLK.classList.remove('hidden'); areaLK.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(initSignatures, 300); toggleSidebarMenu(false);
+            // 🚨 FIX: Pastikan dropdown nama langsung terisi saat membuat lembar kerja baru 🚨
+            populasikanDropdownNamaTanda Tangan();
+            
+            const areaLK = document.getElementById('area-lembar-kerja-resmi'); 
+            areaLK.classList.remove('hidden'); 
+            areaLK.scrollIntoView({ behavior: 'smooth' });
+            
+            // Berikan jeda agar elemen render sempurna di DOM sebelum inisialisasi koordinat tanda tangan
+            setTimeout(initSignatures, 400); 
+            toggleSidebarMenu(false);
         }
 
         function bukaLembarKerjaDinamisDariLog(id) {
@@ -859,8 +865,11 @@
             if(record.saksiTtd) document.getElementById('dlk-select-nama-saksi').value = record.saksiTtd;
             if(record.pjTtd) document.getElementById('dlk-select-nama-pj').value = record.pjTtd;
 
-            const areaLK = document.getElementById('area-lembar-kerja-resmi'); areaLK.classList.remove('hidden'); areaLK.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(initSignatures, 300);
+            const areaLK = document.getElementById('area-lembar-kerja-resmi'); 
+            areaLK.classList.remove('hidden'); 
+            areaLK.scrollIntoView({ behavior: 'smooth' });
+            
+            setTimeout(initSignatures, 400);
         }
 
         function bukaKartuPemeliharaan(alatId) {
@@ -974,7 +983,11 @@
         function initSignatures() {
             signatures.forEach(id => {
                 const canvas = document.getElementById(id); if(!canvas) return; 
-                canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+                
+                // 🚨 FIX LOGIC: Ambil dimensi kontainer asli saat ini agar kanvas tidak berukuran 0x0 🚨
+                canvas.width = canvas.parentElement.clientWidth || canvas.offsetWidth || 250; 
+                canvas.height = canvas.parentElement.clientHeight || canvas.offsetHeight || 96;
+                
                 const ctx = canvas.getContext('2d'); let act = false; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.strokeStyle = '#0f172a';
                 
                 function start(e) { act = true; draw(e); } function end() { act = false; ctx.beginPath(); } 
@@ -984,8 +997,15 @@
                     const cx = e.touches ? e.touches[0].clientX : e.clientX; const cy = e.touches ? e.touches[0].clientY : e.clientY;
                     ctx.lineTo(cx - r.left, cy - r.top); ctx.stroke(); ctx.beginPath(); ctx.moveTo(cx - r.left, cy - r.top);
                 }
-                canvas.addEventListener('mousedown', start); canvas.addEventListener('mouseup', end); canvas.addEventListener('mousemove', draw);
-                canvas.addEventListener('touchstart', start, { passive: false }); canvas.addEventListener('touchend', end, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false });
+                
+                // Hapus event listener lama untuk mencegah penumpukan fungsi (stacking)
+                canvas.replaceWith(canvas.cloneNode(true));
+                const newCanvas = document.getElementById(id);
+                const newCtx = newCanvas.getContext('2d');
+                newCtx.lineWidth = 2.5; newCtx.lineCap = 'round'; newCtx.strokeStyle = '#0f172a';
+                
+                newCanvas.addEventListener('mousedown', start); newCanvas.addEventListener('mouseup', end); newCanvas.addEventListener('mousemove', draw);
+                newCanvas.addEventListener('touchstart', start, { passive: false }); newCanvas.addEventListener('touchend', end, { passive: false }); newCanvas.addEventListener('touchmove', draw, { passive: false });
             });
         }
         
