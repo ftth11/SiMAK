@@ -41,25 +41,12 @@
         canvas {
             touch-action: none;
         }
-        
-        #box-bingkai-foto-cetak {
-            display: none;
-        }
 
         @media print {
             body * { visibility: hidden !important; }
             #area-lembar-kerja-resmi, #area-lembar-kerja-resmi * { visibility: visible !important; }
             #area-lembar-kerja-resmi { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; display: block !important; }
             .no-print { display: none !important; }
-            
-            #box-bingkai-foto-cetak {
-                display: block !important;
-                border: 1.5px solid #000000;
-                border-radius: 6px;
-                padding: 8px;
-                text-align: center;
-                background-color: #ffffff !important;
-            }
         }
     </style>
 </head>
@@ -275,7 +262,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-4">
                         <div class="border p-3 rounded-lg text-xs bg-white shadow-sm flex flex-col justify-between">
                             <div>
                                 <label class="block font-bold text-slate-800 border-b pb-1 mb-2 no-print"><i class="fa-solid fa-camera text-indigo-600 mr-1"></i>Ambil Foto Alat Lapangan</label>
@@ -284,8 +271,8 @@
                                     <input type="file" id="dlk-input-foto" accept="image/*" capture="environment" onchange="previewFotoDipilih(this)" class="w-full border p-1 rounded bg-slate-50 text-[11px]">
                                 </div>
                             </div>
-                            <div class="flex justify-center items-center">
-                                <div id="box-preview-foto" class="w-full h-32 border rounded bg-slate-100 flex items-center justify-center overflow-hidden shadow-inner font-mono text-gray-400 italic text-[10px]">[ Belum Ada Foto ]</div>
+                            <div class="flex justify-center items-center w-full">
+                                <div id="box-preview-foto" class="w-full h-36 border rounded bg-slate-100 flex items-center justify-center overflow-hidden shadow-inner font-mono text-gray-400 italic text-[10px]">[ Belum Ada Foto ]</div>
                             </div>
                         </div>
 
@@ -309,10 +296,6 @@
                                 * Diukur langsung di instalasi unit ruangan alkes.
                             </div>
                         </div>
-                    </div>
-
-                    <div id="box-bingkai-foto-cetak">
-                        <div id="wadah-foto-cetakan-print" class="w-full h-48 flex items-center justify-center overflow-hidden bg-white border"></div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
@@ -361,7 +344,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 text-xs">
+                    <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-6 pt-4 text-xs">
                         <div class="text-center space-y-1.5">
                             <p class="font-semibold text-gray-500">Teknisi Pelaksana</p>
                             <div class="border-2 border-dashed border-slate-300 rounded bg-slate-50 h-32 relative shadow-inner overflow-hidden">
@@ -550,10 +533,9 @@
             renderTabelPusatDokumen();
         }
 
-        // 🚨 DROPDOWN TANDA TANGAN DENGAN OPSI PETUNJUK AWAL (PLACEHOLDER) 🚨
-        function populasikanDropdownNamaTandaTangan() {
+        function populasikanDropdownNamaTanda Tangan() {
             document.getElementById('dlk-select-nama-teknisi').innerHTML = 
-                `<option value="">-- PILIH TEKNISI Pelaksana --</option>` + 
+                `<option value="">-- PILIH TEKNISI --</option>` + 
                 listNamaTeknisi.map(n => `<option value="${n}">${n}</option>`).join('') + 
                 `<option value="tambah-baru">+ Tambah Nama</option>`;
 
@@ -596,7 +578,6 @@
             const selectAlatEl = document.getElementById('dlk-select-alat'); const alatIdRaw = selectAlatEl.value;
             if(!alatIdRaw || alatIdRaw.trim() === "") return alert("Silakan pilih Alat Kesehatan terlebih dahulu!");
             
-            // Validasi proteksi agar user tidak lupa memilih nama pelaksana
             if(!document.getElementById('dlk-select-nama-teknisi').value) return alert("Silakan pilih Nama Teknisi Pelaksana terlebih dahulu!");
             if(!document.getElementById('dlk-select-nama-saksi').value) return alert("Silakan pilih Nama User Ruangan / Saksi terlebih dahulu!");
             if(!document.getElementById('dlk-select-nama-pj').value) return alert("Silakan pilih Nama PJ IPSRS Alkes terlebih dahulu!");
@@ -628,7 +609,7 @@
                     const img = new Image(); img.src = event.target.result;
                     img.onload = function() {
                         const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        const MAX_WIDTH = 500; const MAX_HEIGHT = 500;
+                        const MAX_WIDTH = 550; const MAX_HEIGHT = 550;
                         let width = img.width; let height = img.height;
                         
                         if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
@@ -636,10 +617,9 @@
                         
                         canvas.width = width; canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
-                        stringFotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                        stringFotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
                         
                         document.getElementById('box-preview-foto').innerHTML = `<img src="${stringFotoBase64}" class="w-full h-full object-cover rounded shadow">`;
-                        document.getElementById('wadah-foto-cetakan-print').innerHTML = `<img src="${stringFotoBase64}" class="max-h-44 object-contain shadow rounded">`;
                     }
                 }
             }
@@ -668,6 +648,7 @@
 
         function resetFilterStatusAlat() { globalFilterStatus = "all"; renderAll(); }
 
+        // Mencegah reload halaman saat menekan enter pada input di dalam modal
         function submitFormAlatMaster(e) {
             e.preventDefault(); const formId = document.getElementById('form-alat-id').value;
             const payload = {
@@ -785,7 +766,6 @@
             });
         }
 
-        // 🚨 SINKRONISASI PEMILIHAN SAKSI / USER DINAMIS DENGAN TETAP MENJAGA PLACEHOLDER AWAL 🚨
         function sinkronisasiDataAlatKeWorksheet(alatId) {
             if(!alatId) return; const a = dataAlat.find(item => item.id == alatId);
             if(a) {
@@ -810,7 +790,6 @@
             document.getElementById('dlk-tgl').value = new Date().toISOString().substring(0, 10);
             document.getElementById('dlk-select-alat').value = ""; document.getElementById('dlk-txt-deskripsi-tunggal').value = ""; 
             document.getElementById('box-preview-foto').innerHTML = `[ Belum Ada Foto ]`;
-            document.getElementById('wadah-foto-cetakan-print').innerHTML = ``;
             
             renderOpsiDropdownAwal(); 
             aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi');
@@ -846,10 +825,8 @@
             if(record.fotoAlat && record.fotoAlat !== '-') {
                 stringFotoBase64 = record.fotoAlat;
                 document.getElementById('box-preview-foto').innerHTML = `<img src="${record.fotoAlat}" class="w-full h-full object-cover rounded shadow">`;
-                document.getElementById('wadah-foto-cetakan-print').innerHTML = `<img src="${record.fotoAlat}" class="max-h-44 object-contain shadow rounded">`;
             } else {
                 document.getElementById('box-preview-foto').innerHTML = `[ Belum Ada Foto ]`;
-                document.getElementById('wadah-foto-cetakan-print').innerHTML = ``;
             }
             
             populasikanDropdownNamaTandaTangan();
