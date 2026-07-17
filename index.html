@@ -509,14 +509,15 @@
         // =========================================================
         // PENTING: GANTI DENGAN KUNCI CONFIG FIREBASE ASLI ANDA
         // =========================================================
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
               apiKey: "AIzaSyDfg719ZJwUSM_9jgIkDmWlCJLEpcBlVsM",
               authDomain: "simak-rsudpg11.firebaseapp.com",
               projectId: "simak-rsudpg11",
-              storageBucket: "simak-rsudpg11.appspot.com",
+              storageBucket: "simak-rsudpg11.firebasestorage.app",
               messagingSenderId: "97606453725",
               appId: "1:97606453725:web:778622f3a04716ca4a4e34",
-              
+              measurementId: "G-QCBM7G4S55"
         };
         
         // Inisialisasi Firebase Engine
@@ -809,7 +810,7 @@
             
             renderOpsiDropdownAwal(); 
             aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi');
-            populasikanDropdownNamaTanda Tangan();
+            populasikanDropdownNamaTandaTangan();
             
             const areaLK = document.getElementById('area-lembar-kerja-resmi'); areaLK.classList.remove('hidden'); areaLK.scrollIntoView({ behavior: 'smooth' });
             setTimeout(initSignatures, 400); toggleSidebarMenu(false);
