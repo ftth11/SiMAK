@@ -923,6 +923,18 @@
                     `).join('');
         renderTabelPusatDokumen();
         }
+        
+        function hapusAlatMasterFirebase(id, namaAlat) {
+            if(confirm(`Apakah Anda yakin ingin menghapus aset "${namaAlat}" secara permanen dari Firebase Cloud? Tindakan ini tidak dapat dibatalkan.`)) {
+                db.collection("dataAlat").doc(id).delete()
+                .then(() => {
+                    alert("🎉 Sukses! Aset berhasil dihapus dari Cloud Database.");
+                })
+                .catch((error) => {
+                    alert("Gagal menghapus aset: " + error.message);
+                });
+            }
+        }
 
         function toggleModal(id, show) { document.getElementById(id).classList.toggle('hidden', !show); }
         
