@@ -13,9 +13,9 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- SDK Firebase Legacy (Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- SDK Firebase Legacy (v8) Core & Firestore Cloud -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <style>
         body {
@@ -46,7 +46,7 @@
             touch-action: none;
         }
 
-        /* OPTIMASI 1 LEMBAR CETAK A4 */
+        /* OPTIMASI 1 LEMBAR DOKUMEN CETAK A4 */
         @media print {
             @page {
                 size: A4 vertical;
@@ -81,14 +81,14 @@
 </head>
 <body id="main-app-body" class="font-sans text-gray-800 transition-all duration-500">
 
-    <!-- INDIKATOR STATUS BULATAN MINIMALIS -->
+    <!-- INDIKATOR STATUS LOAD DATABASE CLOUD -->
     <div id="db-status-loader" class="fixed bottom-4 right-4 bg-slate-900/80 p-3 rounded-full shadow-2xl flex items-center justify-center z-50 border border-slate-700/60 backdrop-blur-sm">
-        <div class="w-3.5 h-3.5 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.5)]" id="status-dot"></div>
+        <div class="w-3.5 h-3.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]" id="status-dot"></div>
     </div>
 
     <div class="flex h-screen overflow-hidden bg-slate-950/50 backdrop-blur-[1px] w-full h-full relative">
         
-        <!-- SIDEBAR UTAMA -->
+        <!-- SIDEBAR MENU UTAMA -->
         <div id="app-sidebar" class="sidebar-translate fixed md:sticky top-0 left-0 h-full w-64 bg-slate-900/95 text-white flex flex-col justify-between no-print z-50 shadow-2xl border-r border-slate-800/50 -translate-x-full md:translate-x-0">
             <div class="flex flex-col h-full justify-between overflow-y-auto">
                 <div>
@@ -96,7 +96,7 @@
                         <div class="flex items-center space-x-3">
                             <div class="w-9 h-9 bg-white rounded p-0.5 flex items-center justify-center overflow-hidden border">
                                 <img src="logo.png" onerror="this.style.display='none'; document.getElementById('fallback-icon').classList.remove('hidden')" class="w-full h-full object-contain" alt="Logo">
-                                <i id="fallback-icon" class="fa-solid fa-database text-lg text-blue-500 hidden"></i>
+                                <i id="fallback-icon" class="fa-solid fa-cloud text-lg text-blue-500 hidden"></i>
                             </div>
                             <span class="text-lg font-black tracking-wider bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">SiMAK</span>
                         </div>
@@ -125,12 +125,12 @@
                     </nav>
                 </div>
                 <div class="p-4 border-t border-slate-800 bg-slate-950/50 text-center text-xs text-slate-400 font-mono tracking-widest font-bold">
-                     <i class="fa-solid fa-code-branch text-blue-500 mr-1.5 animate-pulse"></i>ftth11
+                     <i class="fa-solid fa-cloud-arrow-up text-blue-500 mr-1.5 animate-pulse"></i>Firebase v27.20
                 </div>
             </div>
         </div>
 
-        <!-- AREA KONTEN UTAMA -->
+        <!-- AREA UTAMA APLIKASI -->
         <div class="flex-1 flex flex-col overflow-y-auto z-10 bg-transparent">
             
             <header class="bg-white/95 backdrop-blur shadow-md px-6 py-5 flex items-center no-print border-b border-slate-200">
@@ -145,7 +145,7 @@
 
             <main class="p-6 max-w-7xl w-full mx-auto space-y-6 bg-transparent">
 
-                <!-- TAB 1: DASHBOARD STATISTIK -->
+                <!-- KONTEN: DASHBOARD STATISTIK -->
                 <div id="tab-dashboard" class="tab-content space-y-6">
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 no-print">
                         <div onclick="clickDashboardStat('all')" class="glass-panel p-5 rounded-xl shadow border flex items-center justify-between cursor-pointer hover:scale-105 transition border-blue-400/30">
@@ -167,7 +167,7 @@
                     </div>
                 </div>
 
-                <!-- TAB 2: MASTER DATA ALAT MEDIS -->
+                <!-- KONTEN: MASTER DATA ALAT MEDIS -->
                 <div id="tab-data-alat" class="tab-content hidden space-y-6">
                     <div class="flex justify-between items-center flex-wrap gap-4 no-print">
                         <h2 class="text-xl font-bold text-white bg-slate-900/80 px-4 py-1.5 rounded-xl border border-slate-700 shadow-md">Master Data Aset RSUD Pondokgede</h2>
@@ -202,14 +202,14 @@
                                     </tr>
                                 </thead>
                                 <tbody id="table-alat-body" class="divide-y text-gray-700 bg-white/70">
-                                    <tr><td colspan="7" class="p-4 text-center text-gray-400 italic">Menghubungkan Database Firebase Cloud...</td></tr>
+                                    <tr><td colspan="7" class="p-4 text-center text-gray-400 italic">Sinkronisasi Database Firebase Cloud...</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB 3: PUSAT RIWAYAT & DOKUMEN -->
+                <!-- KONTEN: PUSAT DOKUMEN & RIWAYAT -->
                 <div id="tab-kalibrasi" class="tab-content hidden space-y-6">
                     <div class="flex justify-between items-center no-print flex-wrap gap-4">
                         <h2 class="text-xl font-bold text-white bg-slate-900/80 px-4 py-1.5 rounded-xl border border-slate-700 shadow-lg">Pusat Riwayat & Dokumen Aset</h2>
@@ -224,7 +224,7 @@
                     
                     <div class="glass-panel rounded-xl shadow-sm border overflow-hidden">
                         <div class="p-4 bg-slate-100/80 font-bold text-slate-800 border-b text-xs">
-                            <i class="fa-solid fa-folder-open mr-2 text-indigo-600"></i>Daftar Arsip Digital Terintegrasi Cloud
+                            <i class="fa-solid fa-folder-open mr-2 text-indigo-600"></i>Daftar Arsip Digital Terintegrasi Real-time Firebase
                         </div>
                         <div class="overflow-x-auto w-full">
                             <table class="w-full text-left text-xs min-w-[800px] table-auto">
@@ -244,7 +244,7 @@
                     </div>
                 </div>
 
-                <!-- LEMBAR KERJA DIGITAL RESMI -->
+                <!-- FORM LEMBAR KERJA DIGITAL RESMI (SIAP CETAK A4) -->
                 <div id="area-lembar-kerja-resmi" class="hidden bg-white p-6 print:p-2 rounded-xl shadow-2xl border max-w-5xl mx-auto text-slate-900 space-y-4 print:space-y-2 relative">
                     <button onclick="window.print()" type="button" class="no-print absolute top-4 right-4 bg-blue-600 text-white px-3 py-1.5 rounded font-bold text-xs shadow hover:bg-blue-700 flex items-center space-x-1">
                         <i class="fa-solid fa-print"></i> <span>Cetak Dokumen Resmi</span>
@@ -298,9 +298,8 @@
                         </div>
                     </div>
 
-                    <!-- PREVIEW CETAK SEJAJAR 1 BARIS -->
+                    <!-- FOTO LAPANGAN & KONDISI LINGKUNGAN -->
                     <div class="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-4 print:gap-2">
-                        <!-- Kolom Kiri: Foto Lapangan -->
                         <div class="border p-2 rounded-lg text-[11px] bg-white shadow-sm flex flex-col justify-between">
                             <div>
                                 <label class="block font-bold text-slate-800 border-b pb-0.5 mb-1 no-print"><i class="fa-solid fa-camera text-indigo-600 mr-1"></i>Ambil Foto Alat Lapangan</label>
@@ -314,7 +313,6 @@
                             </div>
                         </div>
 
-                        <!-- Kolom Rencana Kondisi Lingkungan -->
                         <div class="border p-2 rounded-lg text-[11px] bg-white shadow-sm flex flex-col justify-between">
                             <div>
                                 <h4 class="font-bold border-b pb-0.5 mb-2 text-slate-800 flex items-center"><i class="fa-solid fa-temperature-three-quarters mr-1.5 text-orange-500"></i>1. Kondisi Lingkungan</h4>
@@ -332,12 +330,12 @@
                                 </div>
                             </div>
                             <div class="text-[9px] text-slate-400 italic font-mono pt-2 border-t mt-1">
-                                * Diukur langsung di instalasi unit ruangan.
+                                * Diukur langsung di unit ruangan rumah sakit.
                             </div>
                         </div>
                     </div>
 
-                    <!-- GRIDS INPUT WADAH POIN KUMULATIF -->
+                    <!-- GRIDS INPUT ELEMEN MERK PEMELIHARAAN -->
                     <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
                         <div class="border p-2 rounded-lg bg-white shadow-sm space-y-2">
                             <div>
@@ -371,8 +369,8 @@
                     </div>
 
                     <div class="border p-3 print:p-2 rounded-lg text-[11px] space-y-1 bg-white">
-                        <h4 class="font-bold border-b pb-0.5 text-slate-800"><i class="fa-solid fa-paste mr-1.5 text-blue-600"></i>2. Deskripsi Pekerjaan Pemeliharaan</h4>
-                        <textarea id="dlk-txt-deskripsi-tunggal" rows="3" class="w-full border p-2 rounded-lg outline-none font-medium bg-slate-50 focus:bg-white focus:border-blue-600 shadow-inner print:rows-3" placeholder="Tuliskan catatan detail lapangan medis di sini..."></textarea>
+                        <h4 class="font-bold border-b pb-0.5 text-slate-800"><i class="fa-solid fa-paste mr-1.5 text-blue-600"></i>2. Uraian Detail Pekerjaan</h4>
+                        <textarea id="dlk-txt-deskripsi-tunggal" rows="3" class="w-full border p-2 rounded-lg outline-none font-medium bg-slate-50 focus:bg-white focus:border-blue-600 shadow-inner" placeholder="Tuliskan catatan pemeliharaan teknis di sini..."></textarea>
                     </div>
 
                     <div class="border p-2.5 print:p-1.5 rounded-lg text-[11px] bg-slate-50 shadow-sm">
@@ -384,7 +382,7 @@
                         </div>
                     </div>
 
-                    <!-- AREA DROPDOWN NAMA TANDA TANGAN -->
+                    <!-- AREA TANDA TANGAN DENGAN CANVAS PROTEKSI KOORDINAT -->
                     <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-4 print:gap-2 pt-2 text-[11px]">
                         <div class="text-center space-y-1">
                             <p class="font-semibold text-gray-500">Teknisi Pelaksana</p>
@@ -426,7 +424,7 @@
                     </div>
                 </div>
 
-                <!-- POPUPS MODAL PREVIEW -->
+                <!-- MODAL PREVIEW FOTO/PDF -->
                 <div id="modal-preview" class="fixed inset-0 bg-slate-900/70 z-50 flex items-center justify-center p-4 hidden no-print">
                     <div class="bg-white w-full max-w-4xl h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
                         <div class="p-4 bg-slate-900 text-white flex justify-between items-center"><h3 id="preview-title" class="font-bold text-sm">File Peninjau</h3><button onclick="toggleModal('modal-preview', false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button></div>
@@ -434,7 +432,7 @@
                     </div>
                 </div>
 
-                <!-- MODAL KARTU LOG REKAM JEJAK -->
+                <!-- MODAL KARTU LOG DOKUMEN PER INSTRUMEN -->
                 <div id="modal-kartu" class="fixed inset-0 bg-slate-900/60 z-40 flex items-center justify-center p-4 hidden no-print">
                     <div class="bg-white w-full max-w-5xl rounded-xl shadow-xl overflow-hidden h-[90vh] flex flex-col text-slate-800">
                         <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
@@ -448,21 +446,21 @@
                             <div><p class="text-gray-400">Unit / Ruangan:</p><p id="kartu-lokasi" class="font-bold text-blue-600 text-sm">-</p></div>
                         </div>
                         <div class="flex border-b text-xs bg-white font-medium">
-                            <button type="button" onclick="switchKartuTab('tab-k-corrective')" id="btn-k-corrective" class="kartu-tab border-b-2 border-transparent px-4 py-3 active">Corrective Log</button>
+                            <button type="button" onclick="switchKartuTab('tab-k-corrective')" id="btn-k-corrective" class="kartu-tab border-b-2 border-transparent px-4 py-3 active">Corrective Log (CM)</button>
                             <button type="button" onclick="switchKartuTab('tab-k-preventive')" id="btn-k-preventive" class="kartu-tab border-b-2 border-transparent px-4 py-3">Preventive Log (PM)</button>
                             <button type="button" onclick="switchKartuTab('tab-k-inspeksi')" id="btn-k-inspeksi" class="kartu-tab border-b-2 border-transparent px-4 py-3">Inspection Log</button>
-                            <button type="button" onclick="switchKartuTab('tab-k-kalibrasi')" id="btn-k-kalibrasi" class="kartu-tab border-b-2 border-transparent px-4 py-3 text-blue-600 font-bold">Kalibrasi (Sertifikat PDF)</button>
+                            <button type="button" onclick="switchKartuTab('tab-k-kalibrasi')" id="btn-k-kalibrasi" class="kartu-tab border-b-2 border-transparent px-4 py-3 text-blue-600 font-bold">Kalibrasi Resmi</button>
                         </div>
                         <div class="flex-1 overflow-y-auto p-4 bg-gray-50 text-xs">
-                            <div id="tab-k-corrective" class="kartu-content-box space-y-3"><div class="overflow-x-auto bg-white rounded border"><table class="w-full text-left"><thead class="bg-slate-100 border-b font-semibold text-gray-600"><tr><th class="p-3">Log Uraian Kerja / Pelaksana</th><th class="p-3 text-center">Foto Alat</th><th class="p-3">Hasil</th><th class="p-3 text-center">Aksi Hapus</th></tr></thead><tbody id="kartu-list-corrective" class="divide-y"></tbody></table></div></div>
-                            <div id="tab-k-preventive" class="kartu-content-box hidden space-y-3"><div class="overflow-x-auto bg-white rounded border"><table class="w-full text-left"><thead class="bg-slate-100 border-b font-semibold text-gray-600"><tr><th class="p-3">Tanggal Pelaksanaan / Tim</th><th class="p-3 text-center">Foto Alat</th><th class="p-3">Hasil</th><th class="p-3 text-center">Aksi Hapus</th></tr></thead><tbody id="kartu-list-preventive" class="divide-y"></tbody></table></div></div>
-                            <div id="tab-k-inspeksi" class="kartu-content-box hidden space-y-3"><div class="overflow-x-auto bg-white rounded border"><table class="w-full text-left"><thead class="bg-slate-100 border-b font-semibold text-gray-600"><tr><th class="p-3">Waktu Inspeksi / Tim</th><th class="p-3 text-center">Foto Alat</th><th class="p-3">Hasil</th><th class="p-3 text-center">Aksi Hapus</th></tr></thead><tbody id="kartu-list-inspeksi" class="divide-y"></tbody></table></div></div>
-                            <div id="tab-k-kalibrasi" class="kartu-content-box hidden space-y-3"><div class="overflow-x-auto bg-white rounded border"><table class="w-full text-left"><thead class="bg-slate-100 border-b font-semibold text-gray-600"><tr><th class="p-3">Tanggal Uji</th><th class="p-3">Masa Berlaku</th><th class="p-3">Vendor Kalibrasi</th><th class="p-3 text-center">Arsip Resmi</th><th class="p-3 text-center">Hapus</th></tr></thead><tbody id="kartu-list-kalibrasi" class="divide-y"></tbody></table></div></div>
+                            <div id="tab-k-corrective" class="kartu-content-box space-y-3"><div class="overflow-x-auto bg-white rounded border"><table class="w-full text-left"><thead class="bg-slate-100 border-b font-semibold text-gray-600"><tr><th class="p-3">Log Uraian Kerja / Pelaksana</th><th class="p-3 text-center">Foto</th><th class="p-3">Hasil</th><th class="p-3 text-center">Aksi</th></tr></thead><tbody id="kartu-list-corrective" class="divide-y"></tbody></table></div></div>
+                            <div id="tab-k-preventive" class="kartu-content-box hidden space-y-3"><div class="overflow-x-auto bg-white rounded border"><table class="w-full text-left"><thead class="bg-slate-100 border-b font-semibold text-gray-600"><tr><th class="p-3">Tanggal Pelaksanaan / Tim</th><th class="p-3 text-center">Foto</th><th class="p-3">Hasil</th><th class="p-3 text-center">Aksi</th></tr></thead><tbody id="kartu-list-preventive" class="divide-y"></tbody></table></div></div>
+                            <div id="tab-k-inspeksi" class="kartu-content-box hidden space-y-3"><div class="overflow-x-auto bg-white rounded border"><table class="w-full text-left"><thead class="bg-slate-100 border-b font-semibold text-gray-600"><tr><th class="p-3">Waktu Inspeksi / Tim</th><th class="p-3 text-center">Foto</th><th class="p-3">Hasil</th><th class="p-3 text-center">Aksi</th></tr></thead><tbody id="kartu-list-inspeksi" class="divide-y"></tbody></table></div></div>
+                            <div id="tab-k-kalibrasi" class="kartu-content-box hidden space-y-3"><div class="overflow-x-auto bg-white rounded border"><table class="w-full text-left"><thead class="bg-slate-100 border-b font-semibold text-gray-600"><tr><th class="p-3">Tanggal Uji</th><th class="p-3">Masa Berlaku</th><th class="p-3">Vendor Kalibrasi</th><th class="p-3 text-center">Arsip</th><th class="p-3 text-center">Hapus</th></tr></thead><tbody id="kartu-list-kalibrasi" class="divide-y"></tbody></table></div></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- MODAL REGISTER ALAT MANUAL -->
+                <!-- MODAL REKAYASA/REGISTRASI DATA MANUAL -->
                 <div id="modal-alat" class="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4 hidden text-xs no-print">
                     <form onsubmit="submitFormAlatMaster(event)" class="bg-white w-full max-w-md rounded-xl shadow-lg">
                         <div id="modal-alat-title" class="px-5 py-4 bg-gray-50 border-b font-bold text-slate-800 text-sm">Registrasi Alat Manual</div>
@@ -473,13 +471,13 @@
                             <div><label class="block mb-0.5 font-bold">Model / Tipe</label><input type="text" id="form-alat-tipe" class="w-full border p-2 rounded outline-none bg-slate-50 focus:bg-white"></div>
                             <div><label class="block mb-0.5 font-bold">Nomor Seri (SN) *</label><input type="text" id="form-alat-seri" required class="w-full border p-2 rounded outline-none bg-slate-50 focus:bg-white"></div>
                             <div><label class="block mb-0.5 font-bold">Izin Edar Resmi</label><input type="text" id="form-alat-edar" class="w-full border p-2 rounded outline-none bg-slate-50 focus:bg-white"></div>
-                            <div><label class="block mb-0.5 font-bold">Instalasi / Ruangan *</label><input type="text" id="form-alat-lokasi" required class="w-full border p-2 rounded outline-none bg-slate-50 focus:bg-white"></div>
+                            <div><label class="block mb-1 font-bold">Instalasi / Ruangan *</label><input type="text" id="form-alat-lokasi" required class="w-full border p-2 rounded outline-none bg-slate-50 focus:bg-white"></div>
                         </div>
-                        <div class="px-5 py-3 border-t bg-gray-50 flex justify-end space-x-2"><button type="button" onclick="toggleModal('modal-alat', false)" class="px-3 py-1.5 border rounded">Batal</button><button type="submit" class="px-4 py-1.5 bg-blue-600 text-white font-bold rounded shadow">Simpan Perubahan</button></div>
+                        <div class="px-5 py-3 border-t bg-gray-50 flex justify-end space-x-2"><button type="button" onclick="toggleModal('modal-alat', false)" class="px-3 py-1.5 border rounded">Batal</button><button type="submit" class="px-4 py-1.5 bg-blue-600 text-white font-bold rounded shadow">Simpan Data</button></div>
                     </form>
                 </div>
 
-                <!-- MODAL CERTIFICATE KALIBRASI -->
+                <!-- MODAL UPLOAD BERKAS SERTIFIKAT PDF -->
                 <div id="modal-kalibrasi" class="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4 hidden text-xs no-print">
                     <form onsubmit="submitKalibrasi(event)" class="bg-white w-full max-w-md rounded-xl shadow-lg text-slate-800">
                         <div class="p-4 font-bold bg-gray-50 border-b flex justify-between items-center">
@@ -508,19 +506,23 @@
     </div>
 
     <script>
+        // ==========================================
+        // CONFIG KONFIGURASI FIREBASE CLOUD UTAMA
+        // ==========================================
         const firebaseConfig = {
-            apiKey: "AIzaSyDfg719ZJwUSM_9jgIkDmWlCJLEpcBlVsM",
-            authDomain: "simak-rsudpg11.firebaseapp.com",
-            projectId: "simak-rsudpg11",
-            storageBucket: "simak-rsudpg11.firebasestorage.app",
-            messagingSenderId: "97606453725",
-            appId: "1:97606453725:web:778622f3a04716ca4a4e34",
-            measurementId: "G-QCBM7G4S55"
+            apiKey: "AIzaSyAsB...",
+            authDomain: "simak-rsudpg.firebaseapp.com",
+            projectId: "simak-rsudpg",
+            storageBucket: "simak-rsudpg.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234:web:abcd"
         };
-
-        firebase.initializeApp(firebaseConfig);
+        
+        // Inisialisasi Firebase Core
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.firestore();
 
+        // Variabel Array Global Data Aplikasi
         let dataAlat = []; let dataKalibrasi = []; let dataPerbaikan = []; let dataPM = []; let dataInspeksi = [];
         let globalFilterStatus = "all"; let subTabDokumenAktif = "all"; let stringFotoBase64 = "-";
 
@@ -534,32 +536,58 @@
         let listNamaSaksi = ["Kepala Unit Ruangan", "Saksi Ruangan A", "Saksi Ruangan B"];
         let listNamaPj = ["Arrief Nurcahyo, S.Tr.Em.", "Baits Abdul Pattah"];
 
-        async function muatDatabaseDariGitHub() {
+        // ==========================================================
+        // REAL-TIME AUTO-SYNC LISTENER DARI FIREBASE CLOUD DATABASE
+        // ==========================================================
+        db.collection("dataAlat").onSnapshot((querySnapshot) => {
+            dataAlat = [];
+            querySnapshot.forEach((doc) => { dataAlat.push({ id: doc.id, ...doc.data() }); });
+            aktualisasikanDotKoneksiHijau();
+            renderAll();
+        });
+
+        db.collection("dataKalibrasi").onSnapshot((querySnapshot) => {
+            dataKalibrasi = [];
+            querySnapshot.forEach((doc) => { dataKalibrasi.push({ id: doc.id, ...doc.data() }); });
+            renderAll();
+        });
+
+        db.collection("lembarKerja").onSnapshot((querySnapshot) => {
+            const dataLk = [];
+            querySnapshot.forEach((doc) => { dataLk.push({ id: doc.id, ...doc.data() }); });
+            
+            dataPerbaikan = dataLk.filter(d => d.jenisKerja === 'Corrective Maintenance').map(d => ({...d, desc: d.desc_kerja}));
+            dataPM = dataLk.filter(d => d.jenisKerja === 'Preventive Maintenance').map(d => ({...d, desc: d.desc_kerja}));
+            dataInspeksi = dataLk.filter(d => d.jenisKerja === 'Inspection').map(d => ({...d, desc: d.desc_kerja}));
+            renderAll();
+        });
+
+        function aktualisasikanDotKoneksiHijau() {
             const dot = document.getElementById('status-dot');
-            db.collection("dataAlat").onSnapshot((querySnapshot) => {
-                dataAlat = [];
-                querySnapshot.forEach((doc) => { dataAlat.push({ id: doc.id, ...doc.data() }); });
-                dataAlat.sort((a, b) => (a.nama || '').localeCompare(b.nama || '', 'id', { sensitivity: 'base' }));
-                if(dot) dot.className = "w-3.5 h-3.5 bg-emerald-500 rounded-full animate-pulse";
-                renderAll();
-            });
+            if(dot) dot.className = "w-3.5 h-3.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]";
+        }
 
-            db.collection("dataKalibrasi").onSnapshot((querySnapshot) => {
-                dataKalibrasi = [];
-                querySnapshot.forEach((doc) => { dataKalibrasi.push({ id: doc.id, ...doc.data() }); });
-                renderAll();
-            });
-
-            db.collection("lembarKerja").onSnapshot((querySnapshot) => {
-                dataPerbaikan = []; dataPM = []; dataInspeksi = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    if(data.jenisKerja === 'Corrective Maintenance') dataPerbaikan.push({ id: doc.id, ...data });
-                    else if(data.jenisKerja === 'Preventive Maintenance') dataPM.push({ id: doc.id, ...data });
-                    else dataInspeksi.push({ id: doc.id, ...data });
+        // ==========================================================
+        // OPERASI HAPUS DATA ALAT MANUAL SECARA PERMANEN DARI FIREBASE
+        // ==========================================================
+        function hapusAlatMasterFirebase(id, namaAlat) {
+            if(confirm(`Apakah Anda yakin ingin menghapus aset "${namaAlat}" secara permanen dari Firebase Cloud? Semua rekam jejak pada alat ini akan terputus.`)) {
+                db.collection("dataAlat").doc(id).delete()
+                .then(() => {
+                    alert("🎉 Sukses! Aset berhasil dihapus dari Cloud Database.");
+                })
+                .catch((error) => {
+                    alert("Gagal menghapus aset dari Cloud: " + error.message);
                 });
-                renderAll();
-            });
+            }
+        }
+
+        function hapusDokumenLogRealtime(id, koleksi) {
+            if(confirm("Apakah Anda yakin ingin menghapus arsip lembar dokumen ini dari Firebase Cloud secara permanen?")) {
+                db.collection(koleksi).doc(id).delete()
+                .then(() => alert("🎉 Berkas dokumen log berhasil dihapus!"))
+                .catch(err => alert("Gagal menghapus dokumen: " + err.message));
+            }
         }
 
         function eksekusiUrutanLokal(kriteria) {
@@ -601,7 +629,7 @@
 
         function pemicuTambahNamaTtd(element, arrayAsal) {
             if(element.value === "tambah-baru") {
-                let nama = prompt("Masukkan nama pelaksana baru:");
+                let nama = prompt("Masukkan nama baru:");
                 if(nama && nama.trim() !== "") {
                     arrayAsal.unshift(nama.trim());
                     populasikanDropdownNamaTandaTangan();
@@ -610,40 +638,34 @@
             }
         }
 
-        function hapusDokumenLogRealtime(id, koleksi) {
-            if(confirm("Apakah Anda yakin ingin menghapus data log ini secara permanen dari Cloud Firebase?")) {
-                db.collection(koleksi).doc(id).delete().then(() => {
-                    alert("Data log berhasil dihapus!");
-                    toggleModal('modal-kartu', false);
-                }).catch(err => alert("Gagal menghapus: " + err.message));
-            }
-        }
-
         function simpanPenuhIsianWorksheetDinamis() {
             const selectAlatEl = document.getElementById('dlk-select-alat'); const alatIdRaw = selectAlatEl.value;
-            if(!alatIdRaw || alatIdRaw.trim() === "") return alert("Silakan pilih Alat Kesehatan terlebih dahulu!");
+            if(!alatIdRaw) return alert("Silakan pilih Alat Kesehatan terlebih dahulu!");
             
-            if(!document.getElementById('dlk-select-nama-teknisi').value) return alert("Silakan pilih Nama Teknisi Pelaksana terlebih dahulu!");
-            if(!document.getElementById('dlk-select-nama-saksi').value) return alert("Silakan pilih Nama User Ruangan / Saksi terlebih dahulu!");
-            if(!document.getElementById('dlk-select-nama-pj').value) return alert("Silakan pilih Nama PJ IPSRS Alkes terlebih dahulu!");
+            if(!document.getElementById('dlk-select-nama-teknisi').value) return alert("Silakan pilih Nama Teknisi Pelaksana!");
+            if(!document.getElementById('dlk-select-nama-saksi').value) return alert("Silakan pilih Nama User Ruangan / Saksi!");
+            if(!document.getElementById('dlk-select-nama-pj').value) return alert("Silakan pilih Nama PJ IPSRS Alkes!");
 
             const payload = {
-                alatId: alatIdRaw.trim(), noLk: document.getElementById('dlk-no').value, tgl: document.getElementById('dlk-tgl').value,
-                desc: document.getElementById('dlk-txt-deskripsi-tunggal').value, jenisKerja: document.querySelector('input[name="dlk-jenis"]:checked').value,
+                alatId: alatIdRaw, noLk: document.getElementById('dlk-no').value, tgl: document.getElementById('dlk-tgl').value,
+                desc_kerja: document.getElementById('dlk-txt-deskripsi-tunggal').value, jenisKerja: document.querySelector('input[name="dlk-jenis"]:checked').value,
                 hasilTunggal: document.querySelector('input[name="dlk-hasil-tunggal"]:checked').value, ttdTeknisi: document.getElementById('sig-teknisi').toDataURL(),
                 teknisiTtd: document.getElementById('dlk-select-nama-teknisi').value, saksiTtd: document.getElementById('dlk-select-nama-saksi').value,
-                pjTtd: document.getElementById('dlk-select-nama-pj').value, fotoAlat: stringFotoBase64, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                
-                paramAlatKerja: JSON.stringify(terpakaiAlatKerja),
-                paramFisik: JSON.stringify(terpakaiFisik),
-                paramFungsi: JSON.stringify(terpakaiFungsi)
+                pjTtd: document.getElementById('dlk-select-nama-pj').value, fotoAlat: stringFotoBase64,
+                paramAlatKerja: JSON.stringify(terpakaiAlatKerja), paramFisik: JSON.stringify(terpakaiFisik), paramFungsi: JSON.stringify(terpakaiFungsi),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            db.collection("lembarKerja").add(payload).then(() => {
-                db.collection("dataAlat").doc(alatIdRaw.trim()).update({ status: (payload.hasilTunggal === "Alat Rusak Perlu Perbaikan" ? "Dalam Perbaikan" : "Siap Digunakan") });
+            db.collection("lembarKerja").add(payload)
+            .then(() => {
+                const newStatus = payload.hasilTunggal === "Alat Rusak Perlu Perbaikan" ? "Dalam Perbaikan" : "Siap Digunakan";
+                return db.collection("dataAlat").doc(alatIdRaw).update({ status: newStatus });
+            })
+            .then(() => {
                 document.getElementById('area-lembar-kerja-resmi').classList.add('hidden');
-                alert("🎉 Sukses! Lembar Kerja cloud berhasil tersimpan.");
-            }).catch(err => alert("Gagal menyimpan ke Cloud: " + err.message));
+                alert("🎉 Sukses! Lembar Kerja resmi berhasil tersimpan di Cloud Database.");
+            })
+            .catch(err => alert("Gagal menyimpan data ke Cloud: " + err.message));
         }
 
         function previewFotoDipilih(input) {
@@ -694,17 +716,21 @@
         function resetFilterStatusAlat() { globalFilterStatus = "all"; renderAll(); }
 
         function submitFormAlatMaster(e) {
-            e.preventDefault(); const formId = document.getElementById('form-alat-id').value;
+            e.preventDefault();
+            const id = document.getElementById('form-alat-id').value;
             const payload = {
                 nama: document.getElementById('form-alat-nama').value, merk: document.getElementById('form-alat-merk').value,
                 tipe: document.getElementById('form-alat-tipe').value, seri: document.getElementById('form-alat-seri').value,
                 edar: document.getElementById('form-alat-edar').value, lokasi: document.getElementById('form-alat-lokasi').value
             };
 
-            if(formId && formId.trim() !== "") {
-                db.collection("dataAlat").doc(formId.trim()).update(payload).then(() => { toggleModal('modal-alat', false); alert("Aset diperbarui!"); });
+            if(id) {
+                db.collection("dataAlat").doc(id).update(payload)
+                .then(() => { toggleModal('modal-alat', false); alert("Data Aset Berhasil Diperbarui!"); });
             } else {
-                db.collection("dataAlat").add({ ...payload, status: "Siap Digunakan" }).then(() => { toggleModal('modal-alat', false); alert("Aset baru ditambahkan!"); });
+                payload.status = 'Siap Digunakan';
+                db.collection("dataAlat").add(payload)
+                .then(() => { toggleModal('modal-alat', false); alert("Aset Baru Berhasil Didaftarkan!"); });
             }
         }
 
@@ -725,16 +751,16 @@
             document.getElementById('form-alat-lokasi').value = a.lokasi || ''; toggleModal('modal-alat', true);
         }
 
-        async function submitKalibrasi(e) {
+        function submitKalibrasi(e) {
             e.preventDefault(); const aId = document.getElementById('form-cal-alat').value; const hasil = document.getElementById('form-cal-hasil').value;
             let reader = new FileReader(); reader.readAsDataURL(document.getElementById('form-cal-pdf-file').files[0]);
             reader.onload = function() {
-                db.collection("dataKalibrasi").add({
+                const payload = {
                     alatId: aId, tgl: document.getElementById('form-cal-tgl').value, exp: document.getElementById('form-cal-exp').value,
-                    vendor: document.getElementById('form-cal-vendor').value || 'Vendor Resmi', certPdf: reader.result, hasil: hasil
-                }).then(() => {
-                    db.collection("dataAlat").doc(aId).update({ status: (hasil === 'Layak' ? 'Siap Digunakan' : 'Dalam Perbaikan') });
-                    toggleModal('modal-kalibrasi', false); e.target.reset();
+                    vendor: document.getElementById('form-cal-vendor').value, certPdf: reader.result, hasil: hasil
+                };
+                db.collection("dataKalibrasi").add(payload).then(() => {
+                    toggleModal('modal-kalibrasi', false); alert("Sertifikat Kalibrasi Berhasil Diunggah ke Cloud!");
                 });
             }
         }
@@ -754,31 +780,26 @@
         }
 
         function tambahPoinAkumulatif(kategori) {
-            const drop = document.getElementById('drop-' + kategori);
-            let value = drop.value;
-            
+            const drop = document.getElementById('drop-' + kategori); let value = drop.value;
             if(!value || value.startsWith('--')) return;
 
             if(kategori === 'alatkerja' && !terpakaiAlatKerja.includes(value)) terpakaiAlatKerja.push(value);
             if(kategori === 'fisik' && !terpakaiFisik.includes(value)) terpakaiFisik.push(value);
             if(kategori === 'fungsi' && !terpakaiFungsi.includes(value)) terpakaiFungsi.push(value);
             
-            aktualisasikanTampilanKotakTabel(kategori);
-            drop.selectedIndex = 0;
+            aktualisasikanTampilanKotakTabel(kategori); drop.selectedIndex = 0;
         }
 
         function hapusPoinSpesifik(kategori, index) {
             if(kategori === 'alatkerja') terpakaiAlatKerja.splice(index, 1);
             if(kategori === 'fisik') terpakaiFisik.splice(index, 1);
             if(kategori === 'fungsi') terpakaiFungsi.splice(index, 1);
-            
             aktualisasikanTampilanKotakTabel(kategori);
         }
 
         function aktualisasikanTampilanKotakTabel(kategori) {
             const box = document.getElementById('box-list-' + kategori);
             let dataArr = (kategori === 'alatkerja') ? terpakaiAlatKerja : (kategori === 'fisik') ? terpakaiFisik : terpakaiFungsi;
-            
             if(dataArr.length === 0) { box.innerHTML = ``; return; }
 
             box.innerHTML = dataArr.map((text, idx) => `
@@ -790,24 +811,8 @@
         }
 
         function hitungDanSetNomorLembarKerjaOtomatis() {
-            db.collection("lembarKerja").get().then((snapshot) => {
-                let nomorTerakhir = 0;
-                snapshot.forEach((doc) => {
-                    let data = doc.data();
-                    if(data.noLk) {
-                        let bagianAngka = data.noLk.split('LK-')[1];
-                        if(bagianAngka) {
-                            let parsed = parseInt(bagianAngka, 10);
-                            if(!isNaN(parsed) && parsed > nomorTerakhir) nomorTerakhir = parsed;
-                        }
-                    }
-                });
-                let nomorBaru = nomorTerakhir + 1;
-                let stringNomorUrut = String(nomorBaru).padStart(3, '0');
-                document.getElementById('dlk-no').value = "RSUDPG/IPSRS/LK-" + stringNomorUrut;
-            }).catch((err) => {
-                document.getElementById('dlk-no').value = "RSUDPG/IPSRS/LK-001";
-            });
+            let nomorBaru = Math.floor(100 + Math.random() * 900);
+            document.getElementById('dlk-no').value = "RSUDPG/IPSRS/LK-" + nomorBaru;
         }
 
         function sinkronisasiDataAlatKeWorksheet(alatId) {
@@ -819,17 +824,14 @@
                 
                 let defaultKaru = "Karu " + (a.lokasi || 'Ruangan');
                 document.getElementById('dlk-select-nama-saksi').innerHTML = 
-                    `<option value="">-- PILIH USER / SAKSI --</option>` +
-                    `<option value="${defaultKaru}">${defaultKaru}</option>` + 
-                    listNamaSaksi.map(n => `<option value="${n}">${n}</option>`).join('') + 
-                    `<option value="tambah-baru">+ Tambah Nama</option>`;
+                    `<option value="">-- PILIH USER / SAKSI --</option>` + `<option value="${defaultKaru}">${defaultKaru}</option>` + 
+                    listNamaSaksi.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="tambah-baru">+ Tambah Nama</option>`;
             }
         }
 
         function bukaLembarKerjaBaruKosong() {
             stringFotoBase64 = "-"; terpakaiAlatKerja = []; terpakaiFisik = []; terpakaiFungsi = [];
-            populasikanDropdownAlatDiLembarKerja();
-            hitungDanSetNomorLembarKerjaOtomatis();
+            populasikanDropdownAlatDiLembarKerja(); hitungDanSetNomorLembarKerjaOtomatis();
             
             document.getElementById('dlk-tgl').value = new Date().toISOString().substring(0, 10);
             document.getElementById('dlk-select-alat').value = ""; document.getElementById('dlk-txt-deskripsi-tunggal').value = ""; 
@@ -837,34 +839,24 @@
             
             renderOpsiDropdownAwal(); 
             aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi');
-            
             populasikanDropdownNamaTandaTangan();
             
-            const areaLK = document.getElementById('area-lembar-kerja-resmi'); 
-            areaLK.classList.remove('hidden'); 
-            areaLK.scrollIntoView({ behavior: 'smooth' });
-            
-            setTimeout(initSignatures, 400); 
-            toggleSidebarMenu(false);
+            const areaLK = document.getElementById('area-lembar-kerja-resmi'); areaLK.classList.remove('hidden'); areaLK.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(initSignatures, 400); toggleSidebarMenu(false);
         }
 
         function bukaLembarKerjaDinamisDariLog(id) {
             toggleModal('modal-kartu', false); populasikanDropdownAlatDiLembarKerja();
             let record = dataPerbaikan.find(r => r.id == id) || dataPM.find(p => p.id == id) || dataInspeksi.find(i => i.id == id);
-            if(!record) return alert("Dokumen lembar kerja tidak ditemukan.");
+            if(!record) return alert("Dokumen tidak ditemukan.");
 
-            document.querySelectorAll('input[name="dlk-jenis"]').forEach(radio => {
-                if(radio.value === record.jenisKerja) radio.checked = true;
-            });
-
+            document.querySelectorAll('input[name="dlk-jenis"]').forEach(radio => { if(radio.value === record.jenisKerja) radio.checked = true; });
             document.getElementById('dlk-no').value = record.noLk || ("LK-" + id);
             document.getElementById('dlk-tgl').value = (record.tgl) ? record.tgl.substring(0, 10) : new Date().toISOString().substring(0, 10);
-            document.getElementById('dlk-select-alat').value = record.alatId.trim(); 
-            sinkronisasiDataAlatKeWorksheet(record.alatId.trim());
-            document.getElementById('dlk-txt-deskripsi-tunggal').value = record.desc || record.fungsi || "";
+            document.getElementById('dlk-select-alat').value = record.alatId; sinkronisasiDataAlatKeWorksheet(record.alatId);
+            document.getElementById('dlk-txt-deskripsi-tunggal').value = record.desc_kerja || "";
             
             renderOpsiDropdownAwal();
-            
             try { terpakaiAlatKerja = record.paramAlatKerja ? JSON.parse(record.paramAlatKerja) : []; } catch(e) { terpakaiAlatKerja = []; }
             try { terpakaiFisik = record.paramFisik ? JSON.parse(record.paramFisik) : []; } catch(e) { terpakaiFisik = []; }
             try { terpakaiFungsi = record.paramFungsi ? JSON.parse(record.paramFungsi) : []; } catch(e) { terpakaiFungsi = []; }
@@ -872,21 +864,15 @@
             aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi');
 
             if(record.fotoAlat && record.fotoAlat !== '-') {
-                stringFotoBase64 = record.fotoAlat;
-                document.getElementById('box-preview-foto').innerHTML = `<img src="${record.fotoAlat}" class="w-full h-full object-cover rounded shadow">`;
-            } else {
-                document.getElementById('box-preview-foto').innerHTML = `[ Belum Ada Foto ]`;
-            }
+                stringFotoBase64 = record.fotoAlat; document.getElementById('box-preview-foto').innerHTML = `<img src="${record.fotoAlat}" class="w-full h-full object-cover rounded shadow">`;
+            } else { document.getElementById('box-preview-foto').innerHTML = `[ Belum Ada Foto ]`; }
             
             populasikanDropdownNamaTandaTangan();
             if(record.teknisiTtd) document.getElementById('dlk-select-nama-teknisi').value = record.teknisiTtd;
             if(record.saksiTtd) document.getElementById('dlk-select-nama-saksi').value = record.saksiTtd;
             if(record.pjTtd) document.getElementById('dlk-select-nama-pj').value = record.pjTtd;
 
-            const areaLK = document.getElementById('area-lembar-kerja-resmi'); 
-            areaLK.classList.remove('hidden'); 
-            areaLK.scrollIntoView({ behavior: 'smooth' });
-            
+            const areaLK = document.getElementById('area-lembar-kerja-resmi'); areaLK.classList.remove('hidden'); areaLK.scrollIntoView({ behavior: 'smooth' });
             setTimeout(initSignatures, 400);
         }
 
@@ -898,10 +884,10 @@
             const mapTim = t => (t && t.teknisiTtd) ? `<br><span class="text-[10px] text-indigo-600 font-bold">Teknisi: ${t.teknisiTtd}</span>` : '';
             const mapFoto = f => (f && f.fotoAlat && f.fotoAlat !== '-') ? `<td class="p-3 text-center"><button onclick="lihatFileLangsung('${f.fotoAlat}','img','Foto Lapangan')" class="text-xs bg-slate-100 p-1 border rounded font-bold">Foto</button></td>` : `<td class="p-3 text-center text-gray-400 italic">No Photo</td>`;
 
-            document.getElementById('kartu-list-corrective').innerHTML = dataPerbaikan.filter(r => r.alatId == alatId).map(r => `<tr><td class="p-3"><b>No LK:</b> ${r.noLk||'-'}<br>${r.desc} ${mapTim(r)}</td>${mapFoto(r)}<td>${r.hasilTunggal}</td><td class="text-center"><button onclick="bukaLembarKerjaDinamisDariLog('${r.id}')" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] mr-1">Buka</button><button onclick="hapusDokumenLogRealtime('${r.id}','lembarKerja')" class="text-red-600 hover:text-red-800 text-xs p-1"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-            document.getElementById('kartu-list-preventive').innerHTML = dataPM.filter(p => p.alatId == alatId).map(p => `<tr><td class="p-3"><b>No LK:</b> ${p.noLk||'-'}<br>${p.desc||'-'} ${mapTim(p)}</td>${mapFoto(p)}<td>${p.hasilTunggal}</td><td class="text-center"><button onclick="bukaLembarKerjaDinamisDariLog('${p.id}')" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] mr-1">Buka</button><button onclick="hapusDokumenLogRealtime('${p.id}','lembarKerja')" class="text-red-600 hover:text-red-800 text-xs p-1"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-            document.getElementById('kartu-list-inspeksi').innerHTML = dataInspeksi.filter(i => i.alatId == alatId).map(i => `<tr><td class="p-3"><b>No LK:</b> ${i.noLk||'-'}<br>${i.desc||'-'} ${mapTim(i)}</td>${mapFoto(i)}<td>${i.hasilTunggal}</td><td class="text-center"><button onclick="bukaLembarKerjaDinamisDariLog('${i.id}')" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] mr-1">Buka</button><button onclick="hapusDokumenLogRealtime('${i.id}','lembarKerja')" class="text-red-600 hover:text-red-800 text-xs p-1"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
-            document.getElementById('kartu-list-kalibrasi').innerHTML = dataKalibrasi.filter(c => c.alatId == alatId).map(c => `<tr><td class="p-3 font-mono">${c.tgl}</td><td class="p-3 text-red-600 font-bold">${c.exp}</td><td>${c.vendor}</td><td class="text-center"><button onclick="lihatFileLangsung('${c.certPdf}','pdf','Sertifikat')" class="bg-red-50 text-red-700 px-2 py-0.5 rounded text-[10px]">PDF</button></td><td class="text-center"><button onclick="hapusDokumenLogRealtime('${c.id}','dataKalibrasi')" class="text-red-600 hover:text-red-800 text-xs p-1"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('kartu-list-corrective').innerHTML = dataPerbaikan.filter(r => r.alatId == alatId).map(r => `<tr><td class="p-3"><b>No LK:</b> ${r.noLk||'-'}<br>${r.desc_kerja||r.desc} ${mapTim(r)}</td>${mapFoto(r)}<td>${r.hasilTunggal}</td><td class="text-center"><button onclick="bukaLembarKerjaDinamisDariLog('${r.id}')" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] mr-1">Buka</button><button onclick="hapusDokumenLogRealtime('${r.id}', 'lembarKerja')" class="bg-red-600 text-white px-1 py-0.5 rounded text-[10px]"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('kartu-list-preventive').innerHTML = dataPM.filter(p => p.alatId == alatId).map(p => `<tr><td class="p-3"><b>No LK:</b> ${p.noLk||'-'}<br>${p.desc_kerja||p.desc||'-'} ${mapTim(p)}</td>${mapFoto(p)}<td>${p.hasilTunggal}</td><td class="text-center"><button onclick="bukaLembarKerjaDinamisDariLog('${p.id}')" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] mr-1">Buka</button><button onclick="hapusDokumenLogRealtime('${p.id}', 'lembarKerja')" class="bg-red-600 text-white px-1 py-0.5 rounded text-[10px]"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('kartu-list-inspeksi').innerHTML = dataInspeksi.filter(i => i.alatId == alatId).map(i => `<tr><td class="p-3"><b>No LK:</b> ${i.noLk||'-'}<br>${i.desc_kerja||i.desc||'-'} ${mapTim(i)}</td>${mapFoto(i)}<td>${i.hasilTunggal}</td><td class="text-center"><button onclick="bukaLembarKerjaDinamisDariLog('${i.id}')" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] mr-1">Buka</button><button onclick="hapusDokumenLogRealtime('${i.id}', 'lembarKerja')" class="bg-red-600 text-white px-1 py-0.5 rounded text-[10px]"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('kartu-list-kalibrasi').innerHTML = dataKalibrasi.filter(c => c.alatId == alatId).map(c => `<tr><td class="p-3 font-mono">${c.tgl}</td><td class="p-3 text-red-600 font-bold">${c.exp}</td><td>${c.vendor}</td><td class="text-center"><button onclick="lihatFileLangsung('${c.certPdf}','pdf','Sertifikat')" class="bg-red-50 text-red-700 px-2 py-0.5 rounded text-[10px]">PDF</button></td><td class="text-center"><button onclick="hapusDokumenLogRealtime('${c.id}', 'dataKalibrasi')" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
             switchKartuTab('tab-k-corrective'); toggleModal('modal-kartu', true);
         }
 
@@ -911,8 +897,7 @@
         }
 
         function renderTabelPusatDokumen() {
-            const tBody = document.getElementById('table-kalibrasi-body'); if(!tBody) return;
-            let wadahSemuaDokumen = [];
+            const tBody = document.getElementById('table-kalibrasi-body'); if(!tBody) return; let wadahSemuaDokumen = [];
             
             dataKalibrasi.forEach(c => {
                 const a = dataAlat.find(item => item.id == c.alatId) || { nama: 'Alat Medis', seri: '-' };
@@ -927,11 +912,8 @@
 
             if(subTabDokumenAktif === 'kalibrasi') wadahSemuaDokumen = wadahSemuaDokumen.filter(d => d.jenis === 'Sertifikat Kalibrasi Resmi');
             if(subTabDokumenAktif === 'mandiri') wadahSemuaDokumen = wadahSemuaDokumen.filter(d => d.jenis !== 'Sertifikat Kalibrasi Resmi');
-
-            if(wadahSemuaDokumen.length === 0) {
-                tBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">Tidak ditemukan arsip dokumen.</td></tr>`; return;
-            }
-            wadahSemuaDokumen.sort((a,b) => (b.tgl || '').localeCompare(a.tgl || ''));
+            if(wadahSemuaDokumen.length === 0) { tBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">Tidak ditemukan arsip dokumen.</td></tr>`; return; }
+            wadahSemuaDokumen.sort((a,b) => String(b.tgl).localeCompare(String(a.tgl)));
 
             tBody.innerHTML = wadahSemuaDokumen.map(d => `
                 <tr class="border-b bg-white/40">
@@ -948,6 +930,9 @@
             `).join('');
         }
 
+        // ==========================================
+        // RENDER MASTER DATA ASET + TOMBOL HAPUS CLOUD
+        // ==========================================
         function renderAll() {
             updateStats(); populasikanDropdownAlatDiLembarKerja();
             const tbody = document.getElementById('table-alat-body'); if(!tbody) return;
@@ -962,8 +947,9 @@
                     <td class="p-3 text-xs"><span class="bg-slate-100 px-2 py-0.5 rounded text-slate-700 font-semibold border">${a.lokasi}</span></td>
                     <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${a.status==='Siap Digunakan'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}">${a.status}</span></td>
                     <td class="p-3 text-center space-x-1">
-                        <button onclick="pemicuEditAlatLangsung('${a.id}')" class="bg-amber-500 text-white px-2 py-1 rounded font-bold text-[10px]"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="bukaKartuPemeliharaan('${a.id}')" class="bg-blue-600 text-white px-2.5 py-1 rounded font-bold shadow text-[10px]">Log</button>
+                        <button onclick="pemicuEditAlatLangsung('${a.id}')" class="bg-amber-500 text-white px-2 py-1 rounded font-bold text-[10px]" title="Edit Aset"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="bukaKartuPemeliharaan('${a.id}')" class="bg-blue-600 text-white px-2.5 py-1 rounded font-bold shadow text-[10px]" title="Lihat Rekam Log">Log</button>
+                        <button onclick="hapusAlatMasterFirebase('${a.id}', '${a.nama}')" class="bg-red-600 text-white px-2 py-1 rounded font-bold text-[10px]" title="Hapus Aset Permanen"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -997,69 +983,46 @@
             if(canvas) { const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.beginPath(); }
         }
 
+        // Inisialisasi Deteksi Koordinat Canvas untuk Touch Screen HP / Tablet
         const signatures = ['sig-teknisi', 'sig-user', 'sig-pj'];
         function initSignatures() {
             signatures.forEach(id => {
                 const canvas = document.getElementById(id); if(!canvas) return; 
-                
-                // Set ukuran resolusi internal kanvas agar presisi
                 canvas.width = canvas.parentElement.clientWidth || canvas.offsetWidth || 250; 
                 canvas.height = canvas.parentElement.clientHeight || canvas.offsetHeight || 96;
                 
-                const ctx = canvas.getContext('2d'); 
-                let isDrawing = false; 
-                ctx.lineWidth = 3.0; 
-                ctx.lineCap = 'round'; 
-                ctx.lineJoin = 'round';
-                ctx.strokeStyle = '#0f172a'; // Warna tinta gelap
+                const ctx = canvas.getContext('2d'); let isDrawing = false; 
+                ctx.lineWidth = 3.0; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#0f172a';
                 
-                // Mengambil koordinat posisi sentuhan atau mouse yang akurat
                 function getPos(e) {
                     const rect = canvas.getBoundingClientRect();
                     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                     return { x: clientX - rect.left, y: clientY - rect.top };
                 }
-                
                 function startDrawing(e) {
-                    isDrawing = true;
-                    const pos = getPos(e);
-                    ctx.beginPath();
-                    ctx.moveTo(pos.x, pos.y);
+                    isDrawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
                     if (e.cancelable) e.preventDefault();
                 }
-                
                 function draw(e) {
-                    if (!isDrawing) return;
-                    const pos = getPos(e);
-                    ctx.lineTo(pos.x, pos.y);
-                    ctx.stroke();
+                    if (!isDrawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke();
                     if (e.cancelable) e.preventDefault();
                 }
-                
                 function stopDrawing() { isDrawing = false; }
                 
-                // Bersihkan event listener lama dengan metode re-binding murni tanpa merusak node DOM
-                canvas.removeEventListener('mousedown', startDrawing);
-                canvas.removeEventListener('mousemove', draw);
-                window.removeEventListener('mouseup', stopDrawing);
+                canvas.removeEventListener('mousedown', startDrawing); canvas.removeEventListener('mousemove', draw);
+                window.removeEventListener('mouseup', stopDrawing); canvas.removeEventListener('touchstart', startDrawing);
+                canvas.removeEventListener('touchmove', draw); canvas.removeEventListener('touchend', stopDrawing);
                 
-                canvas.removeEventListener('touchstart', startDrawing);
-                canvas.removeEventListener('touchmove', draw);
-                canvas.removeEventListener('touchend', stopDrawing);
-                
-                // Pasang event listener fresh langsung ke kanvas
-                canvas.addEventListener('mousedown', startDrawing);
-                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mousedown', startDrawing); canvas.addEventListener('mousemove', draw);
                 window.addEventListener('mouseup', stopDrawing);
-                
                 canvas.addEventListener('touchstart', startDrawing, { passive: false });
                 canvas.addEventListener('touchmove', draw, { passive: false });
                 canvas.addEventListener('touchend', stopDrawing);
             });
         }
         
-        window.onload = function() { muatDatabaseDariGitHub(); renderOpsiDropdownAwal(); gantiSubTabDokumen('all'); };
+        window.onload = function() { renderOpsiDropdownAwal(); gantiSubTabDokumen('all'); };
     </script>
 </body>
 </html>
