@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- QR Code Generator CDN untuk Validasi Hukum Resmi -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <!-- Firebase SDK (v8 Legacy) -->
@@ -53,7 +52,7 @@
 </head>
 <body id="main-app-body" class="font-sans text-slate-200 transition-all duration-500">
 
-    <!-- GATEWAY 1: SISTEM MULTI-USER LOGIN (SIMULASI PERAN MULTI-RS) -->
+    <!-- GATEWAY 1: SISTEM MULTI-USER LOGIN -->
     <div id="auth-gate-screen" class="fixed inset-0 bg-slate-950 z-[9999] flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-white/10 p-6 rounded-2xl shadow-2xl max-w-sm w-full space-y-4 text-center">
             <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 mx-auto flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -61,7 +60,7 @@
             </div>
             <div>
                 <h2 class="text-xl font-black text-white tracking-wide">MEDIX Gate Control</h2>
-                <p class="text-xs text-slate-400 mt-1">Pilih hak akses atau institusi operasional Anda</p>
+                <p class="text-xs text-slate-400 mt-1">Pilih hak akses operasional Anda</p>
             </div>
             <div class="space-y-2 pt-2">
                 <button onclick="pilihRoleUserKontrol('Teknisi')" class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 p-2.5 rounded-xl text-xs font-bold text-white hover:from-blue-700 transition flex items-center justify-center space-x-2">
@@ -109,17 +108,17 @@
                         <button onclick="switchTab('dashboard')" id="btn-dashboard" class="sidebar-item active w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-gray-400 hover:text-white hover:bg-slate-800/50 transition">
                             <i class="fa-solid fa-chart-pie w-5 text-cyan-400"></i><span>Dashboard Utama</span>
                         </button>
-                        <button onclick="switchTab('data-alat')" id="btn-data-alat" class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-gray-400 hover:text-white hover:bg-slate-800/50 transition accessibility-teknisi">
+                        <button onclick="switchTab('data-alat')" id="btn-data-alat" class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-gray-400 hover:text-white hover:bg-slate-800/50 transition menu-akses-teknisi">
                             <i class="fa-solid fa-microscope w-5 text-blue-400"></i><span>Master Data Aset</span>
                         </button>
                         <button onclick="switchTab('ticket-system')" id="btn-ticket-system" class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-gray-400 hover:text-white hover:bg-slate-800/50 transition">
                             <i class="fa-solid fa-headset w-5 text-amber-400"></i><span>Pelaporan Kerusakan</span>
                         </button>
-                        <button onclick="switchTab('kalibrasi')" id="btn-kalibrasi" class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-gray-400 hover:text-white hover:bg-slate-800/50 transition accessibility-teknisi">
+                        <button onclick="switchTab('kalibrasi')" id="btn-kalibrasi" class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left text-gray-400 hover:text-white hover:bg-slate-800/50 transition menu-akses-teknisi">
                             <i class="fa-solid fa-file-invoice-dollar w-5 text-indigo-400"></i><span>Pusat Riwayat Dokumen</span>
                         </button>
                         
-                        <div class="pt-4 mt-4 border-t border-slate-800 space-y-2 accessibility-teknisi">
+                        <div id="btn-aksi-cepat-container" class="pt-4 mt-4 border-t border-slate-800 space-y-2 menu-akses-teknisi">
                             <span class="block px-2 text-[10px] uppercase font-bold text-gray-500 tracking-wider">Aksi Cepat</span>
                             <button onclick="bukaLembarKerjaBaruKosong()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs py-2.5 px-3 rounded-xl font-bold shadow-lg shadow-indigo-950/50 transition flex items-center justify-center space-x-2">
                                 <i class="fa-solid fa-file-circle-plus"></i><span>Buat Lembar Kerja</span>
@@ -128,7 +127,7 @@
                     </nav>
                 </div>
                 <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                    <span>v2.0-Biz</span>
+                    <span>v2.1-Biz</span>
                     <button onclick="location.reload()" class="hover:text-rose-400"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
                 </div>
             </div>
@@ -211,22 +210,30 @@
                     </div>
                 </div>
 
-                <!-- KONTEN: SYSTEM WORKFLOW TICKETING LAPOR KERUSAKAN (BISNIS PROAKTIF) -->
+                <!-- KONTEN: SYSTEM WORKFLOW TICKETING (FORM BUAT TIKET DIKONDISIKAN, DAFTAR DIOPTIMALKAN) -->
                 <div id="tab-ticket-system" class="tab-content hidden space-y-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
-                        <!-- Form Lapor Kerusakan (Akses untuk User Ruangan & Teknisi) -->
-                        <div class="glass-panel p-5 rounded-2xl shadow-2xl border h-fit space-y-3">
-                            <h3 class="text-sm font-bold text-white border-b border-white/5 pb-2 flex items-center"><i class="fa-solid fa-headset mr-2 text-amber-500"></i>Buat Tiket Laporan Kerusakan</h3>
-                            <form onsubmit="kirimTiketKeluhanKerusakan(event)" class="space-y-3 text-xs">
-                                <div><label class="block mb-1 text-slate-400 font-bold">Pilih Alat Medis yang Bermasalah: *</label><select id="ticket-form-alat" required class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none font-semibold"></select></div>
-                                <div><label class="block mb-1 text-slate-400 font-bold">Uraian Masalah / Gejala Kerusakan: *</label><textarea id="ticket-form-keluhan" required rows="3" class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none" placeholder="Contoh: Layar mati total saat tombol power ditekan..."></textarea></div>
-                                <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold p-2.5 rounded-xl hover:from-amber-600 shadow-lg shadow-orange-950/20 transition flex items-center justify-center space-x-2"><i class="fa-solid fa-paper-plane"></i> <span>Kirim Tiket ke Tim Teknisi</span></button>
+                    <div class="grid grid-cols-1 gap-6 no-print">
+                        <!-- Form Lapor Kerusakan (Hanya muncul jika yang login adalah User Ruangan) -->
+                        <div id="box-form-buat-ticket" class="glass-panel p-5 rounded-2xl shadow-2xl border space-y-3 hidden">
+                            <h3 class="text-sm font-bold text-white border-b border-white/5 pb-2 flex items-center"><i class="fa-solid fa-headset mr-2 text-amber-500"></i>Buat Tiket Laporan Kerusakan Baru</h3>
+                            <form onsubmit="kirimTiketKeluhanKerusakan(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                <div><label class="block mb-1 text-slate-400 font-bold">Pilih Alat Medis yang Bermasalah: *</label><select id="ticket-form-alat" class="w-full bg-slate-950 text-white border border-white/10 p-2.5 rounded-xl outline-none font-semibold"></select></div>
+                                <div><label class="block mb-1 text-slate-400 font-bold">Uraian Masalah / Gejala Kerusakan: *</label><input type="text" id="ticket-form-keluhan" class="w-full bg-slate-950 text-white border border-white/10 p-2.5 rounded-xl outline-none" placeholder="Contoh: Layar kedip-kedip atau mati total..."></div>
+                                <div class="md:col-span-2 flex justify-end"><button type="submit" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold px-6 py-2 rounded-xl hover:from-amber-600 shadow transition flex items-center space-x-2"><i class="fa-solid fa-paper-plane"></i> <span>Kirim Tiket Keluhan</span></button></div>
                             </form>
                         </div>
-                        <!-- Daftar Antrean Tiket Lapangan -->
-                        <div class="glass-panel p-5 rounded-2xl shadow-2xl border lg:col-span-2 space-y-3">
-                            <h3 class="text-sm font-bold text-white border-b border-white/5 pb-2 flex items-center justify-between"><span><i class="fa-solid fa-list-check mr-2 text-cyan-400"></i>Daftar Trouble Ticket Masuk (Real-time)</span></h3>
-                            <div class="overflow-x-auto w-full"><table class="w-full text-left text-xs min-w-[500px]"><thead class="bg-slate-950 font-bold text-slate-400"><tr><th class="p-3">Alat / Ruangan</th><th class="p-3">Keluhan Masalah</th><th class="p-3">Status Tiket</th><th class="p-3 text-center">Tindakan Cepat</th></tr></thead><tbody id="table-ticket-body" class="divide-y divide-white/5 text-slate-300"></tbody></table></div>
+                        
+                        <!-- Daftar Antrean Tiket Lapangan (Selalu tampil untuk semua) -->
+                        <div class="glass-panel p-5 rounded-2xl shadow-2xl border space-y-3">
+                            <h3 class="text-sm font-bold text-white border-b border-white/5 pb-2 flex items-center"><i class="fa-solid fa-list-check mr-2 text-cyan-400"></i>Daftar Trouble Ticket Masuk (Real-time Cloud)</h3>
+                            <div class="overflow-x-auto w-full">
+                                <table class="w-full text-left text-xs min-w-[600px]">
+                                    <thead class="bg-slate-950 text-slate-400 font-bold">
+                                        <tr><th class="p-3">Alat / Ruangan</th><th class="p-3">Keluhan Masalah</th><th class="p-3">Tanggal Masuk</th><th class="p-3">Status Tiket</th><th class="p-3 text-center">Tindakan Lapangan</th></tr>
+                                    </thead>
+                                    <tbody id="table-ticket-body" class="divide-y divide-white/5 text-slate-300"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -276,7 +283,7 @@
                         <select id="dlk-select-alat" onchange="sinkronisasiDataAlatKeWorksheet(this.value)" class="w-full border p-1.5 rounded bg-white font-bold outline-none focus:border-blue-600 shadow-sm"></select>
                     </div>
 
-                    <!-- RESTRUKTURISASI 3 BAGIAN UTAMA LEMBAR KERJA -->
+                    <!-- 3 BAGIAN UTAMA LEMBAR KERJA -->
                     <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
                         <div class="border p-3 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px]">
                             <div>
@@ -346,7 +353,7 @@
                         </div>
                     </div>
 
-                    <!-- TANDA TANGAN & DIGITAL VERIFICATION QR CODE (STANDAR HUKUM AUDIT) -->
+                    <!-- TANDA TANGAN & DIGITAL VERIFICATION QR CODE -->
                     <div class="grid grid-cols-1 md:grid-cols-4 print:grid-cols-4 gap-4 print:gap-2 pt-2 text-[11px] items-end">
                         <div class="text-center space-y-1">
                             <p class="font-semibold text-gray-500">Teknisi Pelaksana</p>
@@ -366,7 +373,7 @@
                             <button type="button" onclick="clearCanvasSignature('sig-pj')" class="no-print text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-300">Hapus</button>
                             <div class="pt-1 font-bold text-gray-800 border-b pb-0.5">Arrief Nurcahyo, S.Tr. Em.</div>
                         </div>
-                        <!-- BLOK QR CODE VALIDATOR DIGITAL REAL-TIME -->
+                        <!-- BLOK QR CODE VALIDATOR DIGITAL -->
                         <div class="flex flex-col items-center justify-center p-2 border rounded-xl bg-slate-50/50 h-[130px] print:h-[115px]">
                             <p class="text-[8px] uppercase font-bold text-slate-500 tracking-tight mb-1 text-center">Security Verification</p>
                             <div id="dlk-qrcode-box" class="w-16 h-16 flex items-center justify-center bg-white p-1 rounded shadow-inner"></div>
@@ -442,7 +449,7 @@
 
     <!-- MODAL PREVIEW FOTO/PDF -->
     <div id="modal-preview" class="fixed inset-0 bg-slate-900/80 z-[1000] flex items-center justify-center p-4 hidden no-print backdrop-blur-md">
-        <div class="bg-white/10 backdrop-blur-md w-full max-w-4xl h-[85vh] rounded-2xl flex flex-col overflow-hidden border border-white/10">
+        <div class="bg-white/10 backdrop-blur-md w-full max-w-4xl h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-white/10">
             <div class="p-4 bg-slate-950 text-white flex justify-between items-center"><h3 id="preview-title" class="font-bold text-sm">File Peninjau</h3><button onclick="toggleModal('modal-preview', false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button></div>
             <div id="preview-body" class="flex-1 bg-slate-900 p-2 flex items-center justify-center overflow-auto"></div>
         </div>
@@ -471,26 +478,34 @@
         let opsAlatKerja = []; let opsFisik = []; let opsFungsi = [];
         let listNamaTeknisi = []; let listNamaSaksi = [];
 
-        // GATEWAY MULTI-USER ACCESS SYSTEM
+        // FIXED USER ACCESS & VIEW VISIBILITY CONTROL
         function pilihRoleUserKontrol(role) {
             currentActiveRole = role;
             document.getElementById('auth-gate-screen').classList.add('hidden');
             document.getElementById('sidebar-role-badge').innerText = role;
             
-            // Atur Visibilitas Menu Sesuai Aturan Kontrak MoU Rumah Sakit
+            // Mengatur visibilitas menu sidebar tanpa mematikan data kontainer utama
             if (role === 'User Ruangan') {
-                document.querySelectorAll('.accessibility-teknisi').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.menu-akses-teknisi').forEach(el => el.classList.add('hidden'));
+                document.getElementById('box-form-buat-ticket').classList.remove('hidden');
                 switchTab('ticket-system');
             } else if (role === 'Manajemen') {
-                document.querySelectorAll('.accessibility-teknisi').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.menu-akses-teknisi').forEach(el => el.classList.add('hidden'));
+                document.getElementById('box-form-buat-ticket').classList.add('hidden');
                 switchTab('dashboard');
             } else {
-                document.querySelectorAll('.accessibility-teknisi').forEach(el => el.classList.remove('hidden'));
+                // Teknisi Lapangan
+                document.querySelectorAll('.menu-akses-teknisi').forEach(el => el.classList.remove('hidden'));
+                document.getElementById('box-form-buat-ticket').classList.add('hidden'); // Form disembunyikan untuk teknisi
                 switchTab('dashboard');
             }
+            
+            // Re-render data & grafik secara instan
+            renderAll();
+            setTimeout(renderGrafikDashboardDinamis, 200);
         }
 
-        // FIREBASE SYNC STREAMS
+        // FIREBASE REAL-TIME STREAMS
         db.collection("dataAlat").onSnapshot((querySnapshot) => {
             dataAlat = []; querySnapshot.forEach((doc) => { dataAlat.push({ id: doc.id, ...doc.data() }); });
             aktualisasikanDotKoneksiHijau(); evaluasiJatuhTempoKalibrasiMassal(); renderAll(); populasikanDropdownAlatDiTicketForm();
@@ -522,7 +537,94 @@
             renderAll();
         });
 
-        // TROUBLE TICKETING SYSTEM FUNCTIONS
+        function aktualisasikanDotKoneksiHijau() {
+            const dot = document.getElementById('status-dot');
+            if(dot) dot.className = "w-3.5 h-3.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]";
+        }
+
+        // CHART GENERATOR WITH ANTI-BLANK MANAGEMENT
+        function renderGrafikDashboardDinamis() {
+            if(dataAlat.length === 0) return;
+
+            const jReady = dataAlat.filter(a => a.status === 'Siap Digunakan').length;
+            const jBroken = dataAlat.filter(a => a.status === 'Dalam Perbaikan').length;
+
+            const ctxKondisi = document.getElementById('chartKondisiAlat');
+            if (ctxKondisi) {
+                if (instanceChartKondisi) instanceChartKondisi.destroy();
+                instanceChartKondisi = new Chart(ctxKondisi, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Siap Digunakan', 'Dalam Perbaikan'],
+                        datasets: [{
+                            data: [jReady, jBroken],
+                            backgroundColor: ['rgba(16, 185, 129, 0.75)', 'rgba(244, 63, 94, 0.75)'],
+                            borderColor: ['#10b981', '#f43f5e'],
+                            borderWidth: 1.5
+                        }]
+                    },
+                    options: { plugins: { legend: { display: true, position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } } }, cutout: '70%', responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            const hitungRuangan = {};
+            dataAlat.forEach(a => {
+                let namaRuang = a.edar || a.lokasi || 'Umum';
+                if(namaRuang === 'Baik') namaRuang = a.edar || 'Umum'; 
+                hitungRuangan[namaRuang] = (hitungRuangan[namaRuang] || 0) + 1;
+            });
+
+            const ruanganTerurut = Object.entries(hitungRuangan).sort((x, y) => y[1] - x[1]).slice(0, 5);
+            const labelRuangan = ruanganTerurut.map(item => item[0]);
+            const skorRuangan = ruanganTerurut.map(item => item[1]);
+
+            const ctxRuangan = document.getElementById('chartSebaranRuangan');
+            if (ctxRuangan && labelRuangan.length > 0) {
+                if (instanceChartRuangan) instanceChartRuangan.destroy();
+                instanceChartRuangan = new Chart(ctxRuangan, {
+                    type: 'bar',
+                    data: {
+                        labels: labelRuangan,
+                        datasets: [{
+                            label: 'Jumlah Aset',
+                            data: skorRuangan,
+                            backgroundColor: 'rgba(59, 130, 246, 0.4)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1.5,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        }
+
+        function evaluasiJatuhTempoKalibrasiMassal() {
+            const warningBox = document.getElementById('box-peringatan-kalibrasi');
+            const warningList = document.getElementById('list-warning-kalibrasi');
+            if(!warningBox || !warningList) return;
+            let htmlWarning = ""; const hariIni = new Date();
+            dataAlat.forEach(a => {
+                const listCal = dataKalibrasi.filter(c => c.alatId === a.id);
+                if(listCal.length > 0) {
+                    listCal.sort((x, y) => String(y.exp).localeCompare(String(x.exp)));
+                    const calTerbaru = listCal[0]; const tglExp = new Date(calTerbaru.exp);
+                    const selisihHari = Math.ceil((tglExp.getTime() - hariIni.getTime()) / (1000 * 3600 * 24));
+                    if(selisihHari <= 0) htmlWarning += `<li>Aset <b>${a.nama}</b> (SN: ${a.tipe || a.seri || '-'}) <span class="text-rose-500 font-bold">KEDALUWARSA</span> sejak ${calTerbaru.exp}.</li>`;
+                    else if(selisihHari <= 30) htmlWarning += `<li>Aset <b>${a.nama}</b> (SN: ${a.tipe || a.seri || '-'}) akan habis dalam <span class="text-amber-400 font-bold">${selisihHari} hari</span> (${calTerbaru.exp}).</li>`;
+                }
+            });
+            if(htmlWarning !== "") { warningList.innerHTML = htmlWarning; warningBox.classList.remove('hidden'); } else { warningBox.classList.add('hidden'); }
+        }
+
+        // OPTIMIZED WORKFLOW TICKETING SYSTEM
         function populasikanDropdownAlatDiTicketForm() {
             const selectEl = document.getElementById('ticket-form-alat'); if(!selectEl) return;
             selectEl.innerHTML = `<option value="">-- PILIH ALAT MEDIS --</option>` + dataAlat.map(a => `<option value="${a.id}">${a.nama} [${a.edar || a.lokasi || 'Unit'}]</option>`).join('');
@@ -538,26 +640,40 @@
             db.collection("troubleTickets").add(payload).then(() => {
                 db.collection("dataAlat").doc(alatId).update({ status: "Dalam Perbaikan" });
                 document.getElementById('ticket-form-keluhan').value = "";
-                alert("🎉 Tiket kerusakan berhasil dikirim ke tim IPSRS!");
+                alert("🎉 Tiket kerusakan berhasil dikirim!");
             });
         }
 
         function renderDaftarTiketMasuk() {
             const body = document.getElementById('table-ticket-body'); if(!body) return;
-            if(dataTiket.length === 0) { body.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500 italic">Tidak ada laporan kerusakan aktif.</td></tr>`; return; }
+            if(dataTiket.length === 0) { body.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">Tidak ada antrean laporan kerusakan aktif.</td></tr>`; return; }
             
             body.innerHTML = dataTiket.map(t => {
-                const alat = dataAlat.find(a => a.id == t.alatId) || { nama: "Alat Medis", edar: "Unknown" };
-                const aksiTombol = currentActiveRole === 'Teknisi' ? 
-                    `<button onclick="eksekusiTiketLangsungKerjakan('${t.id}','${t.alatId}')" class="bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold px-3 py-1 rounded-xl shadow"><i class="fa-solid fa-wrench mr-1"></i> Kerjakan</button>` : 
-                    `<span class="text-[10px] text-slate-500 italic">No Auth</span>`;
+                const alat = dataAlat.find(a => a.id == t.alatId) || { nama: "Alat Medis", edar: "Unit" };
+                let aksiAksi = "";
+
+                if (t.statusTiket !== 'Selesai') {
+                    if (currentActiveRole === 'Teknisi') {
+                        aksiAksi = `
+                            <div class="inline-flex space-x-1">
+                                <button onclick="eksekusiTiketLangsungKerjakan('${t.id}','${t.alatId}')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-wrench"></i> Kerjakan</button>
+                                <button onclick="selesaikanTiketTroubleManual('${t.id}','${t.alatId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-check"></i> Selesai</button>
+                            </div>
+                        `;
+                    } else {
+                        aksiAksi = `<span class="text-slate-500 italic text-[10px]">Menunggu Teknisi</span>`;
+                    }
+                } else {
+                    aksiAksi = `<span class="text-emerald-500 font-bold text-[10px]">✅ Selesai Diperbaiki</span>`;
+                }
 
                 return `
                     <tr class="border-b border-white/5 bg-transparent hover:bg-white/[0.01]">
                         <td class="p-3"><b>${alat.nama}</b><br><span class="text-[10px] text-slate-500">${alat.edar || alat.lokasi || '-'}</span></td>
                         <td class="p-3 text-slate-400 font-mono">${t.keluhan}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">${t.statusTiket}</span></td>
-                        <td class="p-3 text-center">${t.statusTiket === 'Selesai' ? '✅ Ditangani' : aksiTombol}</td>
+                        <td class="p-3 text-[11px] font-mono text-slate-500">${t.tglLapor || '-'}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${t.statusTiket==='Selesai'?'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20':'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">${t.statusTiket}</span></td>
+                        <td class="p-3 text-center">${aksiAksi}</td>
                     </tr>
                 `;
             }).join('');
@@ -567,31 +683,33 @@
             bukaLembarKerjaBaruKosong();
             document.getElementById('dlk-select-alat').value = alatId;
             sinkronisasiDataAlatKeWorksheet(alatId);
-            document.querySelector('input[name="dlk-jenis"][value="Corrective Maintenance"]').checked = true;
-            // Hapus tiket dari monitoring antrean setelah diproses teknisi
+            document.querySelectorAll('input[name="dlk-jenis"]').forEach(r => { if(r.value === "Corrective Maintenance") r.checked = true; });
             db.collection("troubleTickets").doc(tiketId).delete();
+        }
+
+        function selesaikanTiketTroubleManual(tiketId, alatId) {
+            if(confirm("Apakah Anda ingin menyelesaikan trouble ticket ini dan mengubah status alat menjadi Siap Pakai?")) {
+                db.collection("troubleTickets").doc(tiketId).update({ statusTiket: "Selesai" }).then(() => {
+                    return db.collection("dataAlat").doc(alatId).update({ status: "Siap Digunakan" });
+                }).then(() => {
+                    alert("🎉 Status tiket berhasil diselesaikan!");
+                });
+            }
         }
 
         // SECURITY QR CODE VERIFICATION LOGIC
         function perbaruiSistemVerifikasiQRCodeResmi(noLk, namaTeknisi) {
-            const hashBox = document.getElementById('dlk-lbl-hash');
-            const qrBox = document.getElementById('dlk-qrcode-box');
-            if(!qrBox) return;
-
-            qrBox.innerHTML = "";
+            const hashBox = document.getElementById('dlk-lbl-hash'); const qrBox = document.getElementById('dlk-qrcode-box');
+            if(!qrBox) return; qrBox.innerHTML = "";
             const securePayloadString = `MEDIX-VERIFIED\nNo: ${noLk}\nTeknisi: ${namaTeknisi || 'IPSRS'}\nStatus: Dokumen Sah Kemenkes/Auditor`;
-            hashBox.innerText = "MDX-" + btoa(noLk).substring(0, 8).toUpperCase();
-            
-            if(!qrcodeInstance) {
-                qrcodeInstance = new QRCode(qrBox, { text: securePayloadString, width: 64, height: 64, colorDark: "#0f172a", colorLight: "#ffffff" });
-            } else {
-                qrcodeInstance.clear(); qrcodeInstance.makeCode(securePayloadString);
-            }
+            hashBox.innerText = "MDX-" + btoa(noLk || "LK").substring(0, 8).toUpperCase();
+            if(!qrcodeInstance) qrcodeInstance = new QRCode(qrBox, { text: securePayloadString, width: 64, height: 64, colorDark: "#0f172a", colorLight: "#ffffff" });
+            else { qrcodeInstance.clear(); qrcodeInstance.makeCode(securePayloadString); }
         }
 
-        // DATA RENDER & WORKSPACE CORE MANAGEMENT
+        // CORE RENDER & WORKSHEET SYSTEM
         function renderAll() {
-            updateStats(); populasikanDropdownAlatDiLembarKerja(); renderGrafikDashboardDinamis();
+            updateStats(); populasikanDropdownAlatDiLembarKerja();
             const tbody = document.getElementById('table-alat-body'); if(!tbody) return;
             let filteredAlat = dataAlat; if(globalFilterStatus !== "all") filteredAlat = dataAlat.filter(a => a.status === globalFilterStatus);
             
@@ -609,9 +727,9 @@
                         <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${a.status==='Siap Digunakan'?'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20':'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">${a.status || 'Siap Pakai'}</span>${infoCal}</td>
                         <td class="p-3 text-center">
                             <div class="inline-flex rounded-xl border border-white/5 overflow-hidden">
-                                <button onclick="pemicuEditAlatLangsung('${a.id}')" class="bg-amber-500/20 text-amber-400 px-3 py-2 text-[11px] hover:bg-amber-500 hover:text-slate-900 transition border-r border-white/5"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="bukaKartuPemeliharaan('${a.id}')" class="bg-blue-600/20 text-blue-400 px-3 py-2 text-[11px] hover:bg-blue-600 hover:text-white transition border-r border-white/5"><i class="fa-solid fa-book-medical"></i></button>
-                                <button onclick="hapAlatMasterFirebase('${a.id}', '${a.nama}')" class="bg-rose-600/20 text-rose-400 px-3 py-2 text-[11px] hover:bg-rose-600 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="pemicuEditAlatLangsung('${a.id}')" class="bg-amber-500/20 text-amber-400 px-3 py-2 text-[11px] hover:bg-amber-500 transition border-r border-white/5"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="bukaKartuPemeliharaan('${a.id}')" class="bg-blue-600/20 text-blue-400 px-3 py-2 text-[11px] hover:bg-blue-600 transition border-r border-white/5"><i class="fa-solid fa-book-medical"></i></button>
+                                <button onclick="hapAlatMasterFirebase('${a.id}', '${a.nama}')" class="bg-rose-600/20 text-rose-400 px-3 py-2 text-[11px] hover:bg-rose-600 transition"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -628,7 +746,6 @@
 
             db.collection("lembarKerja").get().then((snap) => {
                 let currentNoLk = "RSUDPG/IPSRS/LK-" + String(snap.size + 1).padStart(3, '0');
-                
                 const payload = {
                     alatId: alatIdRaw, noLk: currentNoLk, textTgl: document.getElementById('dlk-tgl').value,
                     desc_kerja: document.getElementById('dlk-txt-deskripsi-tunggal').value, jenisKerja: document.querySelector('input[name="dlk-jenis"]:checked').value,
@@ -655,7 +772,7 @@
             document.getElementById('dlk-select-alat').value = ""; document.getElementById('dlk-txt-deskripsi-tunggal').value = ""; 
             document.getElementById('box-preview-foto').innerHTML = `[ Belum Ada Foto ]`; 
             renderOpsiDropdownAwal(); aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi'); 
-            populasikanDropdownNamaTandaTangan();
+            populasikanDropdownNamaTanda Tangan();
             
             db.collection("lembarKerja").get().then(s => {
                 let generatedNo = "RSUDPG/IPSRS/LK-" + String(s.size + 1).padStart(3, '0');
@@ -684,13 +801,12 @@
             populasikanDropdownNamaTandaTangan();
             document.getElementById('dlk-select-nama-teknisi').value = record.teknisiTtd || "";
             document.getElementById('dlk-select-nama-saksi').value = record.saksiTtd || "";
-            
             perbaruiSistemVerifikasiQRCodeResmi(record.noLk, record.teknisiTtd);
             
             const areaLK = document.getElementById('area-lembar-kerja-resmi'); areaLK.classList.remove('hidden'); areaLK.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // GLOBAL UTILITY FUNCTIONS (SHARED)
+        // GLOBAL SHared UTILITIES
         function populasikanDropdownAlatDiLembarKerja() { 
             const selectEl = document.getElementById('dlk-select-alat'); const calSelectEl = document.getElementById('form-cal-alat'); if(!selectEl) return;
             let htmlOpts = `<option value="">-- PILIH ALAT MEDIS SESUAI DATABASE --</option>` + dataAlat.map(a => `<option value="${a.id}">${a.nama} - [${a.edar || a.lokasi || 'Unit'}]</option>`).join('');
@@ -755,7 +871,7 @@
                     <td class="p-4"><b>${d.namaAlat}</b><br><span class="text-[10px] text-slate-500 font-mono">SN: ${d.seri}</span></td>
                     <td class="p-4"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${d.jenis.includes('Kalibrasi')?'bg-amber-500/10 text-amber-400':'bg-indigo-500/10 text-indigo-400'}">${d.jenis}</span></td>
                     <td class="p-4 font-mono">${d.tgl}</td><td class="p-4 text-slate-400 max-w-xs truncate">${d.desc}</td>
-                    <td class="p-4 text-center"><div class="inline-flex rounded-lg shadow-sm">${d.type==='pdf'?`<button onclick="lihatFileLangsung('${d.file}','pdf','Sertifikat')" class="bg-blue-600/20 text-blue-400 p-1.5 rounded-l-lg hover:bg-blue-600 hover:text-white transition"><i class="fa-solid fa-eye"></i></button>`:`<button onclick="bukaLembarKerjaDinamisDariLog('${d.file}')" class="bg-blue-600/20 text-blue-400 p-1.5 rounded-l-lg hover:bg-blue-600 hover:text-white transition"><i class="fa-solid fa-eye"></i></button>`}<button onclick="hapusDokumenPusatRiwayat('${d.id}', '${d.koleksiDb}')" class="bg-rose-600/20 text-rose-400 p-1.5 rounded-r-lg hover:bg-rose-600 hover:text-white transition"><i class="fa-solid fa-trash"></i></button></div></td>
+                    <td class="p-4 text-center"><div class="inline-flex rounded-lg shadow-sm">${d.type==='pdf'?`<button onclick="lihatFileLangsung('${d.file}','pdf','Sertifikat')" class="bg-blue-600/20 text-blue-400 p-1.5 rounded-l-lg hover:bg-blue-600 transition"><i class="fa-solid fa-eye"></i></button>`:`<button onclick="bukaLembarKerjaDinamisDariLog('${d.file}')" class="bg-blue-600/20 text-blue-400 p-1.5 rounded-l-lg hover:bg-blue-600 transition"><i class="fa-solid fa-eye"></i></button>`}<button onclick="hapusDokumenPusatRiwayat('${d.id}', '${d.koleksiDb}')" class="bg-rose-600/20 text-rose-400 p-1.5 rounded-r-lg hover:bg-rose-600 transition"><i class="fa-solid fa-trash"></i></button></div></td>
                     <td class="p-4"><span class="px-2 py-0.5 rounded font-bold text-[10px] ${d.hasil.includes('Baik')||d.hasil==='Layak'?'bg-emerald-500/10 text-emerald-400':'bg-rose-500/10 text-rose-400'}">${d.hasil}</span></td>
                 </tr>
             `).join('');
@@ -763,7 +879,6 @@
         function switchTab(tId) { document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); document.getElementById('tab-' + tId).classList.remove('hidden'); document.querySelectorAll('.sidebar-item').forEach(e => e.classList.remove('active')); if(document.getElementById('btn-' + tId)) document.getElementById('btn-' + tId).classList.add('active'); toggleSidebarMenu(false); if(tId === 'dashboard') setTimeout(renderGrafikDashboardDinamis, 300); }
         function toggleSidebarMenu(s) { const sb = document.getElementById('app-sidebar'); if(sb) { if(s) sb.classList.remove('-translate-x-full'); else sb.classList.add('-translate-x-full'); } }
         function clickDashboardStat(t) { if(t==='all'){ globalFilterStatus="all"; switchTab('data-alat'); } else if(t==='ready'){ globalFilterStatus="Siap Digunakan"; switchTab('data-alat'); } else if(t==='broken'){ globalFilterStatus="Dalam Perbaikan"; switchTab('data-alat'); } else if(t==='docs'){ switchTab('kalibrasi'); gantiSubTabDokumen('all'); } renderAll(); }
-        function resetFilterStatusAlat() { globalFilterStatus = "all"; renderAll(); }
         function openModalAlatManual() { document.getElementById('form-alat-id').value = ""; document.getElementById('form-alat-nama').value = ""; document.getElementById('form-alat-merk').value = ""; toggleModal('modal-alat', true); }
         function pemicuEditAlatLangsung(id) { const a = dataAlat.find(i => i.id == id); if(!a) return; document.getElementById('form-alat-id').value = a.id; document.getElementById('form-alat-nama').value = a.nama || ''; document.getElementById('form-alat-merk').value = a.merk || ''; document.getElementById('form-alat-lokasi').value = a.lokasi === 'Baik' ? a.edar : a.lokasi; toggleModal('modal-alat', true); }
         function submitFormAlatMaster(e) { e.preventDefault(); const id = document.getElementById('form-alat-id').value; const payload = { nama: document.getElementById('form-alat-nama').value, merk: document.getElementById('form-alat-merk').value, tipe: '', seri: '', edar: document.getElementById('form-alat-lokasi').value, lokasi: 'Baik' }; if(id) { db.collection("dataAlat").doc(id).update(payload).then(() => { toggleModal('modal-alat', false); alert("Aset Diperbarui!"); }); } else { payload.status = 'Siap Digunakan'; db.collection("dataAlat").add(payload).then(() => { toggleModal('modal-alat', false); alert("Aset Didaftarkan!"); }); } }
@@ -777,6 +892,35 @@
             if(document.getElementById('stat-broken')) document.getElementById('stat-broken').innerText = dataAlat.filter(a => a.status === 'Dalam Perbaikan').length;
             if(document.getElementById('stat-logs')) document.getElementById('stat-logs').innerText = dataKalibrasi.length + dataPerbaikan.length + dataPM.length + dataInspeksi.length;
         }
+        function previewFotoDipilih(input) {
+            const file = input.files[0];
+            if(file) {
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = function(e) {
+                    const img = new Image(); img.src = e.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        let max_size = 600; let w = img.width; let h = img.height;
+                        if (w > h) { if (w > max_size) { h *= max_size / w; w = max_size; } } else { if (h > max_size) { w *= max_size / h; h = max_size; } }
+                        canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
+                        stringFotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                        document.getElementById('box-preview-foto').innerHTML = `<img src="${stringFotoBase64}" class="w-full h-full object-contain max-h-[140px] print:max-h-[130px] mx-auto rounded">`;
+                    };
+                };
+            }
+        }
+        function exportKeExcelMassal() {
+            if(dataAlat.length === 0) return alert("Tidak ada data aset untuk diexport!");
+            const dClean = dataAlat.map((a, index) => {
+                const listCal = dataKalibrasi.filter(c => c.alatId === a.id);
+                let tCal = "-", eCal = "-", vdr = "-";
+                if(listCal.length > 0) { listCal.sort((x, y) => String(y.exp).localeCompare(String(x.exp))); tCal = listCal[0].tgl || "-"; eCal = listCal[0].exp || "-"; vdr = listCal[0].vendor || "-"; }
+                return { "No": index + 1, "Nama Alat Medis": a.nama || "-", "Merk": a.kode || "-", "Model / Tipe": a.merk || "-", "Nomor Seri (SN)": a.tipe || "-", "Unit / Ruangan": a.edar || "-", "Status Operasional": a.status || "-", "Tgl Kalibrasi Terakhir": tCal, "Habis Masa Berlaku": eCal, "Vendor Penguji": vdr };
+            });
+            const ws = XLSX.utils.json_to_sheet(dClean); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Master Aset Medis"); XLSX.writeFile(wb, `MEDIX_DataAset_${new Date().toISOString().substring(0,10)}.xlsx`);
+        }
+        function hapAlatMasterFirebase(id, namaAlat) { if(confirm(`Hapus aset "${namaAlat}" permanen?`)) { db.collection("dataAlat").doc(id).delete().then(() => alert("🎉 Aset dihapus!")); } }
+        function hapusDokumenPusatRiwayat(id, kol) { if(confirm("Hapus dokumen arsip ini?")) { db.collection(kol).doc(id).delete().then(() => alert("🎉 Dokumen dibersihkan!")); } }
         function lihatFileLangsung(b, j, jdl) { const body = document.getElementById('preview-body'); document.getElementById('preview-title').innerText = "Live Preview: " + jdl; if(j === 'pdf') body.innerHTML = `<iframe src="${b}" class="w-full h-full border rounded-xl" type="application/pdf"></iframe>`; else body.innerHTML = `<div class="max-w-full p-2 flex justify-center"><img src="${b}" class="max-h-[70vh] rounded-xl object-contain"></div>`; toggleModal('modal-preview', true); }
         function clearCanvasSignature(id) { const c = document.getElementById(id); if(c) { const ctx = c.getContext('2d'); ctx.clearRect(0, 0, c.width, c.height); ctx.beginPath(); } }
         function switchKartuTab(tId) { document.querySelectorAll('.kartu-tab').forEach(el => el.classList.remove('active')); if(document.getElementById('btn-'+tId.replace('tab-',''))) document.getElementById('btn-'+tId.replace('tab-','')).classList.add('active'); document.querySelectorAll('.kartu-content-box').forEach(el => el.classList.add('hidden')); document.getElementById(tId).classList.remove('hidden'); }
