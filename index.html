@@ -937,12 +937,16 @@
         function previewFotoDipilih(input) {
             const file = input.files[0];
             if(file) {
-                const reader = new FileReader(); reader.readAsDataURL(file);
+                const reader = new FileReader(); 
+                reader.readAsDataURL(file);
                 reader.onload = function(event) {
-                    const img = new Image(); img.src = event.target.result;
+                    const img = new Image(); 
+                    img.src = event.target.result;
                     img.onload = function() {
-                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        const canvas = document.createElement('canvas'); 
+                        const ctx = canvas.getContext('2d');
                         
+                        // Set standar resolusi internal untuk kompresi data Firebase
                         let targetWidth = 400;
                         let targetHeight = 300;
                         
@@ -963,7 +967,11 @@
                         
                         ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
                         stringFotoBase64 = canvas.toDataURL('image/jpeg', 0.75);
-                        document.getElementById('box-preview-foto').innerHTML = `<img src="${stringFotoBase64}" class="w-full h-full object-cover rounded shadow">`;
+                        
+                        // PERBAIKAN: w-full h-full dan object-contain/cover memaksa foto horizontal/vertikal tetap presisi di dalam kotak
+                        document.getElementById('box-preview-foto').innerHTML = `
+                            <img src="${stringFotoBase64}" class="w-full h-full object-contain bg-slate-100 rounded shadow">
+                        `;
                     }
                 }
             }
@@ -1122,7 +1130,7 @@
             try { terpakaiFisik = record.paramFisik ? JSON.parse(record.paramFisik) : []; } catch(e) { terpakaiFisik = []; }
             try { terpakaiFungsi = record.paramFungsi ? JSON.parse(record.paramFungsi) : []; } catch(e) { terpakaiFungsi = []; }
             aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi');
-            if(record.fotoAlat && record.fotoAlat !== '-') { stringFotoBase64 = record.fotoAlat; document.getElementById('box-preview-foto').innerHTML = `<img src="${record.fotoAlat}" class="w-full h-full object-cover rounded shadow">`; } else { document.getElementById('box-preview-foto').innerHTML = `[ Belum Ada Foto ]`; }
+            if(record.fotoAlat && record.fotoAlat !== '-') { stringFotoBase64 = record.fotoAlat; document.getElementById('box-preview-foto').innerHTML = `<img src="${record.fotoAlat}" class="w-full h-full object-contain bg-slate-100 rounded shadow">`; } else { document.getElementById('box-preview-foto').innerHTML = `[ Belum Ada Foto ]`; }
             populasikanDropdownNamaTandaTangan();
             if(record.teknisiTtd) document.getElementById('dlk-select-nama-teknisi').value = record.teknisiTtd;
             if(record.saksiTtd) document.getElementById('dlk-select-nama-saksi').value = record.saksiTtd;
