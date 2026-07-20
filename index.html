@@ -761,21 +761,21 @@
                 }
         
                 // ========================================================
-                // KOREKSI PENUKARAN KOLOM MERK ➔ TIPE (AUTO-SWAP VISUAL)
+                // STRUKTUR PEMETAAN DATA FIREBASE ASLI (100% SESUAI GAMBAR)
                 // ========================================================
                 let displayNama   = a.nama || '-';
-                let displayMerk   = '-';               // Kosongkan merk karena aslinya ini adalah tipe
-                let displayTipe   = a.merk || '-';     // Pindahkan isi properti 'merk' dari DB ke kolom Tipe/Model
-                let displaySeri   = a.seri || '-';
-                let displayLokasi = a.lokasi || '-';
+                let displayMerk   = a.kode || '-';     // 'kode' di DB berisi Merk (Contoh: HEART GUARDIAN)
+                let displayTipe   = a.merk || '-';     // 'merk' di DB berisi Tipe/Model (Contoh: HR-501)
+                let displaySeri   = a.tipe || '-';     // 'tipe' di DB berisi Nomor Seri (Contoh: SN D0122...)
+                let displayLokasi = a.edar || '-';     // 'edar' di DB berisi Ruangan (Contoh: Ambulance Hiace)
         
-                // Deteksi jika field lokasi berisi teks kondisi ('Baik') seperti struktur JSON Anda
-                if (String(a.lokasi).toLowerCase() === 'baik') {
+                // Jalur antisipasi jika ada format data variasi lain di database Anda
+                if (String(a.lokasi).toLowerCase() !== 'baik' && a.seri && a.seri !== '-') {
                     displayNama   = a.nama || '-';
-                    displayMerk   = '-';               // Setel strip untuk Merk karena data asli bertindak sebagai Tipe
-                    displayTipe   = a.merk || '-';     // Pindahkan isi properti 'merk' (misal: HR-501) ke kolom Model/Tipe
-                    displaySeri   = a.tipe || '-';     // Ambil data Nomor Seri asli dari properti 'tipe'
-                    displayLokasi = a.edar || '-';     // Ambil data Ruangan asli dari properti 'edar'
+                    displayMerk   = a.merk || '-';
+                    displayTipe   = a.tipe || '-';
+                    displaySeri   = a.seri || '-';
+                    displayLokasi = a.lokasi || '-';
                 }
         
                 return `
@@ -798,6 +798,7 @@
             }).join('');
             renderTabelPusatDokumen();
         }
+        
         function eksekusiUrutanLokal(kriteria) {
             if (kriteria === 'nama-asc') dataAlat.sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
             else if (kriteria === 'nama-desc') dataAlat.sort((a, b) => (b.nama || '').localeCompare(a.nama || ''));
