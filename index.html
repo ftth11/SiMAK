@@ -318,9 +318,10 @@
                         </div>
                     </div>
 
-                    <!-- FOTO LAPANGAN -->
+                    <!-- FOTO LAPANGAN & KONDISI LINGKUNGAN RASIO 4:3 -->
                     <div class="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-4 print:gap-2">
-                        <div class="border p-2 rounded-lg text-[11px] bg-white shadow-sm flex flex-col justify-between">
+                        <!-- FOTO LAPANGAN -->
+                        <div class="border p-3 rounded-lg text-[11px] bg-white shadow-sm flex flex-col justify-between h-[210px] print:h-[180px]">
                             <div>
                                 <label class="block font-bold text-slate-800 border-b pb-0.5 mb-1 no-print"><i class="fa-solid fa-camera text-indigo-600 mr-1"></i>Ambil Foto Alat Lapangan</label>
                                 <label class="block font-bold text-slate-800 border-b pb-0.5 mb-1 hidden print-block">Lampiran Foto Lapangan</label>
@@ -328,38 +329,40 @@
                                     <input type="file" id="dlk-input-foto" accept="image/*" capture="environment" onchange="previewFotoDipilih(this)" class="w-full border p-0.5 rounded bg-slate-50 text-[10px]">
                                 </div>
                             </div>
-                            <div class="flex justify-center items-center w-full">
-                                <div id="box-preview-foto" class="w-full h-28 print:h-24 border rounded bg-slate-100 flex items-center justify-center overflow-hidden shadow-inner font-mono text-gray-400 italic text-[9px]">[ Belum Ada Foto ]</div>
+                            <div class="flex-1 flex justify-center items-center overflow-hidden w-full relative">
+                                <div id="box-preview-foto" class="w-full h-full border rounded bg-slate-50 flex items-center justify-center overflow-hidden font-mono text-gray-400 italic text-[9px] shadow-inner">[ Belum Ada Foto ]</div>
                             </div>
                         </div>
 
-                        <div class="border p-2 rounded-lg text-[11px] bg-white shadow-sm flex flex-col justify-between">
+                        <!-- KONDISI LINGKUNGAN -->
+                        <div class="border p-3 rounded-lg text-[11px] bg-white shadow-sm flex flex-col justify-between h-[210px] print:h-[180px]">
                             <div>
                                 <h4 class="font-bold border-b pb-0.5 mb-2 text-slate-800 flex items-center"><i class="fa-solid fa-temperature-three-quarters mr-1.5 text-orange-500"></i>1. Kondisi Lingkungan</h4>
-                                <div class="space-y-2 pt-1">
+                                <div class="space-y-3 pt-2">
                                     <div class="flex items-center space-x-2">
                                         <span class="w-24 text-gray-600 font-medium">Suhu Ruangan:</span>
-                                        <input type="number" id="dlk-env-suhu" class="w-14 border p-0.5 rounded text-center font-bold bg-slate-50" value="23">
-                                        <span class="font-semibold">°C</span>
+                                        <input type="number" id="dlk-env-suhu" class="w-16 border p-1 rounded text-center font-bold bg-slate-50 text-xs" value="23">
+                                        <span class="font-semibold text-slate-700">°C</span>
                                     </div>
                                     <div class="flex items-center space-x-2">
                                         <span class="w-24 text-gray-600 font-medium">Kelembaban:</span>
-                                        <input type="number" id="dlk-env-lembab" class="w-14 border p-0.5 rounded text-center font-bold bg-slate-50" value="55">
-                                        <span class="font-semibold">%</span>
+                                        <input type="number" id="dlk-env-lembab" class="w-16 border p-1 rounded text-center font-bold bg-slate-50 text-xs" value="55">
+                                        <span class="font-semibold text-slate-700">%</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-[9px] text-slate-400 italic font-mono pt-2 border-t mt-1 border-slate-100">* Diukur langsung di unit ruangan rumah sakit.</div>
+                            <div class="text-[9px] text-slate-400 italic font-mono pt-2 border-t border-slate-100">* Diukur langsung di unit ruangan rumah sakit.</div>
                         </div>
                     </div>
 
-                    <!-- GRIDS CHECKLIST POIN -->
+                    <!-- GRIDS CHECKLIST POIN - BISA DROPDOWN & INPUT MANDIRI -->
                     <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
                         <div class="border p-2 rounded-lg bg-white shadow-sm space-y-2">
                             <div>
                                 <h4 class="font-bold border-b pb-0.5 text-slate-800 mb-1">Alat Kerja Digunakan</h4>
                                 <div class="flex space-x-1 no-print mb-1">
-                                    <select id="drop-alatkerja" onchange="tambahPoinAkumulatif('alatkerja')" class="w-full border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select>
+                                    <select id="drop-alatkerja" onchange="tambahPoinAkumulatif('alatkerja')" class="w-2/3 border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select>
+                                    <button type="button" onclick="inputMandiriCustom('alatkerja')" class="w-1/3 bg-slate-800 text-white text-[9px] font-bold rounded hover:bg-slate-700 transition">+ Custom</button>
                                 </div>
                             </div>
                             <div id="box-list-alatkerja" class="space-y-1 max-h-32 overflow-y-auto"></div>
@@ -369,7 +372,8 @@
                             <div>
                                 <h4 class="font-bold border-b pb-0.5 text-slate-800 mb-1">Pemeriksaan Fisik</h4>
                                 <div class="flex space-x-1 no-print mb-1">
-                                    <select id="drop-fisik" onchange="tambahPoinAkumulatif('fisik')" class="w-full border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select>
+                                    <select id="drop-fisik" onchange="tambahPoinAkumulatif('fisik')" class="w-2/3 border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select>
+                                    <button type="button" onclick="inputMandiriCustom('fisik')" class="w-1/3 bg-slate-800 text-white text-[9px] font-bold rounded hover:bg-slate-700 transition">+ Custom</button>
                                 </div>
                             </div>
                             <div id="box-list-fisik" class="space-y-1 max-h-32 overflow-y-auto"></div>
@@ -379,7 +383,8 @@
                             <div>
                                 <h4 class="font-bold border-b pb-0.5 text-slate-800 mb-1">Pemeriksaan Fungsi</h4>
                                 <div class="flex space-x-1 no-print mb-1">
-                                    <select id="drop-fungsi" onchange="tambahPoinAkumulatif('fungsi')" class="w-full border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select>
+                                    <select id="drop-fungsi" onchange="tambahPoinAkumulatif('fungsi')" class="w-2/3 border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select>
+                                    <button type="button" onclick="inputMandiriCustom('fungsi')" class="w-1/3 bg-slate-800 text-white text-[9px] font-bold rounded hover:bg-slate-700 transition">+ Custom</button>
                                 </div>
                             </div>
                             <div id="box-list-fungsi" class="space-y-1 max-h-32 overflow-y-auto"></div>
@@ -484,10 +489,9 @@
         </div>
     </div>
 
-    <!-- MODAL KARTU LOG ASSET (VERSI LAYAR PENUH DI LUAR CONTAINER UTAMA) -->
+    <!-- MODAL KARTU LOG ASSET -->
     <div id="modal-kartu" class="fixed inset-0 bg-slate-950/80 z-[999] flex items-center justify-center hidden no-print backdrop-blur-md">
         <div class="bg-slate-900 w-full h-full flex flex-col text-slate-200">
-            <!-- HEADER MODAL -->
             <div class="p-4 bg-slate-950 text-white flex justify-between items-center shadow-md">
                 <h3 class="font-bold text-sm flex items-center">
                     <i class="fa-solid fa-address-card mr-2 text-blue-400"></i>REKAM JEJAK PEMELIHARAAN & LOG KALIBRASI ASSET
@@ -497,7 +501,6 @@
                 </button>
             </div>
             
-            <!-- RINGKASAN DATA ASET HEADER -->
             <div class="p-4 bg-slate-950/40 border-b border-white/5 text-xs grid grid-cols-2 md:grid-cols-4 gap-4 shadow-inner">
                 <div><p class="text-slate-500 font-bold uppercase tracking-wider text-[10px]">Nama Aset:</p><p id="kartu-nama" class="font-bold text-white text-sm">-</p></div>
                 <div><p class="text-slate-500 font-bold uppercase tracking-wider text-[10px]">Merk / Model:</p><p id="kartu-merk" class="font-semibold text-slate-300 text-sm">-</p></div>
@@ -505,7 +508,6 @@
                 <div><p class="text-slate-500 font-bold uppercase tracking-wider text-[10px]">Unit / Ruangan:</p><p id="kartu-lokasi" class="font-bold text-blue-400 text-sm">-</p></div>
             </div>
             
-            <!-- NAVIGASI SUB-TAB LOG -->
             <div class="flex border-b border-white/5 text-xs bg-slate-950/20 font-medium">
                 <button type="button" onclick="switchKartuTab('tab-k-corrective')" id="btn-k-corrective" class="kartu-tab border-b-2 border-transparent px-6 py-3.5 active text-slate-400">Corrective Log</button>
                 <button type="button" onclick="switchKartuTab('tab-k-preventive')" id="btn-k-preventive" class="kartu-tab border-b-2 border-transparent px-6 py-3.5 text-slate-400">Preventive Log (PM)</button>
@@ -513,7 +515,6 @@
                 <button type="button" onclick="switchKartuTab('tab-k-kalibrasi')" id="btn-k-kalibrasi" class="kartu-tab border-b-2 border-transparent px-6 py-3.5 text-indigo-400 font-bold">Kalibrasi Resmi</button>
             </div>
             
-            <!-- KONTEN TABEL LOG -->
             <div class="flex-1 overflow-y-auto p-6 bg-slate-950/10 text-xs">
                 <div id="tab-k-corrective" class="kartu-content-box space-y-3">
                     <div class="overflow-x-auto bg-slate-900 rounded-xl border border-white/5 shadow-2xl">
@@ -871,7 +872,7 @@
         
         function eksekusiUrutanLokal(kriteria) {
             if (kriteria === 'nama-asc') dataAlat.sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
-            else if (kriteria === 'nama-desc') dataAlat.sort((a, b) => (b.nama || '').localeCompare(a.nama || ''));
+            else if (kriteria === 'nama-desc') dataAlat.sort((b, a) => (a.nama || '').localeCompare(b.nama || ''));
             else if (kriteria === 'lokasi-asc') dataAlat.sort((a, b) => (a.edar || a.lokasi || '').localeCompare(b.edar || b.lokasi || ''));
             else if (kriteria === 'merk-asc') dataAlat.sort((a, b) => (a.merk || '').localeCompare(b.merk || ''));
             renderAll();
@@ -933,11 +934,29 @@
                     const img = new Image(); img.src = event.target.result;
                     img.onload = function() {
                         const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        let width = img.width; let height = img.height;
-                        if (width > height) { if (width > 550) { height *= 550 / width; width = 550; } } else { if (height > 550) { width *= 550 / height; height = 550; } }
-                        canvas.width = width; canvas.height = height;
-                        ctx.drawImage(img, 0, 0, width, height);
-                        stringFotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        // Set standard 4:3 canvas size for internal compression
+                        let targetWidth = 400;
+                        let targetHeight = 300;
+                        
+                        canvas.width = targetWidth; 
+                        canvas.height = targetHeight;
+                        
+                        // Draw image fitting the 4:3 area box cover style
+                        let imgRatio = img.width / img.height;
+                        let targetRatio = targetWidth / targetHeight;
+                        let sx = 0, sy = 0, sw = img.width, sh = img.height;
+                        
+                        if (imgRatio > targetRatio) {
+                            sw = img.height * targetRatio;
+                            sx = (img.width - sw) / 2;
+                        } else {
+                            sh = img.width / targetRatio;
+                            sy = (img.height - sh) / 2;
+                        }
+                        
+                        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+                        stringFotoBase64 = canvas.toDataURL('image/jpeg', 0.75);
                         document.getElementById('box-preview-foto').innerHTML = `<img src="${stringFotoBase64}" class="w-full h-full object-cover rounded shadow">`;
                     }
                 }
@@ -994,10 +1013,23 @@
 
         function tambahPoinAkumulatif(kategori) {
             const drop = document.getElementById('drop-' + kategori); let value = drop.value; if(!value || value.startsWith('--')) return;
-            if(kategori === 'alatkerja' && !terpakaiAlatKerja.includes(value)) terpakaiAlatKerja.push(value);
-            if(kategori === 'fisik' && !terpakaiFisik.includes(value)) terpakaiFisik.push(value);
-            if(kategori === 'fungsi' && !terpakaiFungsi.includes(value)) terpakaiFungsi.push(value);
-            aktualisasikanTampilanKotakTabel(kategori); drop.selectedIndex = 0;
+            eksekusiPushPoinUnik(kategori, value);
+            drop.selectedIndex = 0;
+        }
+
+        function inputMandiriCustom(kategori) {
+            let labelKat = kategori === 'alatkerja' ? 'Alat Kerja' : kategori === 'fisik' ? 'Pemeriksaan Fisik' : 'Pemeriksaan Fungsi';
+            let nilaiCustom = prompt(`Masukkan item ${labelKat} kustom Anda sendiri:`);
+            if (nilaiCustom && nilaiCustom.trim() !== "") {
+                eksekusiPushPoinUnik(kategori, nilaiCustom.trim());
+            }
+        }
+
+        function eksekusiPushPoinUnik(kategori, teksKlaim) {
+            if(kategori === 'alatkerja' && !terpakaiAlatKerja.includes(teksKlaim)) terpakaiAlatKerja.push(teksKlaim);
+            if(kategori === 'fisik' && !terpakaiFisik.includes(teksKlaim)) terpakaiFisik.push(teksKlaim);
+            if(kategori === 'fungsi' && !terpakaiFungsi.includes(teksKlaim)) terpakaiFungsi.push(teksKlaim);
+            aktualisasikanTampilanKotakTabel(kategori);
         }
 
         function hapusPoinSpesifik(kategori, index) { if(kategori === 'alatkerja') terpakaiAlatKerja.splice(index, 1); if(kategori === 'fisik') terpakaiFisik.splice(index, 1); if(kategori === 'fungsi') terpakaiFungsi.splice(index, 1); aktualisasikanTampilanKotakTabel(kategori); }
