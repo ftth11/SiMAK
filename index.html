@@ -127,7 +127,7 @@
                     </nav>
                 </div>
                 <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                    <span>v2.2-Safe</span>
+                    <span>v2.3-Workflow</span>
                     <button onclick="location.reload()" class="hover:text-rose-400"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
                 </div>
             </div>
@@ -537,7 +537,7 @@
             if(dot) dot.className = "w-3.5 h-3.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]";
         }
 
-        // AMAN DARI BLANK/FREEZE: DIBUNGKUS TRY-CATCH
+        // RENDER DASHBOARD GRAPHICS (SAFE TRY-CATCH)
         function renderGrafikDashboardDinamis() {
             try {
                 if(dataAlat.length === 0) return;
@@ -623,7 +623,7 @@
             if(htmlWarning !== "") { warningList.innerHTML = htmlWarning; warningBox.classList.remove('hidden'); } else { warningBox.classList.add('hidden'); }
         }
 
-        // TROUBLE TICKETING SYSTEM FUNCTIONS
+        // WORKFLOW TICKETING SYSTEM - PERBAIKAN ALUR DATA AMAN
         function populasikanDropdownAlatDiTicketForm() {
             const selectEl = document.getElementById('ticket-form-alat'); if(!selectEl) return;
             selectEl.innerHTML = `<option value="">-- PILIH ALAT MEDIS --</option>` + dataAlat.map(a => `<option value="${a.id}">${a.nama} [${a.edar || a.lokasi || 'Unit'}]</option>`).join('');
@@ -653,9 +653,12 @@
 
                 if (t.statusTiket !== 'Selesai') {
                     if (currentActiveRole === 'Teknisi') {
+                        let textTombolKerja = t.statusTiket === "Sedang Dikerjakan" ? '<i class="fa-solid fa-file-signature"></i> Buka Lembar Kerja' : '<i class="fa-solid fa-wrench"></i> Kerjakan';
+                        let warnaTombolKerja = t.statusTiket === "Sedang Dikerjakan" ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-amber-600 hover:bg-amber-700';
+
                         aksiAksi = `
                             <div class="inline-flex space-x-1">
-                                <button onclick="eksekusiTiketLangsungKerjakan('${t.id}','${t.alatId}')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-wrench"></i> Kerjakan</button>
+                                <button onclick="eksekusiTiketLangsungKerjakan('${t.id}','${t.alatId}')" class="${warnaTombolKerja} text-white font-bold px-2 py-1 rounded-lg text-[10px] transition">${textTombolKerja}</button>
                                 <button onclick="selesaikanTiketTroubleManual('${t.id}','${t.alatId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-check"></i> Selesai</button>
                             </div>
                         `;
@@ -666,12 +669,16 @@
                     aksiAksi = `<span class="text-emerald-500 font-bold text-[10px]">✅ Selesai Diperbaiki</span>`;
                 }
 
+                let kelasBadgeStatus = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                if(t.statusTiket === "Selesai") kelasBadgeStatus = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                if(t.statusTiket === "Sedang Dikerjakan") kelasBadgeStatus = "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20";
+
                 return `
                     <tr class="border-b border-white/5 bg-transparent hover:bg-white/[0.01]">
                         <td class="p-3"><b>${alat.nama}</b><br><span class="text-[10px] text-slate-500">${alat.edar || alat.lokasi || '-'}</span></td>
                         <td class="p-3 text-slate-400 font-mono">${t.keluhan}</td>
                         <td class="p-3 text-[11px] font-mono text-slate-500">${t.tglLapor || '-'}</td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${t.statusTiket==='Selesai'?'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20':'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">${t.statusTiket}</span></td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${kelasBadgeStatus}">${t.statusTiket}</span></td>
                         <td class="p-3 text-center">${aksiAksi}</td>
                     </tr>
                 `;
@@ -683,12 +690,14 @@
             document.getElementById('dlk-select-alat').value = alatId;
             sinkronisasiDataAlatKeWorksheet(alatId);
             document.querySelectorAll('input[name="dlk-jenis"]').forEach(r => { if(r.value === "Corrective Maintenance") r.checked = true; });
-            db.collection("troubleTickets").doc(tiketId).delete();
+            
+            // Mengubah status tiket agar tetap eksis dalam daftar antrean pemantauan
+            db.collection("troubleTickets").doc(tiketId).update({ statusTiket: "Sedang Dikerjakan" });
         }
 
         function selesaikanTiketTroubleManual(tiketId, alatId) {
             if(confirm("Apakah Anda ingin menyelesaikan trouble ticket ini dan mengubah status alat menjadi Siap Pakai?")) {
-                db.collection("troubleTickets").doc(tiketId).update({ statusTiket: "Selesai" }).then(() => {
+                db.collection("troubleTickets").doc(tiketId).delete().then(() => {
                     return db.collection("dataAlat").doc(alatId).update({ status: "Siap Digunakan" });
                 }).then(() => {
                     alert("🎉 Status tiket berhasil diselesaikan!");
@@ -763,6 +772,14 @@
 
                 db.collection("lembarKerja").add(payload).then(() => {
                     const newStatus = payload.hasilTunggal === "Alat Rusak Perlu Perbaikan" ? "Dalam Perbaikan" : "Siap Digunakan";
+                    
+                    // Bersihkan trouble ticket yang sesuai dari antrean secara otomatis
+                    db.collection("troubleTickets").where("alatId", "==", alatIdRaw).get().then((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                            db.collection("troubleTickets").doc(doc.id).delete();
+                        });
+                    });
+
                     return db.collection("dataAlat").doc(alatIdRaw).update({ status: newStatus });
                 }).then(() => {
                     document.getElementById('area-lembar-kerja-resmi').classList.add('hidden');
