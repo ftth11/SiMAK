@@ -246,8 +246,27 @@
                         <div id="box-form-buat-ticket" class="glass-panel p-5 rounded-2xl shadow-2xl border space-y-3 hidden">
                             <h3 class="text-sm font-bold text-white border-b border-white/5 pb-2 flex items-center"><i class="fa-solid fa-headset mr-2 text-amber-500"></i>Buat Tiket Laporan Kerusakan Baru</h3>
                             <form onsubmit="kirimTiketKeluhanKerusakan(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                                <div><label class="block mb-1 text-slate-400 font-bold">Pilih Alat Medis yang Bermasalah: *</label><select id="ticket-form-alat" class="w-full bg-slate-950 text-white border border-white/10 p-2.5 rounded-xl outline-none font-semibold"></select></div>
-                                <div><label class="block mb-1 text-slate-400 font-bold">Uraian Masalah / Gejala Kerusakan: *</label><input type="text" id="ticket-form-keluhan" class="w-full bg-slate-950 text-white border border-white/10 p-2.5 rounded-xl outline-none" placeholder="Contoh: Layar mati total..."></div>
+                                <div>
+                                    <label class="block mb-1 text-slate-400 font-bold">Pilih Alat Medis yang Bermasalah: *</label>
+                                    <!-- Input Search Box untuk Dropdown Alat -->
+                                    <div class="relative">
+                                        <input type="text" id="input-search-alat-ticket" oninput="filterDropdownAlatSearch('ticket')" placeholder="🔍 Ketik untuk cari alat..." class="w-full bg-slate-950 text-white border border-white/10 p-2.5 rounded-xl outline-none mb-1 text-xs font-semibold">
+                                        <select id="ticket-form-alat" size="4" class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none font-semibold cursor-pointer">
+                                            <option value="">-- PILIH ALAT --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block mb-1 text-slate-400 font-bold">Uraian Masalah / Gejala Kerusakan: *</label>
+                                        <input type="text" id="ticket-form-keluhan" required class="w-full bg-slate-950 text-white border border-white/10 p-2.5 rounded-xl outline-none" placeholder="Contoh: Layar mati total...">
+                                    </div>
+                                    <div>
+                                        <label class="block mb-1 text-slate-400 font-bold"><i class="fa-solid fa-camera mr-1 text-cyan-400"></i> Foto Kondisi Kerusakan (Before):</label>
+                                        <input type="file" id="ticket-form-foto" accept="image/*" capture="environment" onchange="previewFotoTiketDipilih(this)" class="w-full bg-slate-950 text-white border border-white/10 p-1.5 rounded-xl text-[10px]">
+                                        <div id="ticket-preview-foto-box" class="mt-2 h-16 w-24 border rounded overflow-hidden hidden bg-slate-950 flex items-center justify-center"></div>
+                                    </div>
+                                </div>
                                 <div class="md:col-span-2 flex justify-end"><button type="submit" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold px-6 py-2 rounded-xl hover:from-amber-600 shadow transition flex items-center space-x-2"><i class="fa-solid fa-paper-plane"></i> <span>Kirim Tiket Keluhan</span></button></div>
                             </form>
                         </div>
@@ -256,7 +275,7 @@
                             <div class="overflow-x-auto w-full">
                                 <table class="w-full text-left text-xs min-w-[600px]">
                                     <thead class="bg-slate-950 text-slate-400 font-bold">
-                                        <tr><th class="p-3">Alat / Ruangan</th><th class="p-3">Keluhan Masalah</th><th class="p-3">Tanggal Lapor</th><th class="p-3">Status Tiket</th><th class="p-3 text-center">Tindakan Lapangan</th></tr>
+                                        <tr><th class="p-3">Alat / Ruangan</th><th class="p-3">Keluhan Masalah</th><th class="p-3 text-center">Foto Before</th><th class="p-3">Tanggal Lapor</th><th class="p-3">Status Tiket</th><th class="p-3 text-center">Tindakan Lapangan</th></tr>
                                     </thead>
                                     <tbody id="table-ticket-body" class="divide-y divide-white/5 text-slate-300"></tbody>
                                 </table>
@@ -378,10 +397,15 @@
 
                     <div class="no-print bg-slate-50 p-3 rounded-lg border border-slate-200">
                         <label class="block font-bold mb-1 text-blue-700">Pilih Nama Alat Medis Dari Database:</label>
-                        <select id="dlk-select-alat" onchange="sinkronisasiDataAlatKeWorksheet(this.value)" class="w-full border p-1.5 rounded bg-white font-bold outline-none focus:border-blue-600 shadow-sm"></select>
+                        <!-- Input Search Box untuk Dropdown Alat di Worksheet -->
+                        <div class="relative">
+                            <input type="text" id="input-search-alat-worksheet" oninput="filterDropdownAlatSearch('worksheet')" placeholder="🔍 Ketik untuk cari alat..." class="w-full border p-1 rounded bg-white text-xs outline-none mb-1 font-semibold">
+                            <select id="dlk-select-alat" size="3" onchange="sinkronisasiDataAlatKeWorksheet(this.value)" class="w-full border p-1 rounded bg-white font-bold outline-none focus:border-blue-600 shadow-sm cursor-pointer"></select>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
+                    <div class="grid grid-cols-1 md:grid-cols-4 print:grid-cols-4 gap-3 print:gap-2 text-[11px]">
+                        <!-- Kotak 1: Kondisi Lingkungan -->
                         <div class="border p-3 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px]">
                             <div>
                                 <h4 class="font-bold border-b pb-1 mb-2 text-slate-800 flex items-center"><i class="fa-solid fa-temperature-three-quarters mr-1.5 text-orange-500"></i>Kondisi Lingkungan</h4>
@@ -390,14 +414,31 @@
                                     <div class="flex items-center space-x-2"><span class="w-20 text-gray-600 font-medium">Kelembaban:</span><input type="number" id="dlk-env-lembab" class="w-14 border p-0.5 rounded text-center font-bold bg-slate-50 text-xs" value="55"><span class="font-semibold text-slate-700">%</span></div>
                                 </div>
                             </div>
-                            <div class="text-[9px] text-slate-400 italic font-mono pt-1 border-t border-slate-100">* Diukur di unit ruangan rumah sakit.</div>
+                            <div class="text-[9px] text-slate-400 italic font-mono pt-1 border-t border-slate-100">* Diukur di unit ruangan.</div>
                         </div>
 
-                        <div class="border p-3 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px]">
-                            <div><label class="block font-bold text-slate-800 border-b pb-1 mb-1 no-print"><i class="fa-solid fa-camera text-indigo-600 mr-1"></i>Foto Alat</label><div class="no-print mb-1"><input type="file" id="dlk-input-foto" accept="image/*" capture="environment" onchange="previewFotoDipilih(this)" class="w-full border p-0.5 rounded bg-slate-50 text-[9px]"></div></div>
-                            <div class="flex-1 flex justify-center items-center overflow-hidden w-full relative bg-slate-50/50 rounded"><div id="box-preview-foto" class="w-full h-full flex items-center justify-center overflow-hidden font-mono text-gray-400 italic text-[9px]">[ Belum Ada Foto ]</div></div>
+                        <!-- Kotak 2: Foto Before (Dari Laporan User) -->
+                        <div class="border p-2 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px]">
+                            <div>
+                                <h4 class="font-bold border-b pb-1 mb-1 text-slate-800 flex items-center"><i class="fa-solid fa-image text-amber-600 mr-1"></i>Foto Before (User)</h4>
+                            </div>
+                            <div class="flex-1 flex justify-center items-center overflow-hidden w-full relative bg-slate-50 rounded">
+                                <div id="box-preview-foto-before" class="w-full h-full flex items-center justify-center overflow-hidden font-mono text-gray-400 italic text-[9px] text-center p-1">[ Belum Ada Laporan Foto ]</div>
+                            </div>
                         </div>
 
+                        <!-- Kotak 3: Foto After (Dari Teknisi) -->
+                        <div class="border p-2 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px]">
+                            <div>
+                                <h4 class="font-bold border-b pb-1 mb-1 text-slate-800 flex items-center"><i class="fa-solid fa-camera text-indigo-600 mr-1"></i>Foto After (Teknisi)</h4>
+                                <div class="no-print mb-0.5"><input type="file" id="dlk-input-foto" accept="image/*" capture="environment" onchange="previewFotoDipilih(this)" class="w-full border p-0.5 rounded bg-slate-50 text-[9px]"></div>
+                            </div>
+                            <div class="flex-1 flex justify-center items-center overflow-hidden w-full relative bg-slate-50 rounded">
+                                <div id="box-preview-foto" class="w-full h-full flex items-center justify-center overflow-hidden font-mono text-gray-400 italic text-[9px] text-center p-1">[ Ambil Foto Selesai ]</div>
+                            </div>
+                        </div>
+
+                        <!-- Kotak 4: Data Alat -->
                         <div class="border p-3 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px] overflow-y-auto">
                             <div>
                                 <h4 class="font-bold border-b pb-1 mb-1.5 text-slate-800 flex items-center"><i class="fa-solid fa-microscope mr-1.5 text-blue-600"></i>Data Alat</h4>
@@ -501,7 +542,14 @@
                     <form onsubmit="submitKalibrasi(event)" class="bg-slate-900 border border-white/10 w-full max-w-md rounded-2xl shadow-2xl text-slate-200">
                         <div class="p-4 font-bold bg-slate-950 border-b border-white/5 flex justify-between items-center text-sm text-slate-300"><span>Upload Sertifikat Kalibrasi Resmi</span><button type="button" onclick="toggleModal('modal-kalibrasi', false)" class="text-gray-400"><i class="fa-solid fa-xmark"></i></button></div>
                         <div class="p-5 space-y-3">
-                            <div><label class="block mb-1 font-bold text-cyan-400">Pilih Instrumen Medis Dari Database: *</label><select id="form-cal-alat" required class="w-full border border-white/10 p-2 rounded-xl bg-slate-950 text-white outline-none"></select></div>
+                            <div>
+                                <label class="block mb-1 font-bold text-cyan-400">Pilih Instrumen Medis Dari Database: *</label>
+                                <!-- Input Search Box untuk Modal Kalibrasi -->
+                                <div class="relative">
+                                    <input type="text" id="input-search-alat-kalibrasi" oninput="filterDropdownAlatSearch('kalibrasi')" placeholder="🔍 Ketik untuk cari alat..." class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none mb-1 text-xs font-semibold">
+                                    <select id="form-cal-alat" size="3" required class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none cursor-pointer"></select>
+                                </div>
+                            </div>
                             <div class="grid grid-cols-2 gap-2">
                                 <div><label class="block mb-1 font-bold text-slate-400">Tanggal Uji Ulang *</label><input type="date" id="form-cal-tgl" required class="w-full border border-white/10 p-2 rounded-xl bg-slate-950 text-white"></div>
                                 <div><label class="block mb-1 font-bold text-slate-400">Masa Berlaku *</label><input type="date" id="form-cal-exp" required class="w-full border border-white/10 p-2 rounded-xl bg-slate-950 text-white"></div>
@@ -570,10 +618,9 @@
         let userAksesMenuArray = ["dashboard", "master", "ticket", "riwayat"]; 
         
         let dataAlat = []; let dataKalibrasi = []; let dataPerbaikan = []; let dataPM = []; let dataInspeksi = []; let dataTiket = []; let dataUserSistem = []; let dataKeluhanLog = [];
-        let globalFilterStatus = "all"; let subTabDokumenAktif = "all"; let stringFotoBase64 = "-";
+        let globalFilterStatus = "all"; let subTabDokumenAktif = "all"; let stringFotoBase64 = "-"; let stringFotoBeforeBase64 = "-";
         let instanceChartKondisi = null; let instanceChartRuangan = null; let qrcodeInstance = null;
 
-        // Mengubah struktur data tersimpan agar mendukung objek detail dengan status Ceklis (Baik / Tidak / N/A)
         let terpakaiAlatKerja = []; 
         let terpakaiFisik = []; 
         let terpakaiFungsi = [];
@@ -872,7 +919,7 @@
 
         db.collection("dataAlat").onSnapshot((querySnapshot) => {
             dataAlat = []; querySnapshot.forEach((doc) => { dataAlat.push({ id: doc.id, ...doc.data() }); });
-            aktualisasikanDotKoneksiHijau(); evaluasiJatuhTempoKalibrasiMassal(); renderAll(); populasikanDropdownAlatDiTicketForm();
+            aktualisasikanDotKoneksiHijau(); evaluasiJatuhTempoKalibrasiMassal(); renderAll(); populasikanDropdownAlatDiTicketForm(); populasikanDropdownAlatDiLembarKerja();
         });
 
         db.collection("dataKalibrasi").onSnapshot((querySnapshot) => {
@@ -985,19 +1032,72 @@
             if(htmlWarning !== "") { warningList.innerHTML = htmlWarning; warningBox.classList.remove('hidden'); } else { warningBox.classList.add('hidden'); }
         }
 
-        function populasikanDropdownAlatDiTicketForm() {
+        // Fungsi Filter Search untuk Dropdown Alat (User Ticket, Worksheet, Kalibrasi)
+        function populasikanDropdownAlatDiTicketForm(keyword = "") {
             const selectEl = document.getElementById('ticket-form-alat'); if(!selectEl) return;
-            selectEl.innerHTML = `<option value="">-- PILIH ALAT MEDIS --</option>` + dataAlat.map(a => `<option value="${a.id}">${a.nama} [${a.edar || a.lokasi || 'Unit'}]</option>`).join('');
+            const kw = keyword.toLowerCase();
+            const filtered = dataAlat.filter(a => (a.nama + " " + (a.edar || a.lokasi || '')).toLowerCase().includes(kw));
+            selectEl.innerHTML = filtered.map(a => `<option value="${a.id}">${a.nama} [${a.edar || a.lokasi || 'Unit'}]</option>`).join('');
+        }
+
+        function populasikanDropdownAlatDiLembarKerja(keyword = "") {
+            const selectEl = document.getElementById('dlk-select-alat'); if(!selectEl) return;
+            const kw = keyword.toLowerCase();
+            const filtered = dataAlat.filter(a => (a.nama + " " + (a.edar || a.lokasi || '')).toLowerCase().includes(kw));
+            selectEl.innerHTML = filtered.map(a => `<option value="${a.id}">${a.nama} - [${a.edar || a.lokasi || 'Unit'}]</option>`).join('');
+        }
+
+        function populasikanDropdownAlatDiKalibrasi(keyword = "") {
+            const selectEl = document.getElementById('form-cal-alat'); if(!selectEl) return;
+            const kw = keyword.toLowerCase();
+            const filtered = dataAlat.filter(a => (a.nama + " " + (a.edar || a.lokasi || '')).toLowerCase().includes(kw));
+            selectEl.innerHTML = filtered.map(a => `<option value="${a.id}">${a.nama} - [${a.edar || a.lokasi || 'Unit'}]</option>`).join('');
+        }
+
+        function filterDropdownAlatSearch(targetType) {
+            if(targetType === 'ticket') {
+                populasikanDropdownAlatDiTicketForm(document.getElementById('input-search-alat-ticket').value);
+            } else if(targetType === 'worksheet') {
+                populasikanDropdownAlatDiLembarKerja(document.getElementById('input-search-alat-worksheet').value);
+            } else if(targetType === 'kalibrasi') {
+                populasikanDropdownAlatDiKalibrasi(document.getElementById('input-search-alat-kalibrasi').value);
+            }
+        }
+
+        function previewFotoTiketDipilih(input) {
+            const file = input.files[0];
+            if(file) {
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = function(e) {
+                    const img = new Image(); img.src = e.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                        let max_size = 500; let w = img.width; let h = img.height;
+                        if (w > h) { if (w > max_size) { h *= max_size / w; w = max_size; } } else { if (h > max_size) { w *= max_size / h; h = max_size; } }
+                        canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
+                        stringFotoBeforeBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                        const box = document.getElementById('ticket-preview-foto-box');
+                        box.classList.remove('hidden');
+                        box.innerHTML = `<img src="${stringFotoBeforeBase64}" class="w-full h-full object-cover">`;
+                    };
+                };
+            }
         }
 
         function kirimTiketKeluhanKerusakan(e) {
             e.preventDefault();
             const alatId = document.getElementById('ticket-form-alat').value;
             const keluhan = document.getElementById('ticket-form-keluhan').value;
-            if(!alatId) return alert("Pilih alat terlebih dahulu!");
+            if(!alatId) return alert("Pilih alat terlebih dahulu dari daftar!");
 
             const tglLaporStr = new Date().toISOString().substring(0, 10);
-            const payloadTicket = { alatId, keluhan, statusTiket: "Menunggu Tindakan", tglLapor: tglLaporStr };
+            const payloadTicket = { 
+                alatId, 
+                keluhan, 
+                fotoBefore: stringFotoBeforeBase64, 
+                statusTiket: "Menunggu Tindakan", 
+                tglLapor: tglLaporStr 
+            };
             
             db.collection("troubleTickets").add(payloadTicket).then(() => {
                 return db.collection("laporanKeluhanLog").add({
@@ -1006,6 +1106,7 @@
                     jenisKerja: "Laporan Kerusakan",
                     textTgl: tglLaporStr,
                     desc_kerja: "Keluhan: " + keluhan,
+                    fotoBefore: stringFotoBeforeBase64,
                     hasilTunggal: "Menunggu Penanganan",
                     teknisiTtd: "-"
                 });
@@ -1013,13 +1114,16 @@
                 return db.collection("dataAlat").doc(alatId).update({ status: "Dalam Perbaikan" });
             }).then(() => {
                 document.getElementById('ticket-form-keluhan').value = "";
-                alert("🎉 Tiket kerusakan berhasil dikirim dan tercatat dalam log!");
+                document.getElementById('ticket-form-foto').value = "";
+                document.getElementById('ticket-preview-foto-box').classList.add('hidden');
+                stringFotoBeforeBase64 = "-";
+                alert("🎉 Tiket kerusakan beserta foto kondisi awal berhasil dikirim!");
             });
         }
 
         function renderDaftarTiketMasuk() {
             const body = document.getElementById('table-ticket-body'); if(!body) return;
-            if(dataTiket.length === 0) { body.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">Tidak ada antrean laporan kerusakan aktif.</td></tr>`; return; }
+            if(dataTiket.length === 0) { body.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 italic">Tidak ada antrean laporan kerusakan aktif.</td></tr>`; return; }
             
             body.innerHTML = dataTiket.map(t => {
                 const alat = dataAlat.find(a => a.id == t.alatId) || { nama: "Alat Medis", edar: "Unit" };
@@ -1027,12 +1131,12 @@
 
                 if (t.statusTiket !== 'Selesai') {
                     if (currentActiveRole === 'Teknisi' || currentActiveRole === 'Admin') {
-                        let textTombolKerja = t.statusTiket === "Sedang Dikerjakan" ? '<i class="fa-solid fa-file-signature"></i> Buka Lembar Kerja' : '<i class="fa-solid fa-wrench"></i> Kerjakan';
+                        let textTombolKerja = t.statusTiket === "Sedang Dikerjakan" ? '<i class="fa-solid fa-file-signature"></i> Buka LK' : '<i class="fa-solid fa-wrench"></i> Kerjakan';
                         let warnaTombolKerja = t.statusTiket === "Sedang Dikerjakan" ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-amber-600 hover:bg-amber-700';
 
                         aksiAksi = `
                             <div class="inline-flex space-x-1">
-                                <button onclick="eksekusiTiketLangsungKerjakan('${t.id}','${t.alatId}')" class="${warnaTombolKerja} text-white font-bold px-2 py-1 rounded-lg text-[10px] transition">${textTombolKerja}</button>
+                                <button onclick="eksekusiTiketLangsungKerjakan('${t.id}','${t.alatId}', '${t.fotoBefore || '-'}')" class="${warnaTombolKerja} text-white font-bold px-2 py-1 rounded-lg text-[10px] transition">${textTombolKerja}</button>
                                 <button onclick="selesaikanTiketTroubleManual('${t.id}','${t.alatId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-check"></i> Selesai</button>
                             </div>
                         `;
@@ -1043,6 +1147,8 @@
                     aksiAksi = `<span class="text-emerald-500 font-bold text-[10px]">✅ Selesai Diperbaiki</span>`;
                 }
 
+                let fotoBeforeThm = (t.fotoBefore && t.fotoBefore !== '-') ? `<button onclick="lihatFileLangsung('${t.fotoBefore}','img','Foto Before')" class="bg-slate-800 text-amber-400 px-2 py-1 rounded text-[10px] border border-amber-500/20"><i class="fa-solid fa-image"></i> Lihat</button>` : `<span class="text-[10px] text-slate-500 italic">Tidak ada</span>`;
+
                 let kelasBadgeStatus = "bg-amber-500/10 text-amber-400 border border-amber-500/20";
                 if(t.statusTiket === "Selesai") kelasBadgeStatus = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
                 if(t.statusTiket === "Sedang Dikerjakan") kelasBadgeStatus = "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20";
@@ -1051,6 +1157,7 @@
                     <tr class="border-b border-white/5 bg-transparent hover:bg-white/[0.01]">
                         <td class="p-3"><b>${alat.nama}</b><br><span class="text-[10px] text-slate-500">${alat.edar || alat.lokasi || '-'}</span></td>
                         <td class="p-3 text-slate-400 font-mono">${t.keluhan}</td>
+                        <td class="p-3 text-center">${fotoBeforeThm}</td>
                         <td class="p-3 text-[11px] font-mono text-slate-500">${t.tglLapor || '-'}</td>
                         <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${kelasBadgeStatus}">${t.statusTiket}</span></td>
                         <td class="p-3 text-center">${aksiAksi}</td>
@@ -1059,11 +1166,21 @@
             }).join('');
         }
 
-        function eksekusiTiketLangsungKerjakan(tiketId, alatId) {
+        function eksekusiTiketLangsungKerjakan(tiketId, alatId, fotoBeforeVal) {
             bukaLembarKerjaBaruKosong();
             document.getElementById('dlk-select-alat').value = alatId;
             sinkronisasiDataAlatKeWorksheet(alatId);
             document.querySelectorAll('input[name="dlk-jenis"]').forEach(r => { if(r.value === "Corrective Maintenance") r.checked = true; });
+            
+            // Masukkan foto before ke workspace worksheet
+            stringFotoBeforeBase64 = fotoBeforeVal || "-";
+            const boxBefore = document.getElementById('box-preview-foto-before');
+            if(stringFotoBeforeBase64 !== '-') {
+                boxBefore.innerHTML = `<img src="${stringFotoBeforeBase64}" class="w-full h-full object-contain rounded">`;
+            } else {
+                boxBefore.innerHTML = `[ Tidak Ada Foto Before ]`;
+            }
+
             db.collection("troubleTickets").doc(tiketId).update({ statusTiket: "Sedang Dikerjakan" });
         }
 
@@ -1091,7 +1208,7 @@
         }
 
         function renderAll() {
-            updateStats(); populasikanDropdownAlatDiLembarKerja();
+            updateStats(); populasikanDropdownAlatDiTicketForm(); populasikanDropdownAlatDiLembarKerja(); populasikanDropdownAlatDiKalibrasi();
             const tbody = document.getElementById('table-alat-body'); if(!tbody) return;
             let filteredAlat = dataAlat; if(globalFilterStatus !== "all") filteredAlat = dataAlat.filter(a => a.status === globalFilterStatus);
             
@@ -1144,7 +1261,9 @@
                     desc_kerja: document.getElementById('dlk-txt-deskripsi-tunggal').value, jenisKerja: document.querySelector('input[name="dlk-jenis"]:checked').value,
                     hasilTunggal: document.querySelector('input[name="dlk-hasil-tunggal"]:checked').value, ttdTeknisi: document.getElementById('sig-teknisi').toDataURL(),
                     teknisiTtd: tekNama, saksiTtd: document.getElementById('dlk-select-nama-saksi').value,
-                    pjTtd: "Arrief Nurcahyo, S.Tr. Em.", fotoAlat: stringFotoBase64,
+                    pjTtd: "Arrief Nurcahyo, S.Tr. Em.", 
+                    fotoAlat: stringFotoBase64,          // Foto After oleh Teknisi
+                    fotoBefore: stringFotoBeforeBase64,  // Foto Before oleh User
                     paramAlatKerja: JSON.stringify(terpakaiAlatKerja), paramFisik: JSON.stringify(terpakaiFisik), paramFungsi: JSON.stringify(terpakaiFungsi),
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
@@ -1159,16 +1278,18 @@
                     return db.collection("dataAlat").doc(alatIdRaw).update({ status: newStatus });
                 }).then(() => {
                     document.getElementById('area-lembar-kerja-resmi').classList.add('hidden');
-                    alert(`🎉 Lembar Kerja Resmi #${currentNoLk} Berhasil Disimpan!`);
+                    alert(`🎉 Lembar Kerja Resmi #${currentNoLk} Berhasil Disimpan dengan Dwi-Foto (Before & After)!`);
                 });
             });
         }
 
         function bukaLembarKerjaBaruKosong() { 
-            stringFotoBase64 = "-"; terpakaiAlatKerja = []; terpakaiFisik = []; terpakaiFungsi = []; 
+            stringFotoBase64 = "-"; stringFotoBeforeBase64 = "-";
+            terpakaiAlatKerja = []; terpakaiFisik = []; terpakaiFungsi = []; 
             document.getElementById('dlk-tgl').value = new Date().toISOString().substring(0, 10); 
             document.getElementById('dlk-select-alat').value = ""; document.getElementById('dlk-txt-deskripsi-tunggal').value = ""; 
-            document.getElementById('box-preview-foto').innerHTML = `[ Belum Ada Foto ]`; 
+            document.getElementById('box-preview-foto').innerHTML = `[ Ambil Foto Selesai ]`; 
+            document.getElementById('box-preview-foto-before').innerHTML = `[ Tidak Ada Foto Before ]`;
             renderOpsiDropdownAwal(); aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi'); 
             populasikanDropdownNamaTandaTangan();
             
@@ -1201,7 +1322,22 @@
             } catch(e){ terpakaiFungsi = []; }
             
             aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi');
-            if(record.fotoAlat && record.fotoAlat !== '-') { document.getElementById('box-preview-foto').innerHTML = `<img src="${record.fotoAlat}" class="w-full h-full object-contain max-h-[140px] print:max-h-[130px] mx-auto rounded">`; }
+            
+            // Render Foto After (Teknisi)
+            if(record.fotoAlat && record.fotoAlat !== '-') { 
+                document.getElementById('box-preview-foto').innerHTML = `<img src="${record.fotoAlat}" class="w-full h-full object-contain rounded">`; 
+            } else {
+                document.getElementById('box-preview-foto').innerHTML = `[ Ambil Foto Selesai ]`;
+            }
+
+            // Render Foto Before (User)
+            stringFotoBeforeBase64 = record.fotoBefore || "-";
+            if(stringFotoBeforeBase64 !== '-') {
+                document.getElementById('box-preview-foto-before').innerHTML = `<img src="${stringFotoBeforeBase64}" class="w-full h-full object-contain rounded">`;
+            } else {
+                document.getElementById('box-preview-foto-before').innerHTML = `[ Tidak Ada Foto Before ]`;
+            }
+
             populasikanDropdownNamaTandaTangan();
             document.getElementById('dlk-select-nama-teknisi').value = record.teknisiTtd || "";
             document.getElementById('dlk-select-nama-saksi').value = record.saksiTtd || "";
@@ -1209,12 +1345,6 @@
             
             const areaLK = document.getElementById('area-lembar-kerja-resmi'); areaLK.classList.remove('hidden'); areaLK.scrollIntoView({ behavior: 'smooth' });
             setTimeout(initSignatures, 400);
-        }
-
-        function populasikanDropdownAlatDiLembarKerja() { 
-            const selectEl = document.getElementById('dlk-select-alat'); const calSelectEl = document.getElementById('form-cal-alat'); if(!selectEl) return;
-            let htmlOpts = `<option value="">-- PILIH ALAT MEDIS SESUAI DATABASE --</option>` + dataAlat.map(a => `<option value="${a.id}">${a.nama} - [${a.edar || a.lokasi || 'Unit'}]</option>`).join('');
-            selectEl.innerHTML = htmlOpts; if(calSelectEl) calSelectEl.innerHTML = htmlOpts; 
         }
 
         function renderOpsiDropdownAwal() { 
@@ -1375,7 +1505,7 @@
                         if (w > h) { if (w > max_size) { h *= max_size / w; w = max_size; } } else { if (h > max_size) { w *= max_size / h; h = max_size; } }
                         canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
                         stringFotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
-                        document.getElementById('box-preview-foto').innerHTML = `<img src="${stringFotoBase64}" class="w-full h-full object-contain max-h-[140px] print:max-h-[130px] mx-auto rounded">`;
+                        document.getElementById('box-preview-foto').innerHTML = `<img src="${stringFotoBase64}" class="w-full h-full object-contain rounded">`;
                     };
                 };
             }
