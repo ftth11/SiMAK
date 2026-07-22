@@ -249,8 +249,8 @@
                                     <label class="block mb-1 text-slate-400 font-bold">Pilih Alat Medis yang Bermasalah: *</label>
                                     <!-- Searchable Select Alat (Ticket) -->
                                     <div class="relative">
-                                        <input type="text" id="input-search-alat-ticket" oninput="handleSearchInputAlat('ticket', this.value)" placeholder="🔍 Ketik untuk cari alat..." class="w-full bg-slate-950 text-white border border-white/10 p-2.5 rounded-xl outline-none mb-1 text-xs font-semibold">
-                                        <select id="ticket-form-alat" size="4" onchange="pilihItemAlatDariDropdown('ticket', this)" class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none font-semibold cursor-pointer">
+                                        <input type="text" id="input-search-alat-ticket" onfocus="showDropdownAlat('ticket')" oninput="handleSearchInputAlat('ticket', this.value)" placeholder="🔍 Ketik untuk cari alat..." class="w-full bg-slate-950 text-white border border-white/10 p-2.5 rounded-xl outline-none mb-1 text-xs font-semibold">
+                                        <select id="ticket-form-alat" size="4" onchange="pilihItemAlatDariDropdown('ticket', this)" style="display: none;" class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none font-semibold cursor-pointer">
                                             <option value="">-- PILIH ALAT --</option>
                                         </select>
                                     </div>
@@ -398,8 +398,8 @@
                         <label class="block font-bold mb-1 text-blue-700">Pilih Nama Alat Medis Dari Database:</label>
                         <!-- Searchable Select Alat (Worksheet) -->
                         <div class="relative">
-                            <input type="text" id="input-search-alat-worksheet" oninput="handleSearchInputAlat('worksheet', this.value)" placeholder="🔍 Ketik untuk cari alat..." class="w-full border p-1 rounded bg-white text-xs outline-none mb-1 font-semibold">
-                            <select id="dlk-select-alat" size="3" onchange="pilihItemAlatDariDropdown('worksheet', this)" class="w-full border p-1 rounded bg-white font-bold outline-none focus:border-blue-600 shadow-sm cursor-pointer"></select>
+                            <input type="text" id="input-search-alat-worksheet" onfocus="showDropdownAlat('worksheet')" oninput="handleSearchInputAlat('worksheet', this.value)" placeholder="🔍 Ketik untuk cari alat..." class="w-full border p-1 rounded bg-white text-xs outline-none mb-1 font-semibold">
+                            <select id="dlk-select-alat" size="3" onchange="pilihItemAlatDariDropdown('worksheet', this)" style="display: none;" class="w-full border p-1 rounded bg-white font-bold outline-none focus:border-blue-600 shadow-sm cursor-pointer"></select>
                         </div>
                     </div>
 
@@ -544,8 +544,8 @@
                                 <label class="block mb-1 font-bold text-cyan-400">Pilih Instrumen Medis Dari Database: *</label>
                                 <!-- Searchable Select Alat (Kalibrasi) -->
                                 <div class="relative">
-                                    <input type="text" id="input-search-alat-kalibrasi" oninput="handleSearchInputAlat('kalibrasi', this.value)" placeholder="🔍 Ketik untuk cari alat..." class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none mb-1 text-xs font-semibold">
-                                    <select id="form-cal-alat" size="3" onchange="pilihItemAlatDariDropdown('kalibrasi', this)" required class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none cursor-pointer"></select>
+                                    <input type="text" id="input-search-alat-kalibrasi" onfocus="showDropdownAlat('kalibrasi')" oninput="handleSearchInputAlat('kalibrasi', this.value)" placeholder="🔍 Ketik untuk cari alat..." class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none mb-1 text-xs font-semibold">
+                                    <select id="form-cal-alat" size="3" onchange="pilihItemAlatDariDropdown('kalibrasi', this)" required style="display: none;" class="w-full bg-slate-950 text-white border border-white/10 p-2 rounded-xl outline-none cursor-pointer"></select>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
@@ -1030,7 +1030,17 @@
             if(htmlWarning !== "") { warningList.innerHTML = htmlWarning; warningBox.classList.remove('hidden'); } else { warningBox.classList.add('hidden'); }
         }
 
-        // Searchable Select Mekanisme: Sembunyikan dropdown setelah dipilih, tampilkan lagi jika search diubah
+        // FUNGSI UNTUK MENAMPILKAN DROPDOWN SAAT KOTAK PENCARIAN DIKLIK
+        function showDropdownAlat(targetType) {
+            if(targetType === 'ticket') {
+                document.getElementById('ticket-form-alat').style.display = "block";
+            } else if(targetType === 'worksheet') {
+                document.getElementById('dlk-select-alat').style.display = "block";
+            } else if(targetType === 'kalibrasi') {
+                document.getElementById('form-cal-alat').style.display = "block";
+            }
+        }
+
         function populasikanDropdownAlatDiTicketForm(keyword = "") {
             const selectEl = document.getElementById('ticket-form-alat'); if(!selectEl) return;
             const kw = keyword.toLowerCase();
@@ -1055,7 +1065,7 @@
         function handleSearchInputAlat(targetType, kw) {
             if(targetType === 'ticket') {
                 populasikanDropdownAlatDiTicketForm(kw);
-                document.getElementById('ticket-form-alat').style.display = kw.trim() === "" ? "block" : "block";
+                document.getElementById('ticket-form-alat').style.display = "block";
             } else if(targetType === 'worksheet') {
                 populasikanDropdownAlatDiLembarKerja(kw);
                 document.getElementById('dlk-select-alat').style.display = "block";
@@ -1133,6 +1143,7 @@
                 return db.collection("dataAlat").doc(alatId).update({ status: "Dalam Perbaikan" });
             }).then(() => {
                 document.getElementById('ticket-form-keluhan').value = "";
+                document.getElementById('input-search-alat-ticket').value = ""; // Bersihkan text pencarian
                 document.getElementById('ticket-form-foto').value = "";
                 document.getElementById('ticket-preview-foto-box').classList.add('hidden');
                 stringFotoBeforeBase64 = "-";
@@ -1282,7 +1293,6 @@
                         });
                     });
 
-                    // Bersihkan juga log keluhan mentah agar riwayat tidak menjadi double
                     db.collection("laporanKeluhanLog").where("alatId", "==", alatIdRaw).get().then((qLog) => {
                         qLog.forEach((docLog) => {
                             db.collection("laporanKeluhanLog").doc(docLog.id).delete();
@@ -1301,9 +1311,22 @@
             stringFotoBase64 = "-"; stringFotoBeforeBase64 = "-";
             terpakaiAlatKerja = []; terpakaiFisik = []; terpakaiFungsi = []; 
             document.getElementById('dlk-tgl').value = new Date().toISOString().substring(0, 10); 
-            document.getElementById('dlk-select-alat').value = ""; document.getElementById('dlk-txt-deskripsi-tunggal').value = ""; 
+            document.getElementById('dlk-select-alat').value = ""; 
+            
+            // Sembunyikan dropdown & text search saat buka baru
+            document.getElementById('dlk-select-alat').style.display = "none";
+            document.getElementById('input-search-alat-worksheet').value = "";
+
+            document.getElementById('dlk-txt-deskripsi-tunggal').value = ""; 
             document.getElementById('box-preview-foto').innerHTML = `[ Ambil Foto Selesai ]`; 
             document.getElementById('box-preview-foto-before').innerHTML = `[ Tidak Ada Foto Before ]`;
+            
+            // Reset Data Alat
+            document.getElementById('dlk-nama').value = ""; document.getElementById('dlk-merk').value = "";
+            document.getElementById('dlk-tipe').value = ""; document.getElementById('dlk-seri').value = "";
+            document.getElementById('dlk-lokasi').value = ""; document.getElementById('dlk-tglcal').value = "";
+            document.getElementById('dlk-nokal').value = "";
+
             renderOpsiDropdownAwal(); aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi'); 
             populasikanDropdownNamaTandaTangan();
             
@@ -1428,6 +1451,17 @@
                 let dMerk = a.kode || '-', dTipe = a.merk || '-', dSeri = a.tipe || '-', dLokasi = a.edar || '-';
                 if(a.lokasi !== 'Baik') { dMerk = a.merk; dTipe = a.tipe; dSeri = a.seri; dLokasi = a.lokasi; }
                 document.getElementById('dlk-nama').value = a.nama; document.getElementById('dlk-merk').value = dMerk; document.getElementById('dlk-tipe').value = dTipe; document.getElementById('dlk-seri').value = dSeri; document.getElementById('dlk-lokasi').value = dLokasi;
+                
+                const listCal = dataKalibrasi.filter(c => c.alatId === id);
+                if(listCal.length > 0) {
+                    listCal.sort((x, y) => String(y.exp).localeCompare(String(x.exp)));
+                    document.getElementById('dlk-tglcal').value = listCal[0].tgl || "";
+                    document.getElementById('dlk-nokal').value = listCal[0].exp || "";
+                } else {
+                    document.getElementById('dlk-tglcal').value = "";
+                    document.getElementById('dlk-nokal').value = "";
+                }
+
                 populasikanDropdownNamaTandaTangan();
                 if(document.getElementById('dlk-select-nama-teknisi').innerHTML.includes(currentUserNama)) {
                     document.getElementById('dlk-select-nama-teknisi').value = currentUserNama;
@@ -1447,7 +1481,6 @@
             const combinedLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi];
             combinedLk.forEach(lk => { const a = dataAlat.find(i => i.id == lk.alatId) || { nama: 'Alat Medis', tipe: '-' }; docs.push({ id: lk.id, namaAlat: a.nama, seri: a.tipe || lk.seri || '-', jenis: lk.jenisKerja, lkNo: lk.noLk, tgl: lk.textTgl || lk.tgl.substring(0,10), desc: `No LK: ${lk.noLk} | Teknisi: ${lk.teknisiTtd}`, file: lk.id, type: 'lk-print', hasil: lk.hasilTunggal, koleksiDb: 'lembarKerja' }); });
             
-            // Sembunyikan log keluhan mentah jika alat tersebut sudah memiliki Lembar Kerja (LK) tersimpan agar tidak double
             dataKeluhanLog.forEach(lg => {
                 const sudahAdaLk = combinedLk.some(lk => lk.alatId === lg.alatId);
                 if (!sudahAdaLk) {
@@ -1495,7 +1528,7 @@
         
         function pemicuEditAlatLangsung(id) { const a = dataAlat.find(i => i.id == id); if(!a) return; document.getElementById('form-alat-id').value = a.id; document.getElementById('form-alat-nama').value = a.nama || ''; document.getElementById('form-alat-merk').value = a.merk || ''; document.getElementById('form-alat-lokasi').value = a.lokasi === 'Baik' ? a.edar : a.lokasi; toggleModal('modal-alat', true); }
         function submitFormAlatMaster(e) { e.preventDefault(); const id = document.getElementById('form-alat-id').value; const payload = { nama: document.getElementById('form-alat-nama').value, merk: document.getElementById('form-alat-merk').value, tipe: '', seri: '', edar: document.getElementById('form-alat-lokasi').value, lokasi: 'Baik' }; if(id) { db.collection("dataAlat").doc(id).update(payload).then(() => { toggleModal('modal-alat', false); alert("Aset Diperbarui!"); }); } else { payload.status = 'Siap Digunakan'; db.collection("dataAlat").add(payload).then(() => { toggleModal('modal-alat', false); alert("Aset Didaftarkan!"); }); } }
-        function submitKalibrasi(e) { e.preventDefault(); const aId = document.getElementById('form-cal-alat').value; const hasil = document.getElementById('form-cal-hasil').value; let reader = new FileReader(); reader.readAsDataURL(document.getElementById('form-cal-pdf-file').files[0]); reader.onload = function() { const payload = { alatId: aId, tgl: document.getElementById('form-cal-tgl').value, exp: document.getElementById('form-cal-exp').value, vendor: document.getElementById('form-cal-vendor').value, certPdf: reader.result, hasil: hasil }; db.collection("dataKalibrasi").add(payload).then(() => { toggleModal('modal-kalibrasi', false); alert("Sertifikat Kalibrasi Diunggah!"); }); } }
+        function submitKalibrasi(e) { e.preventDefault(); const aId = document.getElementById('form-cal-alat').value; const hasil = document.getElementById('form-cal-hasil').value; let reader = new FileReader(); reader.readAsDataURL(document.getElementById('form-cal-pdf-file').files[0]); reader.onload = function() { const payload = { alatId: aId, tgl: document.getElementById('form-cal-tgl').value, exp: document.getElementById('form-cal-exp').value, vendor: document.getElementById('form-cal-vendor').value, certPdf: reader.result, hasil: hasil }; db.collection("dataKalibrasi").add(payload).then(() => { toggleModal('modal-kalibrasi', false); document.getElementById('input-search-alat-kalibrasi').value = ""; document.getElementById('form-cal-alat').style.display = "none"; alert("Sertifikat Kalibrasi Diunggah!"); }); } }
         function gantiSubTabDokumen(t) { subTabDokumenAktif = t; document.getElementById('doc-tab-all').className = "px-4 py-2 rounded-lg flex-1 text-center transition " + (t==='all'?'bg-blue-600 text-white':''); document.getElementById('doc-tab-kalibrasi').className = "px-4 py-2 rounded-lg flex-1 text-center transition " + (t==='kalibrasi'?'bg-blue-600 text-white':''); document.getElementById('doc-tab-mandiri').className = "px-4 py-2 rounded-lg flex-1 text-center transition " + (t==='mandiri'?'bg-blue-600 text-white':''); renderTabelPusatDokumen(); }
         
         function toggleModal(id, s) { document.getElementById(id).classList.toggle('hidden', !s); }
