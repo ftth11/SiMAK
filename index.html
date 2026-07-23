@@ -1190,7 +1190,7 @@
                             </div>
                         `;
                     } else if (currentActiveRole === 'User') {
-                        // USER HANYA MELIHAT STATUS PROSES, BISA BATALKAN LAPORAN, TANPA TOMBOL SELESAI MANUAL
+                        // KHUSUS USER: Tombol Selesai mutlak disembunyikan, hanya ada tombol Batal/Hapus laporan
                         aksiAksi = `
                             <div class="inline-flex space-x-1">
                                 <button onclick="hapusTiketUser('${t.id}', '${t.alatId}')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition" title="Batalkan / Hapus Laporan"><i class="fa-solid fa-trash"></i> Batal</button>
@@ -1200,11 +1200,12 @@
                         aksiAksi = `<span class="text-slate-500 italic text-[10px]">Menunggu Teknisi</span>`;
                     }
                 } else {
-                    // KETIKA SUDAH SELESAI, USER BISA MELIHAT LEMBAR KERJA (LK) (READ-ONLY)
+                    // KETIKA TIKET SUDAH SELESAI
                     let matchingLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi].find(lk => lk.alatId === t.alatId);
-                    let tombolBukaLkUser = matchingLk ? `<button onclick="bukaLembarKerjaDinamisDariLog('${matchingLk.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-file-lines mr-1"></i> Buka LK</button>` : `<span class="text-[10px] text-slate-500 italic">Arsip Selesai</span>`;
+                    let tombolBukaLkUser = matchingLk ? `<button onclick="bukaLembarKerjaDinamisDariLog('${matchingLk.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-file-lines mr-1"></i> Buka LK (Read-Only)</button>` : `<span class="text-[10px] text-slate-500 italic">Arsip Selesai</span>`;
 
                     if (currentActiveRole === 'User') {
+                        // USER HANYA BISA MEMBUKA LEMBAR KERJA (READ-ONLY), TANPA ADA TOMBOL SELESAI
                         aksiAksi = `<div class="inline-flex space-x-1">${tombolBukaLkUser}</div>`;
                     } else {
                         aksiAksi = `<div class="inline-flex space-x-1"><span class="text-emerald-500 font-bold text-[10px] mr-1">✅ Selesai</span>${tombolBukaLkUser}</div>`;
@@ -1229,7 +1230,6 @@
                 `;
             }).join('');
         }
-
         function hapusTiketUser(tiketId, alatId) {
             if(confirm("Batalkan atau hapus laporan kerusakan ini? Status alat akan dikembalikan menjadi Siap Pakai.")) {
                 db.collection("troubleTickets").doc(tiketId).delete().then(() => {
