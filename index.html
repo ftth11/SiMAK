@@ -365,159 +365,162 @@
                     </div>
                 </div>
 
-                <!-- AREA WORKSPACE PEMELIHARAAN -->
-                <div id="area-lembar-kerja-resmi" class="hidden bg-white p-6 print:p-2 rounded-2xl shadow-2xl border max-w-5xl mx-auto text-slate-900 space-y-4 print:space-y-2 relative">
-                    <button onclick="window.print()" type="button" class="no-print absolute top-4 right-4 bg-blue-600 text-white px-3 py-1.5 rounded font-bold text-xs shadow hover:bg-blue-700 flex items-center space-x-1"><i class="fa-solid fa-print"></i> <span>Cetak Dokumen Resmi</span></button>
+                <!-- AREA WORKSPACE PEMELIHARAAN (DIUBAH MENJADI MODAL POP-UP TERPISAH) -->
+                <div id="area-lembar-kerja-resmi" class="fixed inset-0 bg-slate-950/80 z-[9999] flex items-center justify-center p-4 hidden no-print backdrop-blur-md overflow-y-auto">
+                    <div class="bg-white p-6 print:p-2 rounded-2xl shadow-2xl border max-w-5xl w-full mx-auto text-slate-900 space-y-4 print:space-y-2 relative max-h-[90vh] overflow-y-auto my-auto">
+                        <button onclick="document.getElementById('area-lembar-kerja-resmi').classList.add('hidden')" type="button" class="absolute top-4 right-16 bg-gray-500 text-white px-3 py-1.5 rounded font-bold text-xs shadow hover:bg-gray-600 flex items-center space-x-1"><i class="fa-solid fa-xmark"></i> <span>Tutup</span></button>
+                        <button onclick="window.print()" type="button" class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1.5 rounded font-bold text-xs shadow hover:bg-blue-700 flex items-center space-x-1"><i class="fa-solid fa-print"></i> <span>Cetak Dokumen</span></button>
 
-                    <div class="flex items-center justify-center space-x-5 border-b-2 border-black pb-3 text-black w-full">
-                        <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center shadow-sm">
-                            <img src="logo.png" onerror="this.style.display='none'; document.getElementById('fallback-icon-kop').classList.remove('hidden')" class="w-full h-full object-contain" alt="Logo">
-                            <i id="fallback-icon-kop" class="fa-solid fa-heart-pulse text-5xl text-blue-600 hidden"></i>
-                        </div>
-                        <div class="text-center md:text-left flex-1 max-w-2xl">
-                            <h1 class="text-xs md:text-sm font-bold uppercase tracking-wide text-gray-800">Pemerintah Kota Bekasi • Dinas Kesehatan</h1>
-                            <h2 class="text-lg md:text-2xl font-black uppercase tracking-wider leading-tight text-black">UPTD Rumah Sakit Umum Daerah Pondokgede</h2>
-                            <p class="text-[10px] md:text-xs text-gray-600 font-mono mt-0.5">Jl. Raya Jatiwaringin No.1, Kel. Jatiwaringin, Kec. Pondok Gede, Kota Bekasi</p>
-                        </div>
-                    </div>
-
-                    <div class="text-center space-y-0.5">
-                        <h3 class="text-sm font-bold underline uppercase tracking-wide">LEMBAR KERJA PEMELIHARAAN ALAT KESEHATAN</h3>
-                        <div class="flex justify-center space-x-4 text-[10px] font-mono">
-                            <p>No Lembar Kerja: <input type="text" id="dlk-no" class="border-b font-bold outline-none text-blue-600 w-52 bg-slate-50 text-center" readonly placeholder="Otomatis Setelah Save..."></p>
-                            <p>Waktu Pengerjaan: <input type="datetime-local" id="dlk-tgl" class="border-b outline-none font-bold"> </p>
-                        </div>
-                    </div>
-
-                    <input type="hidden" id="dlk-firebase-id" value="">
-                    <input type="hidden" id="dlk-selected-alat-id" value="">
-
-                    <div class="flex justify-center space-x-12 text-[10px] font-bold border-y py-1 bg-slate-50">
-                        <label class="flex items-center space-x-1.5 cursor-pointer"><input type="radio" name="dlk-jenis" value="Inspection" checked> <span>Inspection</span></label>
-                        <label class="flex items-center space-x-1.5 cursor-pointer"><input type="radio" name="dlk-jenis" value="Preventive Maintenance"> <span>Preventive PM</span></label>
-                        <label class="flex items-center space-x-1.5 cursor-pointer"><input type="radio" name="dlk-jenis" value="Corrective Maintenance"> <span>Corrective CM</span></label>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
-                        <!-- Kotak 1: Kondisi Lingkungan -->
-                        <div class="border p-3 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px]">
-                            <div>
-                                <h4 class="font-bold border-b pb-1 mb-2 text-slate-800 flex items-center"><i class="fa-solid fa-temperature-three-quarters mr-1.5 text-orange-500"></i>Kondisi Lingkungan</h4>
-                                <div class="space-y-2 pt-1">
-                                    <div class="flex items-center space-x-2"><span class="w-20 text-gray-600 font-medium">Suhu Ruangan:</span><input type="number" id="dlk-env-suhu" class="w-14 border p-0.5 rounded text-center font-bold bg-slate-50 text-xs" value="23"><span class="font-semibold text-slate-700">°C</span></div>
-                                    <div class="flex items-center space-x-2"><span class="w-20 text-gray-600 font-medium">Kelembaban:</span><input type="number" id="dlk-env-lembab" class="w-14 border p-0.5 rounded text-center font-bold bg-slate-50 text-xs" value="55"><span class="font-semibold text-slate-700">%</span></div>
-                                </div>
+                        <div class="flex items-center justify-center space-x-5 border-b-2 border-black pb-3 text-black w-full pt-6">
+                            <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center shadow-sm">
+                                <img src="logo.png" onerror="this.style.display='none'; document.getElementById('fallback-icon-kop').classList.remove('hidden')" class="w-full h-full object-contain" alt="Logo">
+                                <i id="fallback-icon-kop" class="fa-solid fa-heart-pulse text-5xl text-blue-600 hidden"></i>
                             </div>
-                            <div class="text-[9px] text-slate-400 italic font-mono pt-1 border-t border-slate-100">* Diukur di unit ruangan.</div>
-                        </div>
-
-                        <!-- Kotak 2: Foto Before (Dari Laporan User) -->
-                        <div class="border p-2 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px]">
-                            <div>
-                                <h4 class="font-bold border-b pb-1 mb-1 text-slate-800 flex items-center"><i class="fa-solid fa-image text-amber-600 mr-1"></i>Foto Before (User)</h4>
-                            </div>
-                            <div class="flex-1 flex justify-center items-center overflow-hidden w-full relative bg-slate-50 rounded">
-                                <div id="box-preview-foto-before" class="w-full h-full flex items-center justify-center overflow-hidden font-mono text-gray-400 italic text-[9px] text-center p-1">[ Belum Ada Laporan Foto ]</div>
+                            <div class="text-center md:text-left flex-1 max-w-2xl">
+                                <h1 class="text-xs md:text-sm font-bold uppercase tracking-wide text-gray-800">Pemerintah Kota Bekasi • Dinas Kesehatan</h1>
+                                <h2 class="text-lg md:text-2xl font-black uppercase tracking-wider leading-tight text-black">UPTD Rumah Sakit Umum Daerah Pondokgede</h2>
+                                <p class="text-[10px] md:text-xs text-gray-600 font-mono mt-0.5">Jl. Raya Jatiwaringin No.1, Kel. Jatiwaringin, Kec. Pondok Gede, Kota Bekasi</p>
                             </div>
                         </div>
 
-                        <!-- Kotak 3: Data Alat (Otomatis Terisi dari Laporan) -->
-                        <div class="border p-3 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px] overflow-y-auto">
-                            <div>
-                                <h4 class="font-bold border-b pb-1 mb-1.5 text-slate-800 flex items-center"><i class="fa-solid fa-microscope mr-1.5 text-blue-600"></i>Data Alat</h4>
-                                <div class="space-y-1">
-                                    <div class="flex"><span class="w-16 text-gray-500 font-medium text-[10px]">Nama Alat:</span><input type="text" id="dlk-nama" class="flex-1 border-b p-0.5 bg-transparent font-bold text-gray-900" readonly></div>
-                                    <div class="flex space-x-2">
-                                        <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium text-[10px]">Merk:</span><input type="text" id="dlk-merk" class="w-full border-b p-0.5 bg-transparent text-gray-800" readonly></div>
-                                        <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium text-[10px]">Tipe:</span><input type="text" id="dlk-tipe" class="w-full border-b p-0.5 bg-transparent text-gray-800" readonly></div>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium text-[10px]">S/N:</span><input type="text" id="dlk-seri" class="w-full border-b p-0.5 bg-transparent font-mono font-bold text-gray-800" readonly></div>
-                                        <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium text-[10px]">Ruang:</span><input type="text" id="dlk-lokasi" class="w-full border-b p-0.5 bg-transparent text-gray-800" readonly></div>
-                                    </div>
-                                    <div class="flex space-x-2 pt-0.5">
-                                        <div class="flex flex-1 flex-col"><span class="text-blue-700 font-bold text-[9px]">Tgl Kalibrasi:</span><input type="date" id="dlk-tglcal" onchange="hitungOtomatisMasaBerlakuSatuTahun(this.value)" class="w-full border-b p-0 bg-transparent font-bold outline-none text-[10px]"></div>
-                                        <div class="flex flex-1 flex-col"><span class="text-blue-700 font-bold text-[9px]">Tgl Berakhir:</span><input type="date" id="dlk-nokal" class="w-full border-b p-0 bg-transparent font-bold outline-none text-[10px] text-gray-600" readonly placeholder="Otomatis 1 Thn"></div>
+                        <div class="text-center space-y-0.5">
+                            <h3 class="text-sm font-bold underline uppercase tracking-wide">LEMBAR KERJA PEMELIHARAAN ALAT KESEHATAN</h3>
+                            <div class="flex justify-center space-x-4 text-[10px] font-mono">
+                                <p>No Lembar Kerja: <input type="text" id="dlk-no" class="border-b font-bold outline-none text-blue-600 w-52 bg-slate-50 text-center" readonly placeholder="Otomatis Setelah Save..."></p>
+                                <p>Waktu Pengerjaan: <input type="datetime-local" id="dlk-tgl" class="border-b outline-none font-bold"> </p>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="dlk-firebase-id" value="">
+                        <input type="hidden" id="dlk-selected-alat-id" value="">
+
+                        <div class="flex justify-center space-x-12 text-[10px] font-bold border-y py-1 bg-slate-50">
+                            <label class="flex items-center space-x-1.5 cursor-pointer"><input type="radio" name="dlk-jenis" value="Inspection" checked> <span>Inspection</span></label>
+                            <label class="flex items-center space-x-1.5 cursor-pointer"><input type="radio" name="dlk-jenis" value="Preventive Maintenance"> <span>Preventive PM</span></label>
+                            <label class="flex items-center space-x-1.5 cursor-pointer"><input type="radio" name="dlk-jenis" value="Corrective Maintenance"> <span>Corrective CM</span></label>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
+                            <!-- Kotak 1: Kondisi Lingkungan -->
+                            <div class="border p-3 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px]">
+                                <div>
+                                    <h4 class="font-bold border-b pb-1 mb-2 text-slate-800 flex items-center"><i class="fa-solid fa-temperature-three-quarters mr-1.5 text-orange-500"></i>Kondisi Lingkungan</h4>
+                                    <div class="space-y-2 pt-1">
+                                        <div class="flex items-center space-x-2"><span class="w-20 text-gray-600 font-medium">Suhu Ruangan:</span><input type="number" id="dlk-env-suhu" class="w-14 border p-0.5 rounded text-center font-bold bg-slate-50 text-xs" value="23"><span class="font-semibold text-slate-700">°C</span></div>
+                                        <div class="flex items-center space-x-2"><span class="w-20 text-gray-600 font-medium">Kelembaban:</span><input type="number" id="dlk-env-lembab" class="w-14 border p-0.5 rounded text-center font-bold bg-slate-50 text-xs" value="55"><span class="font-semibold text-slate-700">%</span></div>
                                     </div>
                                 </div>
+                                <div class="text-[9px] text-slate-400 italic font-mono pt-1 border-t border-slate-100">* Diukur di unit ruangan.</div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
-                        <div class="border p-2 rounded-lg bg-white shadow-sm space-y-2">
-                            <div><h4 class="font-bold border-b pb-0.5 text-slate-800 mb-1">Alat Kerja Digunakan</h4><div class="no-print mb-1"><select id="drop-alatkerja" onchange="tambahPoinAkumulatif('alatkerja')" class="w-full border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select></div></div>
-                            <div id="box-list-alatkerja" class="space-y-1 max-h-32 overflow-y-auto"></div>
-                        </div>
-                        <div class="border p-2 rounded-lg bg-white shadow-sm space-y-2">
-                            <div><h4 class="font-bold border-b pb-0.5 text-slate-800 mb-1">Pemeriksaan Fisik</h4><div class="no-print mb-1"><select id="drop-fisik" onchange="tambahPoinAkumulatif('fisik')" class="w-full border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select></div></div>
-                            <div id="box-list-fisik" class="space-y-1 max-h-32 overflow-y-auto"></div>
-                        </div>
-                        <div class="border p-2 rounded-lg bg-white shadow-sm space-y-2">
-                            <div><h4 class="font-bold border-b pb-0.5 text-slate-800 mb-1">Pemeriksaan Fungsi</h4><div class="no-print mb-1"><select id="drop-fungsi" onchange="tambahPoinAkumulatif('fungsi')" class="w-full border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select></div></div>
-                            <div id="box-list-fungsi" class="space-y-1 max-h-32 overflow-y-auto"></div>
-                        </div>
-                    </div>
-
-                    <!-- KOTAK FOTO AFTER & URAIAN PEKERJAAN SEJAJAR DALAM 1 BARIS -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
-                        <!-- Foto After (Teknisi) dengan Fitur Retake / Foto Ulang -->
-                        <div class="border p-2 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[155px] print:h-[135px]">
-                            <div>
-                                <h4 class="font-bold border-b pb-1 mb-1 text-slate-800 flex items-center justify-between">
-                                    <span class="flex items-center"><i class="fa-solid fa-camera text-indigo-600 mr-1"></i>Foto After</span>
-                                    <button type="button" onclick="resetFotoAfter()" class="no-print text-[9px] text-rose-500 hover:underline font-bold" id="btn-retake-after" style="display:none;">Foto Ulang</button>
-                                </h4>
-                                <div class="no-print mb-0.5" id="dlk-input-foto-container">
-                                    <input type="file" id="dlk-input-foto" accept="image/*" capture="environment" onchange="previewFotoDipilih(this)" class="w-full border p-0.5 rounded bg-slate-50 text-[9px]">
+                            <!-- Kotak 2: Foto Before (Dari Laporan User) -->
+                            <div class="border p-2 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px]">
+                                <div>
+                                    <h4 class="font-bold border-b pb-1 mb-1 text-slate-800 flex items-center"><i class="fa-solid fa-image text-amber-600 mr-1"></i>Foto Before (User)</h4>
+                                </div>
+                                <div class="flex-1 flex justify-center items-center overflow-hidden w-full relative bg-slate-50 rounded">
+                                    <div id="box-preview-foto-before" class="w-full h-full flex items-center justify-center overflow-hidden font-mono text-gray-400 italic text-[9px] text-center p-1">[ Belum Ada Laporan Foto ]</div>
                                 </div>
                             </div>
-                            <div class="flex-1 flex justify-center items-center overflow-hidden w-full relative bg-slate-50 rounded">
-                                <div id="box-preview-foto" class="w-full h-full flex items-center justify-center overflow-hidden font-mono text-gray-400 italic text-[9px] text-center p-1">[ Ambil Foto Selesai ]</div>
+
+                            <!-- Kotak 3: Data Alat (Otomatis Terisi dari Laporan) -->
+                            <div class="border p-3 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[165px] overflow-y-auto">
+                                <div>
+                                    <h4 class="font-bold border-b pb-1 mb-1.5 text-slate-800 flex items-center"><i class="fa-solid fa-microscope mr-1.5 text-blue-600"></i>Data Alat</h4>
+                                    <div class="space-y-1">
+                                        <div class="flex"><span class="w-16 text-gray-500 font-medium text-[10px]">Nama Alat:</span><input type="text" id="dlk-nama" class="flex-1 border-b p-0.5 bg-transparent font-bold text-gray-900" readonly></div>
+                                        <div class="flex space-x-2">
+                                            <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium text-[10px]">Merk:</span><input type="text" id="dlk-merk" class="w-full border-b p-0.5 bg-transparent text-gray-800" readonly></div>
+                                            <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium text-[10px]">Tipe:</span><input type="text" id="dlk-tipe" class="w-full border-b p-0.5 bg-transparent text-gray-800" readonly></div>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium text-[10px]">S/N:</span><input type="text" id="dlk-seri" class="w-full border-b p-0.5 bg-transparent font-mono font-bold text-gray-800" readonly></div>
+                                            <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium text-[10px]">Ruang:</span><input type="text" id="dlk-lokasi" class="w-full border-b p-0.5 bg-transparent text-gray-800" readonly></div>
+                                        </div>
+                                        <div class="flex space-x-2 pt-0.5">
+                                            <div class="flex flex-1 flex-col"><span class="text-blue-700 font-bold text-[9px]">Tgl Kalibrasi:</span><input type="date" id="dlk-tglcal" onchange="hitungOtomatisMasaBerlakuSatuTahun(this.value)" class="w-full border-b p-0 bg-transparent font-bold outline-none text-[10px]"></div>
+                                            <div class="flex flex-1 flex-col"><span class="text-blue-700 font-bold text-[9px]">Tgl Berakhir:</span><input type="date" id="dlk-nokal" class="w-full border-b p-0 bg-transparent font-bold outline-none text-[10px] text-gray-600" readonly placeholder="Otomatis 1 Thn"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Uraian Detail Pekerjaan -->
-                        <div class="border p-3 print:p-2 rounded-lg text-[11px] space-y-1 bg-white md:col-span-2 print:col-span-2 flex flex-col justify-between h-[155px] print:h-[135px]">
-                            <h4 class="font-bold border-b pb-0.5 text-slate-800"><i class="fa-solid fa-paste mr-1.5 text-blue-600"></i>2. Uraian Detail Pekerjaan</h4>
-                            <textarea id="dlk-txt-deskripsi-tunggal" rows="4" class="w-full flex-1 border p-2 rounded-lg outline-none font-medium bg-slate-50 focus:bg-white resize-none text-[11px]" placeholder="Tuliskan catatan pemeliharaan teknis di sini..."></textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
+                            <div class="border p-2 rounded-lg bg-white shadow-sm space-y-2">
+                                <div><h4 class="font-bold border-b pb-0.5 text-slate-800 mb-1">Alat Kerja Digunakan</h4><div id="container-drop-alatkerja" class="no-print mb-1"><select id="drop-alatkerja" onchange="tambahPoinAkumulatif('alatkerja')" class="w-full border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select></div></div>
+                                <div id="box-list-alatkerja" class="space-y-1 max-h-32 overflow-y-auto"></div>
+                            </div>
+                            <div class="border p-2 rounded-lg bg-white shadow-sm space-y-2">
+                                <div><h4 class="font-bold border-b pb-0.5 text-slate-800 mb-1">Pemeriksaan Fisik</h4><div id="container-drop-fisik" class="no-print mb-1"><select id="drop-fisik" onchange="tambahPoinAkumulatif('fisik')" class="w-full border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select></div></div>
+                                <div id="box-list-fisik" class="space-y-1 max-h-32 overflow-y-auto"></div>
+                            </div>
+                            <div class="border p-2 rounded-lg bg-white shadow-sm space-y-2">
+                                <div><h4 class="font-bold border-b pb-0.5 text-slate-800 mb-1">Pemeriksaan Fungsi</h4><div id="container-drop-fungsi" class="no-print mb-1"><select id="drop-fungsi" onchange="tambahPoinAkumulatif('fungsi')" class="w-full border p-0.5 bg-white rounded outline-none text-[10px] font-semibold text-slate-700"></select></div></div>
+                                <div id="box-list-fungsi" class="space-y-1 max-h-32 overflow-y-auto"></div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="border p-2.5 print:p-1.5 rounded-lg text-[11px] bg-slate-50 shadow-sm">
-                        <span class="font-bold block mb-1 text-slate-800"><i class="fa-solid fa-square-poll-vertical mr-1.5 text-indigo-600"></i>3. Hasil Pemeriksaan Akhir:</span>
-                        <div class="flex flex-wrap gap-4 pt-0.5 font-bold">
-                            <label class="flex items-center space-x-1.5 cursor-pointer text-green-700"><input type="radio" name="dlk-hasil-tunggal" value="Alat Berfungsi Dengan Baik" checked> <span>Berfungsi Baik</span></label>
-                            <label class="flex items-center space-x-1.5 cursor-pointer text-amber-700"><input type="radio" name="dlk-hasil-tunggal" value="Alat Berfungsi Dengan Catatan"> <span>Berfungsi dengan Catatan</span></label>
-                            <label class="flex items-center space-x-1.5 cursor-pointer text-red-700"><input type="radio" name="dlk-hasil-tunggal" value="Alat Rusak Perlu Perbaikan"> <span>Perlu Perbaikan (Rusak)</span></label>
-                        </div>
-                    </div>
+                        <!-- KOTAK FOTO AFTER & URAIAN PEKERJAAN SEJAJAR DALAM 1 BARIS -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-3 print:gap-2 text-[11px]">
+                            <!-- Foto After (Teknisi) dengan Fitur Retake / Foto Ulang -->
+                            <div class="border p-2 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[155px] print:h-[135px]">
+                                <div>
+                                    <h4 class="font-bold border-b pb-1 mb-1 text-slate-800 flex items-center justify-between">
+                                        <span class="flex items-center"><i class="fa-solid fa-camera text-indigo-600 mr-1"></i>Foto After</span>
+                                        <button type="button" onclick="resetFotoAfter()" class="no-print text-[9px] text-rose-500 hover:underline font-bold" id="btn-retake-after" style="display:none;">Foto Ulang</button>
+                                    </h4>
+                                    <div class="no-print mb-0.5" id="dlk-input-foto-container">
+                                        <input type="file" id="dlk-input-foto" accept="image/*" capture="environment" onchange="previewFotoDipilih(this)" class="w-full border p-0.5 rounded bg-slate-50 text-[9px]">
+                                    </div>
+                                </div>
+                                <div class="flex-1 flex justify-center items-center overflow-hidden w-full relative bg-slate-50 rounded">
+                                    <div id="box-preview-foto" class="w-full h-full flex items-center justify-center overflow-hidden font-mono text-gray-400 italic text-[9px] text-center p-1">[ Ambil Foto Selesai ]</div>
+                                </div>
+                            </div>
 
-                    <!-- TANDA TANGAN DIGITAL -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-4 print:gap-2 pt-2 text-[11px] items-end">
-                        <div class="text-center space-y-1">
-                            <p class="font-semibold text-gray-500">Teknisi Pelaksana</p>
-                            <div class="border border-dashed border-slate-300 rounded bg-slate-50 h-24 print:h-20 relative overflow-hidden"><canvas id="sig-teknisi" class="w-full h-full absolute inset-0 z-10"></canvas></div>
-                            <button type="button" onclick="clearCanvasSignature('sig-teknisi')" class="no-print text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-300">Hapus</button>
-                            <div class="pt-0.5"><select id="dlk-select-nama-teknisi" class="w-full text-center border-b p-0.5 font-bold text-gray-800 bg-transparent outline-none"></select></div>
+                            <!-- Uraian Detail Pekerjaan -->
+                            <div class="border p-3 print:p-2 rounded-lg text-[11px] space-y-1 bg-white md:col-span-2 print:col-span-2 flex flex-col justify-between h-[155px] print:h-[135px]">
+                                <h4 class="font-bold border-b pb-0.5 text-slate-800"><i class="fa-solid fa-paste mr-1.5 text-blue-600"></i>2. Uraian Detail Pekerjaan</h4>
+                                <textarea id="dlk-txt-deskripsi-tunggal" rows="4" class="w-full flex-1 border p-2 rounded-lg outline-none font-medium bg-slate-50 focus:bg-white resize-none text-[11px]" placeholder="Tuliskan catatan pemeliharaan teknis di sini..."></textarea>
+                            </div>
                         </div>
-                        <div class="text-center space-y-1">
-                            <p class="font-semibold text-gray-500">User Ruangan</p>
-                            <div class="border border-dashed border-slate-300 rounded bg-slate-50 h-24 print:h-20 relative overflow-hidden"><canvas id="sig-user" class="w-full h-full absolute inset-0 z-10"></canvas></div>
-                            <button type="button" onclick="clearCanvasSignature('sig-user')" class="no-print text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-300">Hapus</button>
-                            <div class="pt-0.5"><select id="dlk-select-nama-saksi" class="w-full text-center border-b p-0.5 font-bold text-gray-800 bg-transparent outline-none"></select></div>
-                        </div>
-                        <div class="text-center space-y-1">
-                            <p class="font-semibold text-gray-500">PJ IPSRS Alkes</p>
-                            <div class="border border-dashed border-slate-300 rounded bg-slate-50 h-24 print:h-20 relative overflow-hidden"><canvas id="sig-pj" class="w-full h-full absolute inset-0 z-10"></canvas></div>
-                            <button type="button" onclick="clearCanvasSignature('sig-pj')" class="no-print text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-300">Hapus</button>
-                            <div class="pt-1 font-bold text-gray-800 border-b pb-0.5">Arrief Nurcahyo, S.Tr. Em.</div>
-                        </div>
-                    </div>
 
-                    <div class="no-print border-t pt-3 flex justify-end space-x-2">
-                        <button type="button" onclick="document.getElementById('area-lembar-kerja-resmi').classList.add('hidden')" class="bg-gray-400 text-white px-4 py-1.5 rounded-lg text-xs">Tutup</button>
-                        <button type="button" id="btn-simpan-lk-aksi" onclick="simpanPenuhIsianWorksheetDinamis()" class="bg-blue-600 text-white px-5 py-1.5 rounded-lg font-bold text-xs shadow-md">Simpan Data Baru / Perbarui</button>
+                        <div class="border p-2.5 print:p-1.5 rounded-lg text-[11px] bg-slate-50 shadow-sm">
+                            <span class="font-bold block mb-1 text-slate-800"><i class="fa-solid fa-square-poll-vertical mr-1.5 text-indigo-600"></i>3. Hasil Pemeriksaan Akhir:</span>
+                            <div class="flex flex-wrap gap-4 pt-0.5 font-bold">
+                                <label class="flex items-center space-x-1.5 cursor-pointer text-green-700"><input type="radio" name="dlk-hasil-tunggal" value="Alat Berfungsi Dengan Baik" checked> <span>Berfungsi Baik</span></label>
+                                <label class="flex items-center space-x-1.5 cursor-pointer text-amber-700"><input type="radio" name="dlk-hasil-tunggal" value="Alat Berfungsi Dengan Catatan"> <span>Berfungsi dengan Catatan</span></label>
+                                <label class="flex items-center space-x-1.5 cursor-pointer text-red-700"><input type="radio" name="dlk-hasil-tunggal" value="Alat Rusak Perlu Perbaikan"> <span>Perlu Perbaikan (Rusak)</span></label>
+                            </div>
+                        </div>
+
+                        <!-- TANDA TANGAN DIGITAL -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-4 print:gap-2 pt-2 text-[11px] items-end">
+                            <div class="text-center space-y-1">
+                                <p class="font-semibold text-gray-500">Teknisi Pelaksana</p>
+                                <div class="border border-dashed border-slate-300 rounded bg-slate-50 h-24 print:h-20 relative overflow-hidden"><canvas id="sig-teknisi" class="w-full h-full absolute inset-0 z-10"></canvas></div>
+                                <button type="button" onclick="clearCanvasSignature('sig-teknisi')" class="no-print text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-300" id="btn-clear-sig-teknisi">Hapus</button>
+                                <div class="pt-0.5"><select id="dlk-select-nama-teknisi" class="w-full text-center border-b p-0.5 font-bold text-gray-800 bg-transparent outline-none"></select></div>
+                            </div>
+                            <div class="text-center space-y-1">
+                                <p class="font-semibold text-gray-500">User Ruangan</p>
+                                <div class="border border-dashed border-slate-300 rounded bg-slate-50 h-24 print:h-20 relative overflow-hidden"><canvas id="sig-user" class="w-full h-full absolute inset-0 z-10"></canvas></div>
+                                <button type="button" onclick="clearCanvasSignature('sig-user')" class="no-print text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-300" id="btn-clear-sig-user">Hapus</button>
+                                <div class="pt-0.5"><select id="dlk-select-nama-saksi" class="w-full text-center border-b p-0.5 font-bold text-gray-800 bg-transparent outline-none"></select></div>
+                            </div>
+                            <div class="text-center space-y-1">
+                                <p class="font-semibold text-gray-500">PJ IPSRS Alkes</p>
+                                <div class="border border-dashed border-slate-300 rounded bg-slate-50 h-24 print:h-20 relative overflow-hidden"><canvas id="sig-pj" class="w-full h-full absolute inset-0 z-10"></canvas></div>
+                                <button type="button" onclick="clearCanvasSignature('sig-pj')" class="no-print text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-300" style="display:none;">Hapus</button>
+                                <div class="pt-1 font-bold text-gray-800 border-b pb-0.5">Arrief Nurcahyo, S.Tr. Em.</div>
+                            </div>
+                        </div>
+
+                        <div class="no-print border-t pt-3 flex justify-end space-x-2">
+                            <button type="button" onclick="document.getElementById('area-lembar-kerja-resmi').classList.add('hidden')" class="bg-gray-400 text-white px-4 py-1.5 rounded-lg text-xs">Tutup</button>
+                            <button type="button" id="btn-simpan-lk-aksi" onclick="simpanPenuhIsianWorksheetDinamis()" class="bg-blue-600 text-white px-5 py-1.5 rounded-lg font-bold text-xs shadow-md">Simpan Data Baru / Perbarui</button>
+                        </div>
                     </div>
                 </div>
 
@@ -1190,7 +1193,6 @@
                             </div>
                         `;
                     } else if (currentActiveRole === 'User') {
-                        // KHUSUS USER: Tombol Selesai mutlak disembunyikan, hanya ada tombol Batal/Hapus laporan
                         aksiAksi = `
                             <div class="inline-flex space-x-1">
                                 <button onclick="hapusTiketUser('${t.id}', '${t.alatId}')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition" title="Batalkan / Hapus Laporan"><i class="fa-solid fa-trash"></i> Batal</button>
@@ -1200,12 +1202,10 @@
                         aksiAksi = `<span class="text-slate-500 italic text-[10px]">Menunggu Teknisi</span>`;
                     }
                 } else {
-                    // KETIKA TIKET SUDAH SELESAI
                     let matchingLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi].find(lk => lk.alatId === t.alatId);
                     let tombolBukaLkUser = matchingLk ? `<button onclick="bukaLembarKerjaDinamisDariLog('${matchingLk.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-file-lines mr-1"></i> Buka LK (Read-Only)</button>` : `<span class="text-[10px] text-slate-500 italic">Arsip Selesai</span>`;
 
                     if (currentActiveRole === 'User') {
-                        // USER HANYA BISA MEMBUKA LEMBAR KERJA (READ-ONLY), TANPA ADA TOMBOL SELESAI
                         aksiAksi = `<div class="inline-flex space-x-1">${tombolBukaLkUser}</div>`;
                     } else {
                         aksiAksi = `<div class="inline-flex space-x-1"><span class="text-emerald-500 font-bold text-[10px] mr-1">✅ Selesai</span>${tombolBukaLkUser}</div>`;
@@ -1230,6 +1230,7 @@
                 `;
             }).join('');
         }
+
         function hapusTiketUser(tiketId, alatId) {
             if(confirm("Batalkan atau hapus laporan kerusakan ini? Status alat akan dikembalikan menjadi Siap Pakai.")) {
                 db.collection("troubleTickets").doc(tiketId).delete().then(() => {
@@ -1410,11 +1411,11 @@
                 document.getElementById('dlk-no').value = generatedNo;
             });
             
-            const areaLK = document.getElementById('area-lembar-kerja-resmi'); areaLK.classList.remove('hidden'); areaLK.scrollIntoView({ behavior: 'smooth' }); 
-            
-            // Aktifkan kembali tombol simpan jika sebelumnya di-disable untuk user view-only
-            const btnSimpanLk = document.getElementById('btn-simpan-lk-aksi');
-            if(btnSimpanLk) btnSimpanLk.style.display = 'inline-block';
+            // Buka area lembar kerja modal
+            aturModeTampilanWorksheetUser();
+            const areaLK = document.getElementById('area-lembar-kerja-resmi'); 
+            areaLK.classList.remove('hidden'); 
+            areaLK.scrollTop = 0;
 
             setTimeout(() => {
                 initSignatures();
@@ -1471,23 +1472,55 @@
             document.getElementById('dlk-select-nama-teknisi').value = record.teknisiTtd || "";
             document.getElementById('dlk-select-nama-saksi').value = record.saksiTtd || "";
             
-            const areaLK = document.getElementById('area-lembar-kerja-resmi'); areaLK.classList.remove('hidden'); areaLK.scrollIntoView({ behavior: 'smooth' });
-            
-            // JIKA AKUN USER, SEMBUNYIKAN TOMBOL SIMPAN AGAR HANYA BISA MELIHAT/MENCETAK (READ-ONLY)
-            const btnSimpanLk = document.getElementById('btn-simpan-lk-aksi');
-            if(btnSimpanLk) {
-                if(currentActiveRole === 'User') {
-                    btnSimpanLk.style.display = 'none';
-                } else {
-                    btnSimpanLk.style.display = 'inline-block';
-                }
-            }
+            // ATUR MODE READ-ONLY KHUSUS USER DI SINI
+            aturModeTampilanWorksheetUser();
+
+            const areaLK = document.getElementById('area-lembar-kerja-resmi'); 
+            areaLK.classList.remove('hidden'); 
+            areaLK.scrollTop = 0;
 
             setTimeout(() => {
                 initSignatures();
                 if(record.ttdTeknisi) muatTandaTanganKeCanvas('sig-teknisi', record.ttdTeknisi);
                 if(record.ttdUser) muatTandaTanganKeCanvas('sig-user', record.ttdUser);
             }, 400);
+        }
+
+        // FUNGSI UNTUK MENGUNCI TOTAL FORM LK JIKA AKUN ADALAH USER
+        function aturModeTampilanWorksheetUser() {
+            const isUser = (currentActiveRole === 'User');
+            
+            // Sembunyikan tombol simpan & tombol hapus tanda tangan untuk user
+            const btnSimpanLk = document.getElementById('btn-simpan-lk-aksi');
+            if(btnSimpanLk) btnSimpanLk.style.display = isUser ? 'none' : 'inline-block';
+
+            const btnClearTek = document.getElementById('btn-clear-sig-teknisi');
+            const btnClearUsr = document.getElementById('btn-clear-sig-user');
+            if(btnClearTek) btnClearTek.style.display = isUser ? 'none' : 'inline-block';
+            if(btnClearUsr) btnClearUsr.style.display = isUser ? 'none' : 'inline-block';
+
+            // Sembunyikan kotak dropdown tambah poin item di user
+            const dropAk = document.getElementById('container-drop-alatkerja');
+            const dropFs = document.getElementById('container-drop-fisik');
+            const dropFn = document.getElementById('container-drop-fungsi');
+            if(dropAk) dropAk.style.display = isUser ? 'none' : 'block';
+            if(dropFs) dropFs.style.display = isUser ? 'none' : 'block';
+            if(dropFn) dropFn.style.display = isUser ? 'none' : 'block';
+
+            // Kunci semua input, textarea, select, dan radio button
+            setTimeout(() => {
+                const area = document.getElementById('area-lembar-kerja-resmi');
+                if(area) {
+                    const elements = area.querySelectorAll('input, select, textarea');
+                    elements.forEach(el => {
+                        if(isUser) {
+                            el.setAttribute('disabled', 'true');
+                        } else {
+                            el.removeAttribute('disabled');
+                        }
+                    });
+                }
+            }, 100);
         }
 
         function muatTandaTanganKeCanvas(canvasId, dataUrl) {
@@ -1532,11 +1565,13 @@
         }
 
         function updateStatusPoinCeklis(kategori, idx, valStatus) {
+            if(currentActiveRole === 'User') return; // Cegah ubah status jika user
             if(kategori === 'fisik' && terpakaiFisik[idx]) terpakaiFisik[idx].status = valStatus;
             if(kategori === 'fungsi' && terpakaiFungsi[idx]) terpakaiFungsi[idx].status = valStatus;
         }
 
         function hapusPoinSpesifik(kategori, idx) { 
+            if(currentActiveRole === 'User') return; 
             if(kategori === 'alatkerja') terpakaiAlatKerja.splice(idx,1); 
             if(kategori === 'fisik') terpakaiFisik.splice(idx,1); 
             if(kategori === 'fungsi') terpakaiFungsi.splice(idx,1); 
@@ -1546,6 +1581,7 @@
         function aktualisasikanTampilanKotakTabel(kategori) { 
             const box = document.getElementById('box-list-' + kategori); 
             let arr = (kategori === 'alatkerja') ? terpakaiAlatKerja : (kategori === 'fisik') ? terpakaiFisik : terpakaiFungsi; 
+            const isUser = (currentActiveRole === 'User');
             
             box.innerHTML = arr.map((item, i) => {
                 let namaItem = typeof item === 'object' ? item.nama : item;
@@ -1555,7 +1591,7 @@
                     return `
                         <div class="flex items-center justify-between bg-slate-900/60 border border-white/5 p-1 rounded-lg gap-2 text-[10px]">
                             <span class="flex-1 font-medium truncate">• ${namaItem}</span>
-                            <button type="button" onclick="hapusPoinSpesifik('${kategori}', ${i})" class="no-print text-rose-400 hover:text-rose-600 font-bold px-1.5 text-xs" title="Hapus Item">×</button>
+                            ${isUser ? '' : `<button type="button" onclick="hapusPoinSpesifik('${kategori}', ${i})" class="no-print text-rose-400 hover:text-rose-600 font-bold px-1.5 text-xs" title="Hapus Item">×</button>`}
                         </div>
                     `;
                 } else {
@@ -1563,12 +1599,12 @@
                         <div class="flex items-center justify-between bg-slate-900/60 border border-white/5 p-1 rounded-lg gap-2 text-[10px]">
                             <span class="flex-1 font-medium truncate">• ${namaItem}</span>
                             <div class="flex items-center space-x-1 no-print">
-                                <label class="cursor-pointer text-[9px]"><input type="radio" name="chk_${kategori}_${i}" ${statusItem==='Baik'?'checked':''} onclick="updateStatusPoinCeklis('${kategori}', ${i}, 'Baik')"> Baik</label>
-                                <label class="cursor-pointer text-[9px]"><input type="radio" name="chk_${kategori}_${i}" ${statusItem==='Tidak'?'checked':''} onclick="updateStatusPoinCeklis('${kategori}', ${i}, 'Tidak')"> Tidak</label>
-                                <label class="cursor-pointer text-[9px]"><input type="radio" name="chk_${kategori}_${i}" ${statusItem==='N/A'?'checked':''} onclick="updateStatusPoinCeklis('${kategori}', ${i}, 'N/A')"> N/A</label>
+                                <label class="cursor-pointer text-[9px]"><input type="radio" name="chk_${kategori}_${i}" ${statusItem==='Baik'?'checked':''} ${isUser?'disabled':''} onclick="updateStatusPoinCeklis('${kategori}', ${i}, 'Baik')"> Baik</label>
+                                <label class="cursor-pointer text-[9px]"><input type="radio" name="chk_${kategori}_${i}" ${statusItem==='Tidak'?'checked':''} ${isUser?'disabled':''} onclick="updateStatusPoinCeklis('${kategori}', ${i}, 'Tidak')"> Tidak</label>
+                                <label class="cursor-pointer text-[9px]"><input type="radio" name="chk_${kategori}_${i}" ${statusItem==='N/A'?'checked':''} ${isUser?'disabled':''} onclick="updateStatusPoinCeklis('${kategori}', ${i}, 'N/A')"> N/A</label>
                             </div>
                             <span class="print:inline hidden font-bold">[${statusItem}]</span>
-                            <button type="button" onclick="hapusPoinSpesifik('${kategori}', ${i})" class="no-print text-rose-400 hover:text-rose-600 font-bold px-1.5 text-xs" title="Hapus Item">×</button>
+                            ${isUser ? '' : `<button type="button" onclick="hapusPoinSpesifik('${kategori}', ${i})" class="no-print text-rose-400 hover:text-rose-600 font-bold px-1.5 text-xs" title="Hapus Item">×</button>`}
                         </div>
                     `;
                 }
@@ -1714,6 +1750,7 @@
         }
 
         function resetFotoAfter() {
+            if(currentActiveRole === 'User') return;
             stringFotoBase64 = "-";
             document.getElementById('dlk-input-foto').value = "";
             resetFotoAfterDisplay();
@@ -1763,7 +1800,10 @@
         }
 
         function lihatFileLangsung(b, j, jdl) { const body = document.getElementById('preview-body'); document.getElementById('preview-title').innerText = "Live Preview: " + jdl; if(j === 'pdf') body.innerHTML = `<iframe src="${b}" class="w-full h-full border rounded-xl" type="application/pdf"></iframe>`; else body.innerHTML = `<div class="max-w-full p-2 flex justify-center"><img src="${b}" class="max-h-[70vh] rounded-xl object-contain"></div>`; toggleModal('modal-preview', true); }
-        function clearCanvasSignature(id) { const c = document.getElementById(id); if(c) { const ctx = c.getContext('2d'); ctx.clearRect(0, 0, c.width, c.height); ctx.beginPath(); } }
+        function clearCanvasSignature(id) { 
+            if(currentActiveRole === 'User') return;
+            const c = document.getElementById(id); if(c) { const ctx = c.getContext('2d'); ctx.clearRect(0, 0, c.width, c.height); ctx.beginPath(); } 
+        }
         function switchKartuTab(tId) { document.querySelectorAll('.kartu-tab').forEach(el => el.classList.remove('active')); if(document.getElementById('btn-'+tId.replace('tab-',''))) document.getElementById('btn-'+tId.replace('tab-','')).classList.add('active'); document.querySelectorAll('.kartu-content-box').forEach(el => el.classList.add('hidden')); document.getElementById(tId).classList.remove('hidden'); }
         
         function bukaKartuPemeliharaan(alatId) {
@@ -1789,8 +1829,8 @@
                     const ctx = canvas.getContext('2d'); let isDrawing = false;
                     ctx.lineWidth = 3.0; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#0f172a';
                     function getPos(e) { const r = canvas.getBoundingClientRect(); const cX = e.touches ? e.touches[0].clientX : e.clientX; const cY = e.touches ? e.touches[0].clientY : e.clientY; return { x: cX - r.left, y: cY - r.top }; }
-                    function startDrawing(e) { isDrawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); if (e.cancelable) e.preventDefault(); }
-                    function draw(e) { if (!isDrawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); if (e.cancelable) e.preventDefault(); }
+                    function startDrawing(e) { if(currentActiveRole === 'User') return; isDrawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); if (e.cancelable) e.preventDefault(); }
+                    function draw(e) { if(currentActiveRole === 'User' || !isDrawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); if (e.cancelable) e.preventDefault(); }
                     canvas.addEventListener('mousedown', startDrawing); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', () => isDrawing = false);
                     canvas.addEventListener('touchstart', startDrawing, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); canvas.addEventListener('touchend', () => isDrawing = false);
                 });
