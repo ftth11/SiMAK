@@ -1188,9 +1188,9 @@
                             </div>
                         `;
                     } else if (currentActiveRole === 'User') {
+                        // USER HANYA MELIHAT STATUS PROSES, BISA BATALKAN LAPORAN, TANPA TOMBOL SELESAI MANUAL
                         aksiAksi = `
                             <div class="inline-flex space-x-1">
-                                <span class="text-[10px] text-amber-400 italic">Menunggu Teknisi</span>
                                 <button onclick="hapusTiketUser('${t.id}', '${t.alatId}')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition" title="Batalkan / Hapus Laporan"><i class="fa-solid fa-trash"></i> Batal</button>
                             </div>
                         `;
@@ -1198,7 +1198,15 @@
                         aksiAksi = `<span class="text-slate-500 italic text-[10px]">Menunggu Teknisi</span>`;
                     }
                 } else {
-                    aksiAksi = `<span class="text-emerald-500 font-bold text-[10px]">✅ Selesai Diperbaiki</span>`;
+                    // KETIKA SUDAH SELESAI, USER BISA MELIHAT LEMBAR KERJA (LK)
+                    let matchingLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi].find(lk => lk.alatId === t.alatId);
+                    let tombolBukaLkUser = matchingLk ? `<button onclick="bukaLembarKerjaDinamisDariLog('${matchingLk.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-file-lines mr-1"></i> Buka LK</button>` : `<span class="text-[10px] text-slate-500 italic">Arsip Selesai</span>`;
+
+                    if (currentActiveRole === 'User') {
+                        aksiAksi = `<div class="inline-flex space-x-1">${tombolBukaLkUser}</div>`;
+                    } else {
+                        aksiAksi = `<div class="inline-flex space-x-1"><span class="text-emerald-500 font-bold text-[10px] mr-1">✅ Selesai</span>${tombolBukaLkUser}</div>`;
+                    }
                 }
 
                 let fotoBeforeThm = (t.fotoBefore && t.fotoBefore !== '-') ? `<button onclick="lihatFileLangsung('${t.fotoBefore}','img','Foto Before')" class="bg-slate-800 text-amber-400 px-2 py-1 rounded text-[10px] border border-amber-500/20"><i class="fa-solid fa-image"></i> Lihat</button>` : `<span class="text-[10px] text-slate-500 italic">Tidak ada</span>`;
@@ -1249,7 +1257,7 @@
 
         function selesaikanTiketTroubleManual(tiketId, alatId) {
             if(confirm("Apakah Anda ingin menyelesaikan trouble ticket ini dan mengubah status alat menjadi Siap Pakai?")) {
-                db.collection("troubleTickets").doc(tiketId).delete().then(() => {
+                db.collection("troubleTickets").doc(tiketId).update({ statusTiket: "Selesai" }).then(() => {
                     return db.collection("dataAlat").doc(alatId).update({ status: "Siap Digunakan" });
                 }).then(() => {
                     alert("🎉 Status tiket berhasil diselesaikan!");
@@ -1338,8 +1346,14 @@
                 db.collection("lembarKerja").doc(existingFirebaseId).update(payload).then(() => {
                     return db.collection("dataAlat").doc(alatIdRaw).update({ status: newStatus });
                 }).then(() => {
+                    // Update status tiket jadi Selesai jika ada tiket terkait
+                    return db.collection("troubleTickets").where("alatId", "==", alatIdRaw).get();
+                }).then((qSnap) => {
+                    qSnap.forEach(docT => {
+                        db.collection("troubleTickets").doc(docT.id).update({ statusTiket: "Selesai" });
+                    });
                     document.getElementById('area-lembar-kerja-resmi').classList.add('hidden');
-                    alert(`🎉 Lembar Kerja #${payload.noLk} Berhasil Diperbarui!`);
+                    alert(`🎉 Lembar Kerja #${payload.noLk} Berhasil Diperbarui & Tiket Diselesaikan!`);
                 });
             } else {
                 db.collection("lembarKerja").get().then((snap) => {
@@ -1348,18 +1362,16 @@
                     payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
 
                     db.collection("lembarKerja").add(payload).then(() => {
-                        db.collection("troubleTickets").where("alatId", "==", alatIdRaw).get().then((querySnapshot) => {
-                            querySnapshot.forEach((doc) => { db.collection("troubleTickets").doc(doc.id).delete(); });
-                        });
-
-                        db.collection("laporanKeluhanLog").where("alatId", "==", alatIdRaw).get().then((qLog) => {
-                            qLog.forEach((docLog) => { db.collection("laporanKeluhanLog").doc(docLog.id).delete(); });
+                        return db.collection("troubleTickets").where("alatId", "==", alatIdRaw).get();
+                    }).then((qSnap) => {
+                        qSnap.forEach(docT => {
+                            db.collection("troubleTickets").doc(docT.id).update({ statusTiket: "Selesai" });
                         });
 
                         return db.collection("dataAlat").doc(alatIdRaw).update({ status: newStatus });
                     }).then(() => {
                         document.getElementById('area-lembar-kerja-resmi').classList.add('hidden');
-                        alert(`🎉 Lembar Kerja Resmi #${currentNoLk} Berhasil Disimpan!`);
+                        alert(`🎉 Lembar Kerja Resmi #${currentNoLk} Berhasil Disimpan & Tiket Selesai!`);
                     });
                 });
             }
@@ -1367,7 +1379,6 @@
 
         function bukaLembarKerjaBaruKosong() { 
             if(dataAlat.length === 0) return alert("Belum ada data Master Aset di sistem.");
-            // Default pilih alat pertama jika dibuat manual
             const defaultAlat = dataAlat[0];
             
             document.getElementById('dlk-firebase-id').value = ""; 
@@ -1516,7 +1527,6 @@
                 let statusItem = typeof item === 'object' ? (item.status || 'Baik') : 'Baik';
 
                 if (kategori === 'alatkerja') {
-                    // TANPA PILIHAN BAIK/TIDAK/NA SESUAI PERMINTAAN
                     return `
                         <div class="flex items-center justify-between bg-slate-900/60 border border-white/5 p-1 rounded-lg gap-2 text-[10px]">
                             <span class="flex-1 font-medium truncate">• ${namaItem}</span>
