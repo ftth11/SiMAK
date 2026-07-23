@@ -1181,8 +1181,22 @@
                 const alat = dataAlat.find(a => a.id == t.alatId) || { nama: "Alat Medis", edar: "Unit" };
                 let aksiAksi = "";
 
-                if (t.statusTiket !== 'Selesai') {
-                    if (currentActiveRole === 'Teknisi' || currentActiveRole === 'Admin') {
+                if (currentActiveRole === 'User') {
+                    // KHUSUS AKUN USER: Tidak ada tombol pengerjaan sama sekali. 
+                    // Hanya bisa melihat status, membuka LK (read-only) jika sudah selesai, atau membatalkan laporan jika belum dikerjakan.
+                    if (t.statusTiket === 'Selesai') {
+                        let matchingLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi].find(lk => lk.alatId === t.alatId);
+                        aksiAksi = matchingLk ? `<button onclick="bukaLembarKerjaDinamisDariLog('${matchingLk.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-file-lines mr-1"></i> Buka LK (Read-Only)</button>` : `<span class="text-[10px] text-slate-500 italic">Selesai</span>`;
+                    } else {
+                        aksiAksi = `
+                            <div class="inline-flex space-x-1">
+                                <button onclick="hapusTiketUser('${t.id}', '${t.alatId}')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition" title="Batalkan Laporan"><i class="fa-solid fa-trash"></i> Batal</button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    // UNTUK TEKNISI & ADMIN
+                    if (t.statusTiket !== 'Selesai') {
                         let textTombolKerja = t.statusTiket === "Sedang Dikerjakan" ? '<i class="fa-solid fa-file-signature"></i> Buka LK' : '<i class="fa-solid fa-wrench"></i> Kerjakan';
                         let warnaTombolKerja = t.statusTiket === "Sedang Dikerjakan" ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-amber-600 hover:bg-amber-700';
 
@@ -1192,23 +1206,10 @@
                                 <button onclick="selesaikanTiketTroubleManual('${t.id}','${t.alatId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-check"></i> Selesai</button>
                             </div>
                         `;
-                    } else if (currentActiveRole === 'User') {
-                        aksiAksi = `
-                            <div class="inline-flex space-x-1">
-                                <button onclick="hapusTiketUser('${t.id}', '${t.alatId}')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition" title="Batalkan / Hapus Laporan"><i class="fa-solid fa-trash"></i> Batal</button>
-                            </div>
-                        `;
                     } else {
-                        aksiAksi = `<span class="text-slate-500 italic text-[10px]">Menunggu Teknisi</span>`;
-                    }
-                } else {
-                    let matchingLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi].find(lk => lk.alatId === t.alatId);
-                    let tombolBukaLkUser = matchingLk ? `<button onclick="bukaLembarKerjaDinamisDariLog('${matchingLk.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-file-lines mr-1"></i> Buka LK (Read-Only)</button>` : `<span class="text-[10px] text-slate-500 italic">Arsip Selesai</span>`;
-
-                    if (currentActiveRole === 'User') {
-                        aksiAksi = `<div class="inline-flex space-x-1">${tombolBukaLkUser}</div>`;
-                    } else {
-                        aksiAksi = `<div class="inline-flex space-x-1"><span class="text-emerald-500 font-bold text-[10px] mr-1">✅ Selesai</span>${tombolBukaLkUser}</div>`;
+                        let matchingLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi].find(lk => lk.alatId === t.alatId);
+                        let tombolBukaLk = matchingLk ? `<button onclick="bukaLembarKerjaDinamisDariLog('${matchingLk.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-file-lines mr-1"></i> Buka LK</button>` : `<span class="text-[10px] text-slate-500 italic">Arsip</span>`;
+                        aksiAksi = `<div class="inline-flex space-x-1"><span class="text-emerald-500 font-bold text-[10px] mr-1">✅ Selesai</span>${tombolBukaLk}</div>`;
                     }
                 }
 
@@ -1230,7 +1231,6 @@
                 `;
             }).join('');
         }
-
         function hapusTiketUser(tiketId, alatId) {
             if(confirm("Batalkan atau hapus laporan kerusakan ini? Status alat akan dikembalikan menjadi Siap Pakai.")) {
                 db.collection("troubleTickets").doc(tiketId).delete().then(() => {
