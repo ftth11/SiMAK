@@ -356,10 +356,14 @@
     <!-- AREA WORKSPACE PEMELIHARAAN (FIXED DI ROOT BODY SUPAYA TIDAK TERTUTUP SIDEBAR) -->
     <div id="area-lembar-kerja-resmi" class="fixed inset-0 bg-slate-950/80 z-[99999] flex items-center justify-center p-4 hidden no-print backdrop-blur-md overflow-y-auto">
         <div class="bg-white p-6 print:p-2 rounded-2xl shadow-2xl border max-w-5xl w-full mx-auto text-slate-900 space-y-4 print:space-y-2 relative max-h-[92vh] overflow-y-auto my-auto">
-            <button onclick="document.getElementById('area-lembar-kerja-resmi').classList.add('hidden')" type="button" class="absolute top-4 right-16 bg-gray-500 text-white px-3 py-1.5 rounded font-bold text-xs shadow hover:bg-gray-600 flex items-center space-x-1"><i class="fa-solid fa-xmark"></i> <span>Tutup</span></button>
-            <button onclick="window.print()" type="button" class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1.5 rounded font-bold text-xs shadow hover:bg-blue-700 flex items-center space-x-1"><i class="fa-solid fa-print"></i> <span>Cetak Dokumen</span></button>
+            
+            <!-- TOMBOL AKSI ATAS DITATA SEJAJAR SUPAYA TIDAK TUMPANG TINDIH -->
+            <div class="absolute top-4 right-4 flex items-center space-x-2 z-20">
+                <button onclick="document.getElementById('area-lembar-kerja-resmi').classList.add('hidden')" type="button" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1.5 rounded font-bold text-xs shadow flex items-center space-x-1"><i class="fa-solid fa-xmark"></i> <span>Tutup</span></button>
+                <button onclick="window.print()" type="button" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded font-bold text-xs shadow flex items-center space-x-1"><i class="fa-solid fa-print"></i> <span>Cetak Dokumen</span></button>
+            </div>
 
-            <div class="flex items-center justify-center space-x-5 border-b-2 border-black pb-3 text-black w-full pt-6">
+            <div class="flex items-center justify-center space-x-5 border-b-2 border-black pb-3 text-black w-full pt-8">
                 <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center shadow-sm">
                     <img src="logo.png" onerror="this.style.display='none'; document.getElementById('fallback-icon-kop').classList.remove('hidden')" class="w-full h-full object-contain" alt="Logo">
                     <i id="fallback-icon-kop" class="fa-solid fa-heart-pulse text-5xl text-blue-600 hidden"></i>
@@ -388,10 +392,10 @@
                 <label class="flex items-center space-x-1.5 cursor-pointer"><input type="radio" name="dlk-jenis" value="Corrective Maintenance"> <span>Corrective CM</span></label>
             </div>
 
-            <!-- LAYOUT ATAS DIPERSEMPIT UNTUK KONDISI LINGKUNGAN & FOTO BEFORE, DIPERLUAS UNTUK DATA ALAT -->
+            <!-- LAYOUT ATAS: KONDISI LINGKUNGAN, FOTO BEFORE, & DATA ALAT (DENGAN DROPDOWN PILIH ALAT) -->
             <div class="grid grid-cols-1 md:grid-cols-12 print:grid-cols-12 gap-2 text-[11px]">
-                <!-- Kotak 1: Kondisi Lingkungan (Lebar 3 Col) -->
-                <div class="md:col-span-3 print:col-span-3 border p-2.5 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[175px] print:h-[155px]">
+                <!-- Kotak 1: Kondisi Lingkungan (3 Col) -->
+                <div class="md:col-span-3 print:col-span-3 border p-2.5 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[155px]">
                     <div>
                         <h4 class="font-bold border-b pb-1 mb-2 text-slate-800 text-[10px] flex items-center"><i class="fa-solid fa-temperature-three-quarters mr-1 text-orange-500"></i>Kondisi Lingkungan</h4>
                         <div class="space-y-2 pt-1 text-[10px]">
@@ -402,8 +406,8 @@
                     <div class="text-[8px] text-slate-400 italic font-mono pt-1 border-t">* Ruangan unit.</div>
                 </div>
 
-                <!-- Kotak 2: Foto Before (Lebar 3 Col) -->
-                <div class="md:col-span-3 print:col-span-3 border p-2 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[175px] print:h-[155px]">
+                <!-- Kotak 2: Foto Before (3 Col) -->
+                <div class="md:col-span-3 print:col-span-3 border p-2 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[155px]">
                     <div>
                         <h4 class="font-bold border-b pb-1 mb-1 text-slate-800 text-[10px] flex items-center"><i class="fa-solid fa-image text-amber-600 mr-1"></i>Foto Before (User)</h4>
                     </div>
@@ -412,12 +416,19 @@
                     </div>
                 </div>
 
-                <!-- Kotak 3: Data Alat (Lebar 6 Col / Lebih Luas Supaya Tidak Terpotong) -->
-                <div class="md:col-span-6 print:col-span-6 border p-2.5 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[175px] print:h-[155px] overflow-y-auto">
+                <!-- Kotak 3: Data Alat (6 Col) dengan Pilihan Alat di Awal -->
+                <div class="md:col-span-6 print:col-span-6 border p-2.5 rounded-lg bg-white shadow-sm flex flex-col justify-between h-[185px] print:h-[155px] overflow-y-auto">
                     <div>
-                        <h4 class="font-bold border-b pb-1 mb-1 text-slate-800 text-[10px] flex items-center"><i class="fa-solid fa-microscope mr-1 text-blue-600"></i>Data Alat Kesehatan</h4>
+                        <div class="flex justify-between items-center border-b pb-1 mb-1">
+                            <h4 class="font-bold text-slate-800 text-[10px] flex items-center"><i class="fa-solid fa-microscope mr-1 text-blue-600"></i>Data Alat Kesehatan</h4>
+                            <div class="no-print">
+                                <select id="dropdown-pilih-alat-worksheet" onchange="pilihAlatKeWorksheetDariDropdown(this.value)" class="text-[10px] font-bold border rounded p-0.5 bg-blue-50 text-blue-700 outline-none">
+                                    <option value="">-- PILIH ALAT MEDIS --</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="space-y-1 text-[10px]">
-                            <div class="flex"><span class="w-14 text-gray-500 font-medium">Nama:</span><input type="text" id="dlk-nama" class="flex-1 border-b p-0.5 bg-transparent font-bold text-gray-900 truncate" readonly></div>
+                            <div class="flex"><span class="w-14 text-gray-500 font-medium">Nama:</span><input type="text" id="dlk-nama" class="flex-1 border-b p-0.5 bg-transparent font-bold text-gray-900 truncate" readonly placeholder="Silakan pilih alat di atas..."></div>
                             <div class="flex space-x-2">
                                 <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium">Merk:</span><input type="text" id="dlk-merk" class="w-full border-b p-0.5 bg-transparent text-gray-800 truncate" readonly></div>
                                 <div class="flex flex-1"><span class="w-10 text-gray-500 font-medium">Tipe:</span><input type="text" id="dlk-tipe" class="w-full border-b p-0.5 bg-transparent text-gray-800 truncate" readonly></div>
@@ -481,19 +492,23 @@
                 </div>
             </div>
 
-            <!-- TANDA TANGAN DIGITAL (TERMASUK PJ IPSRS) -->
+            <!-- TANDA TANGAN DIGITAL (DENGAN OPSI TAMBAH TEKNISI / USER BARU OTOMATIS) -->
             <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-4 print:gap-2 pt-2 text-[11px] items-end">
                 <div class="text-center space-y-1">
                     <p class="font-semibold text-gray-500">Teknisi Pelaksana</p>
                     <div class="border border-dashed border-slate-300 rounded bg-slate-50 h-24 print:h-20 relative overflow-hidden"><canvas id="sig-teknisi" class="w-full h-full absolute inset-0 z-10"></canvas></div>
                     <button type="button" onclick="clearCanvasSignature('sig-teknisi')" class="no-print text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-300" id="btn-clear-sig-teknisi">Hapus</button>
-                    <div class="pt-0.5"><select id="dlk-select-nama-teknisi" class="w-full text-center border-b p-0.5 font-bold text-gray-800 bg-transparent outline-none"></select></div>
+                    <div class="pt-0.5">
+                        <select id="dlk-select-nama-teknisi" onchange="handleDropdownNamaBaru(this, 'Teknisi')" class="w-full text-center border-b p-0.5 font-bold text-gray-800 bg-transparent outline-none cursor-pointer"></select>
+                    </div>
                 </div>
                 <div class="text-center space-y-1">
                     <p class="font-semibold text-gray-500">User Ruangan</p>
                     <div class="border border-dashed border-slate-300 rounded bg-slate-50 h-24 print:h-20 relative overflow-hidden"><canvas id="sig-user" class="w-full h-full absolute inset-0 z-10"></canvas></div>
                     <button type="button" onclick="clearCanvasSignature('sig-user')" class="no-print text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded border border-red-300" id="btn-clear-sig-user">Hapus</button>
-                    <div class="pt-0.5"><select id="dlk-select-nama-saksi" class="w-full text-center border-b p-0.5 font-bold text-gray-800 bg-transparent outline-none"></select></div>
+                    <div class="pt-0.5">
+                        <select id="dlk-select-nama-saksi" onchange="handleDropdownNamaBaru(this, 'User')" class="w-full text-center border-b p-0.5 font-bold text-gray-800 bg-transparent outline-none cursor-pointer"></select>
+                    </div>
                 </div>
                 <div class="text-center space-y-1">
                     <p class="font-semibold text-gray-500">PJ IPSRS Alkes</p>
@@ -504,8 +519,8 @@
             </div>
 
             <div class="no-print border-t pt-3 flex justify-end space-x-2">
-                <button type="button" onclick="document.getElementById('area-lembar-kerja-resmi').classList.add('hidden')" class="bg-gray-400 text-white px-4 py-1.5 rounded-lg text-xs">Tutup</button>
-                <button type="button" id="btn-simpan-lk-aksi" onclick="simpanPenuhIsianWorksheetDinamis()" class="bg-blue-600 text-white px-5 py-1.5 rounded-lg font-bold text-xs shadow-md">Simpan Data Baru / Perbarui</button>
+                <button type="button" onclick="document.getElementById('area-lembar-kerja-resmi').classList.add('hidden')" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-1.5 rounded-lg text-xs">Tutup</button>
+                <button type="button" id="btn-simpan-lk-aksi" onclick="simpanPenuhIsianWorksheetDinamis()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-1.5 rounded-lg font-bold text-xs shadow-md">Simpan Data Baru / Perbarui</button>
             </div>
         </div>
     </div>
@@ -919,7 +934,7 @@
 
         db.collection("dataAlat").onSnapshot((querySnapshot) => {
             dataAlat = []; querySnapshot.forEach((doc) => { dataAlat.push({ id: doc.id, ...doc.data() }); });
-            aktualisasikanDotKoneksiHijau(); evaluasiJatuhTempoKalibrasiMassal(); renderAll(); populasikanDropdownAlatDiTicketForm(); populasikanDropdownAlatDiKalibrasi();
+            aktualisasikanDotKoneksiHijau(); evaluasiJatuhTempoKalibrasiMassal(); renderAll(); populasikanDropdownAlatDiTicketForm(); populasikanDropdownAlatDiKalibrasi(); populasikanDropdownAlatDiWorksheet();
         });
 
         db.collection("dataKalibrasi").onSnapshot((querySnapshot) => {
@@ -1052,6 +1067,17 @@
             const kw = keyword.toLowerCase();
             const filtered = dataAlat.filter(a => (a.nama + " " + (a.edar || a.lokasi || '')).toLowerCase().includes(kw));
             selectEl.innerHTML = filtered.map(a => `<option value="${a.id}">${a.nama} - [${a.edar || a.lokasi || 'Unit'}]</option>`).join('');
+        }
+
+        function populasikanDropdownAlatDiWorksheet() {
+            const selectEl = document.getElementById('dropdown-pilih-alat-worksheet');
+            if(!selectEl) return;
+            selectEl.innerHTML = `<option value="">-- PILIH ALAT MEDIS --</option>` + dataAlat.map(a => `<option value="${a.id}">${a.nama} (${a.edar || a.lokasi || 'Unit'})</option>`).join('');
+        }
+
+        function pilihAlatKeWorksheetDariDropdown(alatId) {
+            if(!alatId) return;
+            sinkronisasiDataAlatKeWorksheet(alatId);
         }
 
         function handleSearchInputAlat(targetType, kw) {
@@ -1245,6 +1271,9 @@
         function eksekusiTiketLangsungKerjakan(tiketId, alatId, fotoBeforeVal) {
             bukaLembarKerjaBaruKosong();
             document.getElementById('dlk-selected-alat-id').value = alatId;
+            const dropdownAlat = document.getElementById('dropdown-pilih-alat-worksheet');
+            if(dropdownAlat) dropdownAlat.value = alatId;
+
             sinkronisasiDataAlatKeWorksheet(alatId);
             document.querySelectorAll('input[name="dlk-jenis"]').forEach(r => { if(r.value === "Corrective Maintenance") r.checked = true; });
             
@@ -1270,7 +1299,7 @@
         }
 
         function renderAll() {
-            updateStats(); populasikanDropdownAlatDiTicketForm(); populasikanDropdownAlatDiKalibrasi();
+            updateStats(); populasikanDropdownAlatDiTicketForm(); populasikanDropdownAlatDiKalibrasi(); populasikanDropdownAlatDiWorksheet();
             const tbody = document.getElementById('table-alat-body'); if(!tbody) return;
             let filteredAlat = dataAlat; if(globalFilterStatus !== "all") filteredAlat = dataAlat.filter(a => a.status === globalFilterStatus);
             
@@ -1323,7 +1352,7 @@
             }
 
             const alatIdRaw = document.getElementById('dlk-selected-alat-id').value;
-            if(!alatIdRaw) return alert("Belum ada alat yang terpilih/dilaporkan pada Lembar Kerja ini!");
+            if(!alatIdRaw) return alert("Belum ada alat yang terpilih pada Lembar Kerja ini! Silakan pilih alat terlebih dahulu di dropdown pojok kanan atas kotak Data Alat.");
             const tekNama = document.getElementById('dlk-select-nama-teknisi').value;
             if(!tekNama) return alert("Silakan pilih Nama Teknisi!");
 
@@ -1338,7 +1367,7 @@
                 hasilTunggal: document.querySelector('input[name="dlk-hasil-tunggal"]:checked').value, 
                 ttdTeknisi: document.getElementById('sig-teknisi').toDataURL(),
                 ttdUser: document.getElementById('sig-user').toDataURL(),
-                ttdPJ: document.getElementById('sig-pj').toDataURL(), // Tanda Tangan PJ IPSRS Disimpan Sempurna
+                ttdPJ: document.getElementById('sig-pj').toDataURL(), 
                 teknisiTtd: tekNama, 
                 saksiTtd: document.getElementById('dlk-select-nama-saksi').value,
                 pjTtd: "Arrief Nurcahyo, S.Tr. Em.", 
@@ -1388,7 +1417,6 @@
 
         function bukaLembarKerjaBaruKosong() { 
             if(dataAlat.length === 0) return alert("Belum ada data Master Aset di sistem.");
-            const defaultAlat = dataAlat[0];
             
             document.getElementById('dlk-firebase-id').value = ""; 
             stringFotoBase64 = "-"; stringFotoBeforeBase64 = "-";
@@ -1396,14 +1424,27 @@
             
             terpakaiAlatKerja = []; terpakaiFisik = []; terpakaiFungsi = []; 
             
+            // Waktu lokal real-time sekarang
             const now = new Date();
-            const currentDateTimeLocal = now.toISOString().substring(0, 16);
-            document.getElementById('dlk-tgl').value = currentDateTimeLocal; 
+            const offsetMs = now.getTimezoneOffset() * 60 * 1000;
+            const localIso = new Date(now.getTime() - offsetMs).toISOString().substring(0, 16);
+            document.getElementById('dlk-tgl').value = localIso; 
             
             document.getElementById('dlk-txt-deskripsi-tunggal').value = ""; 
             document.getElementById('box-preview-foto-before').innerHTML = `[ Tidak Ada Foto Before ]`;
             
-            sinkronisasiDataAlatKeWorksheet(defaultAlat.id);
+            // Kosongkan form alat supaya user memilih dulu
+            document.getElementById('dlk-selected-alat-id').value = "";
+            const dropdownAlat = document.getElementById('dropdown-pilih-alat-worksheet');
+            if(dropdownAlat) dropdownAlat.value = "";
+            
+            document.getElementById('dlk-nama').value = "";
+            document.getElementById('dlk-merk').value = "";
+            document.getElementById('dlk-tipe').value = "";
+            document.getElementById('dlk-seri').value = "";
+            document.getElementById('dlk-lokasi').value = "";
+            document.getElementById('dlk-tglcal').value = "";
+            document.getElementById('dlk-nokal').value = "";
 
             renderOpsiDropdownAwal(); aktualisasikanTampilanKotakTabel('alatkerja'); aktualisasikanTampilanKotakTabel('fisik'); aktualisasikanTampilanKotakTabel('fungsi'); 
             populasikanDropdownNamaTandaTangan();
@@ -1438,6 +1479,9 @@
             document.getElementById('dlk-no').value = record.noLk; 
             document.getElementById('dlk-tgl').value = record.textTgl || (record.tgl ? record.tgl.substring(0,16) : '');
             
+            const dropdownAlat = document.getElementById('dropdown-pilih-alat-worksheet');
+            if(dropdownAlat) dropdownAlat.value = record.alatId;
+
             sinkronisasiDataAlatKeWorksheet(record.alatId); 
             document.getElementById('dlk-txt-deskripsi-tunggal').value = record.desc_kerja || "";
             
@@ -1634,10 +1678,42 @@
                 }
             }
         }
+
         function hitungOtomatisMasaBerlakuSatuTahun(v) { if(!v) return; let d = new Date(v); d.setFullYear(d.getFullYear()+1); document.getElementById('dlk-nokal').value = d.toISOString().substring(0,10); }
+        
         function populasikanDropdownNamaTandaTangan() {
-            document.getElementById('dlk-select-nama-teknisi').innerHTML = `<option value="">-- PILIH TEKNISI --</option>` + listNamaTeknisi.map(n => `<option value="${n}">${n}</option>`).join('');
-            document.getElementById('dlk-select-nama-saksi').innerHTML = `<option value="">-- PILIH USER --</option>` + listNamaSaksi.map(n => `<option value="${n}">${n}</option>`).join('');
+            const selTek = document.getElementById('dlk-select-nama-teknisi');
+            const selUsr = document.getElementById('dlk-select-nama-saksi');
+            if(!selTek || !selUsr) return;
+
+            selTek.innerHTML = `<option value="">-- PILIH TEKNISI --</option>` + listNamaTeknisi.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="tambah-teknisi-baru" class="text-blue-600 font-bold">+ Tambah Teknisi Baru</option>`;
+            selUsr.innerHTML = `<option value="">-- PILIH USER --</option>` + listNamaSaksi.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="tambah-user-baru" class="text-blue-600 font-bold">+ Tambah User Baru</option>`;
+        }
+
+        function handleDropdownNamaBaru(selectEl, jenisRole) {
+            const val = selectEl.value;
+            if(val === 'tambah-teknisi-baru' || val === 'tambah-user-baru') {
+                const targetRoleName = (jenisRole === 'Teknisi') ? 'Teknisi' : 'User';
+                let namaBaru = prompt(`Masukkan Nama Lengkap ${targetRoleName} Baru:`);
+                if(namaBaru && namaBaru.trim() !== '') {
+                    const cleanNama = namaBaru.trim();
+                    let payloadUser = {
+                        nama: cleanNama,
+                        username: cleanNama.toLowerCase().replace(/\s+/g, '_'),
+                        password: '123',
+                        role: targetRoleName,
+                        menuAkses: ['dashboard', 'master', 'ticket', 'riwayat']
+                    };
+                    db.collection("users").add(payloadUser).then(() => {
+                        alert(`🎉 ${targetRoleName} baru "${cleanNama}" berhasil disimpan otomatis ke sistem!`);
+                    }).catch(err => {
+                        console.error(err);
+                        alert("Gagal menyimpan data ke database.");
+                    });
+                } else {
+                    selectEl.selectedIndex = 0;
+                }
+            }
         }
         
         function renderTabelPusatDokumen() {
