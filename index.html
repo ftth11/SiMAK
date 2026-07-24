@@ -1848,7 +1848,14 @@
             if(document.getElementById('stat-total')) document.getElementById('stat-total').innerText = dataAlat.length;
             if(document.getElementById('stat-ready')) document.getElementById('stat-ready').innerText = dataAlat.filter(a => a.status === 'Siap Digunakan').length;
             if(document.getElementById('stat-broken')) document.getElementById('stat-broken').innerText = dataAlat.filter(a => a.status === 'Dalam Perbaikan').length;
-            if(document.getElementById('stat-logs')) document.getElementById('stat-logs').innerText = dataKalibrasi.length + dataPerbaikan.length + dataPM.length + dataInspeksi.length;
+            
+            // Hitung total dokumen persis seperti yang dirender pada tabel pusat dokumen
+            let totalDocsCount = dataKalibrasi.length + dataPerbaikan.length + dataPM.length + dataInspeksi.length;
+            dataKeluhanLog.forEach(lg => {
+                const sudahAdaLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi].some(lk => lk.alatId === lg.alatId);
+                if (!sudahAdaLk) totalDocsCount++;
+            });
+            if(document.getElementById('stat-logs')) document.getElementById('stat-logs').innerText = totalDocsCount;
         }
 
         function previewFotoDipilih(input) {
