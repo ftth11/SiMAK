@@ -1229,6 +1229,7 @@
                                 <div class="inline-flex space-x-1">
                                     <button onclick="eksekusiTiketLangsungKerjakan('${t.id}','${t.alatId}', '${t.fotoBefore || '-'}')" class="${warnaTombolKerja} text-white font-bold px-2 py-1 rounded-lg text-[10px] transition">${textTombolKerja}</button>
                                     <button onclick="selesaikanTiketTroubleManual('${t.id}','${t.alatId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-check"></i> Selesai</button>
+                                    <button onclick="hapusTiketUser('${t.id}', '${t.alatId}')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition" title="Hapus Tiket"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </td>
                         `;
