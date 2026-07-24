@@ -1175,25 +1175,25 @@
 
         function renderDaftarTiketMasuk() {
             const body = document.getElementById('table-ticket-body'); if(!body) return;
-            if(dataTiket.length === 0) { body.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 italic">Tidak ada antrean laporan kerusakan aktif.</td></tr>`; return; }
+            
+            // Sembunyikan atau tampilkan kolom header "Tindakan Lapangan" secara dinamis
+            const headerTindakan = document.querySelector('#tab-ticket-system thead tr th:last-child');
+            if(headerTindakan) {
+                headerTindakan.style.display = (currentActiveRole === 'User') ? 'none' : '';
+            }
+
+            if(dataTiket.length === 0) { 
+                body.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 italic">Tidak ada antrean laporan kerusakan aktif.</td></tr>`; 
+                return; 
+            }
             
             body.innerHTML = dataTiket.map(t => {
                 const alat = dataAlat.find(a => a.id == t.alatId) || { nama: "Alat Medis", edar: "Unit" };
                 let aksiAksi = "";
 
                 if (currentActiveRole === 'User') {
-                    // KHUSUS AKUN USER: Tidak ada tombol pengerjaan sama sekali. 
-                    // Hanya bisa melihat status, membuka LK (read-only) jika sudah selesai, atau membatalkan laporan jika belum dikerjakan.
-                    if (t.statusTiket === 'Selesai') {
-                        let matchingLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi].find(lk => lk.alatId === t.alatId);
-                        aksiAksi = matchingLk ? `<button onclick="bukaLembarKerjaDinamisDariLog('${matchingLk.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-file-lines mr-1"></i> Buka LK (Read-Only)</button>` : `<span class="text-[10px] text-slate-500 italic">Selesai</span>`;
-                    } else {
-                        aksiAksi = `
-                            <div class="inline-flex space-x-1">
-                                <button onclick="hapusTiketUser('${t.id}', '${t.alatId}')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition" title="Batalkan Laporan"><i class="fa-solid fa-trash"></i> Batal</button>
-                            </div>
-                        `;
-                    }
+                    // KHUSUS AKUN USER: Kolom tindakan ditiadakan kosong / disembunyikan
+                    aksiAksi = '';
                 } else {
                     // UNTUK TEKNISI & ADMIN
                     if (t.statusTiket !== 'Selesai') {
@@ -1201,15 +1201,17 @@
                         let warnaTombolKerja = t.statusTiket === "Sedang Dikerjakan" ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-amber-600 hover:bg-amber-700';
 
                         aksiAksi = `
-                            <div class="inline-flex space-x-1">
-                                <button onclick="eksekusiTiketLangsungKerjakan('${t.id}','${t.alatId}', '${t.fotoBefore || '-'}')" class="${warnaTombolKerja} text-white font-bold px-2 py-1 rounded-lg text-[10px] transition">${textTombolKerja}</button>
-                                <button onclick="selesaikanTiketTroubleManual('${t.id}','${t.alatId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-check"></i> Selesai</button>
-                            </div>
+                            <td class="p-3 text-center">
+                                <div class="inline-flex space-x-1">
+                                    <button onclick="eksekusiTiketLangsungKerjakan('${t.id}','${t.alatId}', '${t.fotoBefore || '-'}')" class="${warnaTombolKerja} text-white font-bold px-2 py-1 rounded-lg text-[10px] transition">${textTombolKerja}</button>
+                                    <button onclick="selesaikanTiketTroubleManual('${t.id}','${t.alatId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-check"></i> Selesai</button>
+                                </div>
+                            </td>
                         `;
                     } else {
                         let matchingLk = [...dataPerbaikan, ...dataPM, ...dataInspeksi].find(lk => lk.alatId === t.alatId);
                         let tombolBukaLk = matchingLk ? `<button onclick="bukaLembarKerjaDinamisDariLog('${matchingLk.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-2.5 py-1 rounded-lg text-[10px] transition"><i class="fa-solid fa-file-lines mr-1"></i> Buka LK</button>` : `<span class="text-[10px] text-slate-500 italic">Arsip</span>`;
-                        aksiAksi = `<div class="inline-flex space-x-1"><span class="text-emerald-500 font-bold text-[10px] mr-1">✅ Selesai</span>${tombolBukaLk}</div>`;
+                        aksiAksi = `<td class="p-3 text-center"><div class="inline-flex space-x-1"><span class="text-emerald-500 font-bold text-[10px] mr-1">✅ Selesai</span>${tombolBukaLk}</div></td>`;
                     }
                 }
 
@@ -1226,11 +1228,12 @@
                         <td class="p-3 text-center">${fotoBeforeThm}</td>
                         <td class="p-3 text-[11px] font-mono text-slate-400">${t.tglLapor || '-'}</td>
                         <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${kelasBadgeStatus}">${t.statusTiket}</span></td>
-                        <td class="p-3 text-center">${aksiAksi}</td>
+                        ${aksiAksi}
                     </tr>
                 `;
             }).join('');
         }
+        
         function hapusTiketUser(tiketId, alatId) {
             if(confirm("Batalkan atau hapus laporan kerusakan ini? Status alat akan dikembalikan menjadi Siap Pakai.")) {
                 db.collection("troubleTickets").doc(tiketId).delete().then(() => {
